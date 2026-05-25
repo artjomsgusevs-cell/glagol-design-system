@@ -6,7 +6,8 @@
 
 @theme inline {
   --font-sans: var(--font-sans);
-  --font-heading: var(--font-display);
+  --font-display: var(--font-onest);
+  --font-heading: var(--font-onest);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-serif: var(--font-sans);
 
@@ -176,8 +177,24 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    /* Чёткость кириллицы: subpixel + контурный рендеринг */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "ss01", "cv01";
+    /* Tabular figures для цифр в KPI и таблицах */
+    font-feature-settings: "ss01", "cv11";
+  }
+  /* В таблицах и метриках — моноширинные цифры, чтобы колонки не «прыгали» */
+  table,
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Display-заголовки: жирнее и компактнее межбуквенно */
+  .font-display {
+    letter-spacing: -0.015em;
   }
 }

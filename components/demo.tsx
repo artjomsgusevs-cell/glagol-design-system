@@ -14,7 +14,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -41,7 +40,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
+import { PageShell, PageHeader } from "@/components/page-shell";
+import { BrandLogo, Logo, type LogoVariant } from "@/components/brand";
+import { Eyebrow, Small } from "@/components/typography";
+import Link from "next/link";
 import {
   CalendarIcon,
   CheckIcon,
@@ -55,9 +67,10 @@ import {
   UserIcon,
   XIcon,
 } from "lucide-react";
+import { SalesPlanProgress } from "@/components/dashboard-widgets";
 
 /* =========================================================
-   Глагол · Дизайн-система v1.2 · демо-страница
+   Глагол · Дизайн-система v1.3 · демо-страница
    Структурно повторяет shadcn Demo (radix-nova / next-monorepo):
    двухколоночная сетка карточек с обзором стилей, иконками,
    кнопками, формой, таблицей и hero-блоком.
@@ -98,77 +111,98 @@ const ICONS = [
   SparklesIcon,
 ];
 
+
 export function Demo() {
   const [sliderValue, setSliderValue] = React.useState<number[]>([72]);
   const [tab, setTab] = React.useState("calendar");
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="bg-muted/40 min-h-screen w-full px-4 py-10 sm:px-8 lg:px-12">
-        {/* ========== Шапка ========== */}
-        <header className="mx-auto mb-10 max-w-6xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-foreground text-background font-display flex h-10 w-10 items-center justify-center rounded-xl text-lg font-extrabold">
-                Г
-              </div>
-              <div>
-                <div className="font-display text-base font-extrabold leading-tight">
-                  Глагол DS
-                </div>
-                <div className="text-muted-foreground text-xs">
-                  v1.2 · 2026-05-22
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="hidden sm:inline-flex">
-                Next 16 · Tailwind 4 · shadcn
-              </Badge>
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href="https://github.com/artjomsgusevs-cell/glagol-design-system"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
-                  <ExternalLinkIcon />
-                </a>
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-10">
-            <div className="text-primary mb-3 text-xs font-extrabold uppercase tracking-[0.18em]">
-              Бюро Глагол · Внутренний портал
-            </div>
-            <h1 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl">
-              Дизайн-система <span className="text-primary">v1.2</span>
-            </h1>
-            <p className="text-muted-foreground mt-3 max-w-2xl text-base leading-relaxed">
+      <PageShell>
+        <PageHeader
+          size="hero"
+          eyebrow="бюро Глагол · UI-кит веб-сервисов"
+          title={
+            <>
+              Дизайн-система <span className="text-primary">v1.3</span>
+            </>
+          }
+          description={
+            <>
               Брендовые цвета, типографика, радиусы и компоненты, на которых
-              собран портал бронирования бюро Глагол. Источник правды —{" "}
+              собран портал бронирования и другие сервисы бюро Глагол.
+              Источник правды —{" "}
               <code className="bg-muted rounded px-1.5 py-0.5 text-[0.85em]">
-                src/app/globals.css
+                app/globals.css
               </code>
               .
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Badge className="bg-primary/15 text-primary border-primary/30 border">
-                Оранж = акценты/CTA
-              </Badge>
-              <Badge className="bg-accent text-accent-foreground border-accent/40 border">
-                Персик = декор-подложка
-              </Badge>
-              <Badge variant="secondary">Никогда чистый #000 / #fff</Badge>
-            </div>
-          </div>
-        </header>
+            </>
+          }
+        />
+        <div className="-mt-4 mb-10 flex flex-wrap gap-2">
+          <Badge className="bg-primary/15 text-primary border-primary/30 border">
+            Оранж = акценты/CTA
+          </Badge>
+          <Badge className="bg-accent text-accent-foreground border-accent/40 border">
+            Персик = декор-подложка
+          </Badge>
+          <Badge variant="secondary">Никогда чистый #000 / #fff</Badge>
+          <Link
+            href="/calendar"
+            className="hover:border-primary hover:text-primary border-border bg-card flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-colors"
+          >
+            Календарь <ChevronRightIcon className="size-3" />
+          </Link>
+          <Link
+            href="/dashboard"
+            className="hover:border-primary hover:text-primary border-border bg-card flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-colors"
+          >
+            Дашборд <ChevronRightIcon className="size-3" />
+          </Link>
+        </div>
 
         {/* ========== Грид ========== */}
-        <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-12">
+        <div className="grid gap-5 lg:grid-cols-12">
           {/* --- COL 1: токены, иконки, kpi --- */}
           <div className="flex flex-col gap-5 lg:col-span-7">
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-display">Логотип</CardTitle>
+                <CardDescription>
+                  Знак-стрелка «›» + слово «бюро Глагол». Четыре варианта на
+                  разные фоны.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 sm:grid-cols-2">
+                <LogoTile
+                  variant="default"
+                  bg="bg-[#F6F6F6]"
+                  label="Основной"
+                  note="Светлые фоны · по умолчанию"
+                />
+                <LogoTile
+                  variant="black"
+                  bg="bg-[#F6F6F6]"
+                  label="Чёрный"
+                  note="Моно/печать"
+                />
+                <LogoTile
+                  variant="white-on-dark"
+                  bg="bg-[#1A1A1A]"
+                  label="На тёмном"
+                  note="Hero / тёмный фон"
+                  dark
+                />
+                <LogoTile
+                  variant="mono-white"
+                  bg="bg-primary"
+                  label="На оранжевом"
+                  note="Только бренд-сабстрат"
+                  dark
+                />
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle className="font-display">Style Overview</CardTitle>
@@ -204,7 +238,7 @@ export function Demo() {
                   <TypeRow
                     sample={
                       <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight">
-                        Внутренний портал · v1.2
+                        Внутренний портал · v1.3
                       </h1>
                     }
                     meta="Display H1 · 30/800"
@@ -220,15 +254,15 @@ export function Demo() {
                   <TypeRow
                     sample={
                       <p className="text-foreground text-sm leading-relaxed">
-                        Основной текст — Wix Madefor Text, 14px.
+                        Основной текст — Manrope, 14px.
                       </p>
                     }
                     meta="Body · 14/400"
                   />
                   <TypeRow
                     sample={
-                      <p className="text-muted-foreground text-[11px] font-extrabold uppercase tracking-[0.14em]">
-                        название поля формы
+                      <p className="text-muted-foreground text-xs font-medium">
+                        Название поля формы
                       </p>
                     }
                     meta="Label · 11/800 UPPER"
@@ -264,55 +298,166 @@ export function Demo() {
               </CardContent>
             </Card>
 
+            <SalesPlanProgress
+              title="План"
+              month="Май 2026"
+              fact={3_420_000}
+              pre={1_580_000}
+              plan={7_800_000}
+            />
+
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="font-display text-base">
-                    KPI · май 2026
-                  </CardTitle>
-                  <CardDescription>
-                    Карточки и индикаторы прогресса
-                  </CardDescription>
-                </div>
-                <Badge variant="outline" className="hidden sm:inline-flex">
-                  Live
-                </Badge>
+              <CardHeader>
+                <CardTitle>Список броней · май</CardTitle>
+                <CardDescription>
+                  Сводная таблица с пилюлями статуса и аватарами
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <KpiTile label="Броней" value={42} delta="+12%" />
-                  <KpiTile
-                    label="Подтверждено"
-                    value={28}
-                    delta="+8%"
-                    tone="success"
-                  />
-                  <KpiTile
-                    label="Предварительно"
-                    value={14}
-                    delta="-3%"
-                    tone="warning"
-                  />
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Дата</TableHead>
+                      <TableHead>Проект</TableHead>
+                      <TableHead>Тренер</TableHead>
+                      <TableHead>Формат</TableHead>
+                      <TableHead className="text-right">Статус</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {BOOKINGS.map((b) => (
+                      <TableRow key={b.id}>
+                        <TableCell className="text-xs tabular-nums">
+                          {b.date}
+                        </TableCell>
+                        <TableCell className="font-medium">{b.title}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="size-6">
+                              <AvatarFallback className="text-[10px]">
+                                {b.trainer
+                                  .split(" ")
+                                  .map((p) => p[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">{b.trainer}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {b.format}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <StatusPill status={b.status} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Состояния</CardTitle>
+                <CardDescription>
+                  Hover, focus, active, disabled, loading. Кликабельные карточки
+                  через{" "}
+                  <code className="bg-muted rounded px-1 text-[0.85em]">
+                    interactive
+                  </code>
+                  .
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-5">
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Кнопки</Eyebrow>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button>Default</Button>
+                    <Button className="hover:bg-primary/90 ring-primary/40 ring-2">
+                      Hover
+                    </Button>
+                    <Button className="ring-ring/60 ring-2">Focus</Button>
+                    <Button disabled>Disabled</Button>
+                    <Button disabled>
+                      <Spinner />
+                      Loading
+                    </Button>
+                  </div>
                 </div>
-                <div className="mt-5 grid gap-4">
-                  <ProgressRow
-                    label="Загрузка тренеров"
-                    value={72}
-                    tone="primary"
-                  />
-                  <ProgressRow
-                    label="Подтверждено vs план"
-                    value={88}
-                    tone="success"
-                  />
-                  <ProgressRow
-                    label="Свободные слоты"
-                    value={32}
-                    tone="warning"
-                  />
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Поля ввода</Eyebrow>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Input placeholder="Default" />
+                    <Input
+                      placeholder="Focus"
+                      className="ring-ring/60 border-ring ring-2"
+                    />
+                    <Input
+                      placeholder="Disabled"
+                      disabled
+                      defaultValue="Артём Гусев"
+                    />
+                    <Input
+                      placeholder="Error"
+                      aria-invalid="true"
+                      className="border-destructive ring-destructive/40 ring-2"
+                      defaultValue="Невалидное значение"
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Кликабельные карточки</Eyebrow>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Card interactive size="sm">
+                      <CardHeader>
+                        <CardTitle>Карточка проекта</CardTitle>
+                        <CardDescription>
+                          Hover, чтобы увидеть состояние
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                    <Card interactive size="sm">
+                      <CardHeader>
+                        <CardTitle>Карточка тренера</CardTitle>
+                        <CardDescription>
+                          Курсор pointer + ring + lift
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  </div>
                 </div>
               </CardContent>
             </Card>
+
+            <div className="from-primary via-primary/95 to-primary/80 text-primary-foreground relative overflow-hidden rounded-2xl bg-gradient-to-br p-8 sm:p-10">
+              <div className="absolute -right-10 -top-10 size-48 rounded-full bg-white/10 blur-3xl" />
+              <div className="text-primary-foreground/80 mb-3 text-xs font-medium">
+                бюро Глагол
+              </div>
+              <h2 className="font-display max-w-md text-3xl font-extrabold leading-[1.02] tracking-tight sm:text-4xl">
+                Календарь для
+                <span className="block font-extrabold">продаж и тренеров</span>
+              </h2>
+              <p className="text-primary-foreground/85 mt-3 max-w-md text-sm leading-relaxed">
+                Один источник правды для броней, услуг и нагрузки. amoCRM,
+                Google Calendar и SMTP — на автомате.
+              </p>
+              <ul className="mt-5 flex flex-col gap-2 text-sm">
+                <li className="flex items-center gap-2">
+                  <CheckIcon className="size-4" /> Подтверждение брони одним
+                  кликом
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckIcon className="size-4" /> Drag&drop в календаре и
+                  канбане
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckIcon className="size-4" /> Серии воркшопов и гибридный
+                  формат
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* --- COL 2: кнопки, форма, поиск --- */}
@@ -369,9 +514,9 @@ export function Demo() {
                         <SelectValue placeholder="Выберите" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="anna">Анна Иванова</SelectItem>
-                        <SelectItem value="petr">Пётр Сидоров</SelectItem>
-                        <SelectItem value="maria">Мария Кравцова</SelectItem>
+                        <SelectItem value="anna">Юля Глазкова</SelectItem>
+                        <SelectItem value="petr">Андрей Суворков</SelectItem>
+                        <SelectItem value="maria">Сабина Алиева</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -415,7 +560,7 @@ export function Demo() {
                 <div className="grid gap-2">
                   <div className="flex items-center justify-between">
                     <Label>Длительность</Label>
-                    <span className="text-muted-foreground font-mono text-xs">
+                    <span className="text-muted-foreground text-xs tabular-nums">
                       {sliderValue[0]} мин
                     </span>
                   </div>
@@ -482,70 +627,104 @@ export function Demo() {
                 </Tabs>
               </CardContent>
             </Card>
-          </div>
 
-          {/* --- ROW 2: таблица + чипы --- */}
-          <div className="lg:col-span-7">
             <Card>
               <CardHeader>
-                <CardTitle className="font-display text-base">
-                  Список броней · май
-                </CardTitle>
+                <CardTitle>Аватары</CardTitle>
                 <CardDescription>
-                  Сводная таблица с пилюлями статуса и аватарами
+                  Группа тренеров, размеры sm/default/lg, статусы
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Дата</TableHead>
-                      <TableHead>Проект</TableHead>
-                      <TableHead>Тренер</TableHead>
-                      <TableHead>Формат</TableHead>
-                      <TableHead className="text-right">Статус</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {BOOKINGS.map((b) => (
-                      <TableRow key={b.id}>
-                        <TableCell className="font-mono text-xs">
-                          {b.date}
-                        </TableCell>
-                        <TableCell className="font-medium">{b.title}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="size-6">
-                              <AvatarFallback className="text-[10px]">
-                                {b.trainer
-                                  .split(" ")
-                                  .map((p) => p[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm">{b.trainer}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
-                          {b.format}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <StatusPill status={b.status} />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <CardContent className="flex flex-col gap-5">
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Команда</Eyebrow>
+                  <div className="flex items-center gap-3">
+                    <AvatarGroup>
+                      <Avatar>
+                        <AvatarFallback className="text-[11px] font-semibold">
+                          ЮГ
+                        </AvatarFallback>
+                      </Avatar>
+                      <Avatar>
+                        <AvatarFallback className="text-[11px] font-semibold">
+                          АС
+                        </AvatarFallback>
+                      </Avatar>
+                      <Avatar>
+                        <AvatarFallback className="text-[11px] font-semibold">
+                          СА
+                        </AvatarFallback>
+                      </Avatar>
+                      <Avatar>
+                        <AvatarFallback className="text-[11px] font-semibold">
+                          ЛЖ
+                        </AvatarFallback>
+                      </Avatar>
+                      <AvatarGroupCount>+5</AvatarGroupCount>
+                    </AvatarGroup>
+                    <Small>9 активных тренеров</Small>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Размеры</Eyebrow>
+                  <div className="flex items-end gap-4">
+                    <Avatar size="sm">
+                      <AvatarFallback className="text-[10px]">АГ</AvatarFallback>
+                    </Avatar>
+                    <Avatar>
+                      <AvatarFallback className="text-xs">АГ</AvatarFallback>
+                    </Avatar>
+                    <Avatar size="lg">
+                      <AvatarFallback className="text-sm font-semibold">
+                        АГ
+                      </AvatarFallback>
+                    </Avatar>
+                    <Avatar size="lg" className="relative">
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                        ЮГ
+                      </AvatarFallback>
+                      <AvatarBadge className="bg-success size-2.5" />
+                    </Avatar>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">С фото</Eyebrow>
+                  <div className="flex items-center gap-3">
+                    <AvatarGroup>
+                      <Avatar size="lg">
+                        <AvatarImage
+                          src="/photos/trainer-01.jpg"
+                          alt="Артём Гусев"
+                        />
+                        <AvatarFallback className="text-xs font-semibold">
+                          АГ
+                        </AvatarFallback>
+                      </Avatar>
+                      <Avatar size="lg">
+                        <AvatarFallback className="text-xs font-semibold">
+                          ЮГ
+                        </AvatarFallback>
+                      </Avatar>
+                      <Avatar size="lg">
+                        <AvatarFallback className="text-xs font-semibold">
+                          АС
+                        </AvatarFallback>
+                      </Avatar>
+                      <Avatar size="lg">
+                        <AvatarFallback className="text-xs font-semibold">
+                          СА
+                        </AvatarFallback>
+                      </Avatar>
+                    </AvatarGroup>
+                    <Small>Если есть фото — показываем; иначе инициалы</Small>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          </div>
 
-          <div className="lg:col-span-5">
-            <Card className="h-full">
+            <Card>
               <CardHeader>
-                <CardTitle className="font-display text-base">
-                  Чипы календаря
-                </CardTitle>
+                <CardTitle>Чипы календаря</CardTitle>
                 <CardDescription>
                   Цветной левый бордер маркирует статус
                 </CardDescription>
@@ -555,13 +734,13 @@ export function Demo() {
                   status="confirmed"
                   time="18:00"
                   title="Воркшоп продажи"
-                  who="Анна Иванова"
+                  who="Юля Глазкова"
                 />
                 <CalChip
                   status="pre"
                   time="10:00"
                   title="Лидерство 2.0"
-                  who="Пётр Сидоров"
+                  who="Андрей Суворков"
                 />
                 <CalChip
                   status="conflict"
@@ -586,46 +765,51 @@ export function Demo() {
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          {/* --- ROW 3: Hero + Tokens --- */}
-          <div className="lg:col-span-7">
-            <div className="from-primary via-primary/95 to-primary/80 text-primary-foreground relative overflow-hidden rounded-2xl bg-gradient-to-br p-8 sm:p-10">
-              <div className="absolute -right-10 -top-10 size-48 rounded-full bg-white/10 blur-3xl" />
-              <div className="text-primary-foreground/80 mb-3 text-[11px] font-extrabold uppercase tracking-[0.18em]">
-                Бюро Глагол
-              </div>
-              <h2 className="font-display max-w-md text-3xl font-extrabold leading-[1.02] tracking-tight sm:text-4xl">
-                Календарь для
-                <span className="block font-extrabold">продаж и тренеров</span>
-              </h2>
-              <p className="text-primary-foreground/85 mt-3 max-w-md text-sm leading-relaxed">
-                Один источник правды для броней, услуг и нагрузки. amoCRM,
-                Google Calendar и SMTP — на автомате.
-              </p>
-              <ul className="mt-5 flex flex-col gap-2 text-sm">
-                <li className="flex items-center gap-2">
-                  <CheckIcon className="size-4" /> Подтверждение брони одним
-                  кликом
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckIcon className="size-4" /> Drag&drop в календаре и
-                  канбане
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckIcon className="size-4" /> Серии воркшопов и гибридный
-                  формат
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="lg:col-span-5">
-            <Card className="h-full">
+            <Card>
               <CardHeader>
-                <CardTitle className="font-display text-base">
-                  CSS-переменные
-                </CardTitle>
+                <CardTitle>Empty · Loading</CardTitle>
+                <CardDescription>
+                  Пустые состояния и скелетоны для загрузки
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <div className="border-border bg-card flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-8 text-center">
+                  <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-full">
+                    <CalendarIcon className="size-5" />
+                  </div>
+                  <div className="font-display text-sm font-bold">
+                    Нет броней
+                  </div>
+                  <p className="text-muted-foreground max-w-[28ch] text-xs">
+                    На эту неделю нет запланированных событий.
+                  </p>
+                  <Button size="sm" variant="outline">
+                    <PlusIcon />
+                    Добавить
+                  </Button>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Eyebrow tone="muted">Skeleton</Eyebrow>
+                  <div className="grid gap-2">
+                    <Skeleton className="h-4 w-2/3 rounded-md" />
+                    <Skeleton className="h-3 w-full rounded-md" />
+                    <Skeleton className="h-3 w-5/6 rounded-md" />
+                    <div className="mt-2 flex items-center gap-3">
+                      <Skeleton className="size-9 rounded-full" />
+                      <div className="flex-1 space-y-1">
+                        <Skeleton className="h-3 w-32 rounded-md" />
+                        <Skeleton className="h-2.5 w-20 rounded-md" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>CSS-переменные</CardTitle>
                 <CardDescription>
                   Скопируй в <code>:root</code> любого проекта
                 </CardDescription>
@@ -639,16 +823,70 @@ export function Demo() {
           </div>
         </div>
 
-        <footer className="text-muted-foreground mx-auto mt-14 max-w-6xl border-t pt-6 text-xs">
-          Бюро Глагол · Дизайн-система v1.2 · собрано на Next.js 16, Tailwind 4
-          и shadcn/ui
+
+        <footer className="text-muted-foreground mt-14 flex flex-wrap items-center justify-between gap-3 border-t pt-6 text-xs">
+          <div className="flex items-center gap-3">
+            <BrandLogo size={24} withText={false} />
+            <span>
+              бюро Глагол · Дизайн-система v1.3 · Next.js 16, Tailwind 4,
+              shadcn/ui
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/calendar" className="hover:text-foreground">
+              Календарь
+            </Link>
+            <Link href="/dashboard" className="hover:text-foreground">
+              Дашборд
+            </Link>
+          </div>
         </footer>
-      </div>
+      </PageShell>
     </TooltipProvider>
   );
 }
 
 /* ============== вспомогательные блоки ============== */
+
+function LogoTile({
+  variant,
+  bg,
+  label,
+  note,
+  dark,
+}: {
+  variant: LogoVariant;
+  bg: string;
+  label: string;
+  note: string;
+  dark?: boolean;
+}) {
+  return (
+    <div
+      className={`flex flex-col gap-3 rounded-xl border border-black/10 ${bg} p-4`}
+    >
+      <div className="flex h-16 items-center justify-start">
+        <Logo variant={variant} className="h-7 w-auto" />
+      </div>
+      <div>
+        <div
+          className={`text-sm font-extrabold ${
+            dark ? "text-white" : "text-[#1A1A1A]"
+          }`}
+        >
+          {label}
+        </div>
+        <div
+          className={`text-[11px] ${
+            dark ? "text-white/70" : "text-[#1A1A1A]/60"
+          }`}
+        >
+          {note}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function TypeRow({
   sample,
@@ -660,68 +898,13 @@ function TypeRow({
   return (
     <div className="border-border bg-card flex items-center justify-between gap-4 rounded-xl border px-4 py-3">
       <div className="min-w-0 truncate">{sample}</div>
-      <div className="text-muted-foreground shrink-0 font-mono text-[10.5px] uppercase tracking-wider">
+      <div className="text-muted-foreground shrink-0 text-xs font-medium">
         {meta}
       </div>
     </div>
   );
 }
 
-function KpiTile({
-  label,
-  value,
-  delta,
-  tone = "default",
-}: {
-  label: string;
-  value: number;
-  delta: string;
-  tone?: "default" | "success" | "warning";
-}) {
-  const toneCls =
-    tone === "success"
-      ? "text-success"
-      : tone === "warning"
-        ? "text-warning"
-        : "text-muted-foreground";
-  return (
-    <div className="border-border bg-card rounded-xl border p-4">
-      <div className="text-muted-foreground text-[10.5px] font-extrabold uppercase tracking-[0.14em]">
-        {label}
-      </div>
-      <div className="font-display mt-1 text-2xl font-extrabold leading-none tracking-tight">
-        {value}
-      </div>
-      <div className={`mt-1 text-xs ${toneCls}`}>{delta} к плану</div>
-    </div>
-  );
-}
-
-function ProgressRow({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: number;
-  tone: "primary" | "success" | "warning";
-}) {
-  const trackCls =
-    tone === "success"
-      ? "[&>div]:bg-success"
-      : tone === "warning"
-        ? "[&>div]:bg-warning"
-        : "[&>div]:bg-primary";
-  return (
-    <div className="grid gap-1.5">
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono">{value}%</span>
-      </div>
-      <Progress value={value} className={`h-2 ${trackCls}`} />
-    </div>
-  );
-}
 
 function StatusPill({
   status,
@@ -780,7 +963,7 @@ const BOOKINGS: {
     id: "1",
     date: "18.05",
     title: "Воркшоп продажи",
-    trainer: "Анна Иванова",
+    trainer: "Юля Глазкова",
     format: "Офлайн · СПб",
     status: "confirmed",
   },
@@ -788,7 +971,7 @@ const BOOKINGS: {
     id: "2",
     date: "21.05",
     title: "Лидерство 2.0",
-    trainer: "Пётр Сидоров",
+    trainer: "Андрей Суворков",
     format: "Онлайн",
     status: "pre",
   },
@@ -796,7 +979,7 @@ const BOOKINGS: {
     id: "3",
     date: "27.05",
     title: "Стратегия Q3",
-    trainer: "Мария Кравцова",
+    trainer: "Сабина Алиева",
     format: "Гибрид",
     status: "confirmed",
   },
@@ -804,7 +987,7 @@ const BOOKINGS: {
     id: "4",
     date: "03.06",
     title: "Onboarding",
-    trainer: "Анна Иванова",
+    trainer: "Юля Глазкова",
     format: "Офлайн · Москва",
     status: "cancelled",
   },

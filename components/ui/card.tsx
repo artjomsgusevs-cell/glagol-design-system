@@ -5,14 +5,20 @@ import { cn } from '@/lib/utils'
 function Card({
   className,
   size = "default",
+  interactive = false,
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> & {
+  size?: "default" | "sm";
+  /** Кликабельная карточка: hover-shadow, ring-primary, лёгкий lift. */
+  interactive?: boolean;
+}) {
   return (
     <div
       data-slot="card"
       data-size={size}
+      data-interactive={interactive ? "true" : undefined}
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "group/card flex shrink-0 flex-col gap-4 overflow-hidden rounded-xl bg-card/80 backdrop-blur-sm py-4 text-sm text-card-foreground ring-1 ring-foreground/10 transition has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl data-[interactive=true]:cursor-pointer data-[interactive=true]:hover:-translate-y-0.5 data-[interactive=true]:hover:ring-primary/40 data-[interactive=true]:hover:shadow-md",
         className
       )}
       {...props}
@@ -38,7 +44,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+        "font-display text-base leading-snug font-extrabold tracking-tight group-data-[size=sm]/card:text-sm",
         className
       )}
       {...props}
