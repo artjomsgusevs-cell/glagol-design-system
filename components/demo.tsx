@@ -630,6 +630,57 @@ export function Demo() {
 
             <Card>
               <CardHeader>
+                <CardTitle>Выпадающие списки</CardTitle>
+                <CardDescription>
+                  Ширина списка ровно равна ширине триггера
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Стандартный</Eyebrow>
+                  <Select defaultValue="anna">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите тренера" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="anna">Юля Глазкова</SelectItem>
+                      <SelectItem value="petr">Андрей Суворков</SelectItem>
+                      <SelectItem value="maria">Сабина Алиева</SelectItem>
+                      <SelectItem value="lena">Лена Жукова</SelectItem>
+                      <SelectItem value="artem">Артём Гусев</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Узкий</Eyebrow>
+                  <Select defaultValue="offline">
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="offline">Офлайн</SelectItem>
+                      <SelectItem value="online">Онлайн</SelectItem>
+                      <SelectItem value="hybrid">Гибрид</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Отключён</Eyebrow>
+                  <Select disabled defaultValue="confirmed">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="confirmed">Подтверждено</SelectItem>
+                      <SelectItem value="pre">Предварительно</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Аватары</CardTitle>
                 <CardDescription>
                   Группа тренеров, размеры sm/default/lg, статусы
