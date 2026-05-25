@@ -464,26 +464,124 @@ export function Demo() {
           <div className="flex flex-col gap-5 lg:col-span-5">
             <Card>
               <CardHeader>
-                <CardTitle className="font-display text-base">
-                  Кнопки и бейджи
-                </CardTitle>
-                <CardDescription>Базовые варианты shadcn</CardDescription>
+                <CardTitle>Кнопки</CardTitle>
+                <CardDescription>
+                  Варианты, размеры, с иконкой. Меняйте в одном месте — обновится по всему интерфейсу.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col gap-5">
-                <div className="flex flex-wrap gap-2">
-                  <Button>
-                    <PlusIcon /> Бронь
-                  </Button>
-                  <Button variant="secondary">Отмена</Button>
-                  <Button variant="outline">Редактировать</Button>
-                  <Button variant="ghost">Подробнее</Button>
-                  <Button variant="destructive">Удалить</Button>
+              <CardContent className="flex flex-col gap-4">
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Варианты</Eyebrow>
+                  <div className="flex flex-wrap gap-2">
+                    <Button>
+                      <PlusIcon /> Бронь
+                    </Button>
+                    <Button variant="secondary">Отмена</Button>
+                    <Button variant="outline">Редактировать</Button>
+                    <Button variant="ghost">Подробнее</Button>
+                    <Button variant="destructive">Удалить</Button>
+                  </div>
                 </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Размеры</Eyebrow>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button size="sm">Маленькая</Button>
+                    <Button>По умолчанию</Button>
+                    <Button size="lg">Крупная</Button>
+                    <Button size="icon" aria-label="Добавить">
+                      <PlusIcon />
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Состояния</Eyebrow>
+                  <div className="flex flex-wrap gap-2">
+                    <Button disabled>Disabled</Button>
+                    <Button disabled>
+                      <Spinner />
+                      Loading
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Бейджи и статусы</CardTitle>
+                <CardDescription>
+                  Пилюли для статусов броней, проектов, ролей
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge>Подтверждено</Badge>
                   <Badge variant="secondary">Предварительно</Badge>
                   <Badge variant="destructive">Конфликт</Badge>
                   <Badge variant="outline">Часть серии</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Переключатели</CardTitle>
+                <CardDescription>
+                  Switch, Checkbox — для тумблеров настроек и выбора
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Switch</Eyebrow>
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                    <div className="flex items-center gap-2">
+                      <Switch id="sw-on" defaultChecked />
+                      <Label htmlFor="sw-on" className="cursor-pointer">
+                        Включён
+                      </Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch id="sw-off" />
+                      <Label htmlFor="sw-off" className="cursor-pointer">
+                        Выключен
+                      </Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch id="sw-dis" disabled />
+                      <Label
+                        htmlFor="sw-dis"
+                        className="text-muted-foreground cursor-not-allowed"
+                      >
+                        Отключён
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <Eyebrow tone="muted">Checkbox</Eyebrow>
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                    <div className="flex items-center gap-2">
+                      <Checkbox id="cb-on" defaultChecked />
+                      <Label htmlFor="cb-on" className="cursor-pointer">
+                        Отмечен
+                      </Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox id="cb-off" />
+                      <Label htmlFor="cb-off" className="cursor-pointer">
+                        Снят
+                      </Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox id="cb-dis" disabled />
+                      <Label
+                        htmlFor="cb-dis"
+                        className="text-muted-foreground cursor-not-allowed"
+                      >
+                        Отключён
+                      </Label>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
