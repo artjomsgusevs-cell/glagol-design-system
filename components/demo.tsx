@@ -70,7 +70,7 @@ import {
 import { SalesPlanProgress } from "@/components/dashboard-widgets";
 
 /* =========================================================
-   Глагол · Дизайн-система v1.3.2 · демо-страница
+   Глагол · Дизайн-система v1.4 · демо-страница
    Структурно повторяет shadcn Demo (radix-nova / next-monorepo):
    двухколоночная сетка карточек с обзором стилей, иконками,
    кнопками, формой, таблицей и hero-блоком.
@@ -119,52 +119,73 @@ export function Demo() {
   return (
     <TooltipProvider delayDuration={200}>
       <PageShell>
-        <PageHeader
-          size="hero"
-          eyebrow="бюро Глагол · UI-кит веб-сервисов"
-          title={
-            <>
-              Дизайн-система <span className="text-primary">v1.3.2</span>
-            </>
-          }
-          description={
-            <>
-              Брендовые цвета, типографика, радиусы и компоненты, на которых
-              собран портал бронирования и другие сервисы бюро Глагол.
-              Источник правды —{" "}
-              <code className="bg-muted rounded px-1.5 py-0.5 text-[0.85em]">
-                app/globals.css
-              </code>
-              .
-            </>
-          }
-        />
-        <div className="-mt-4 mb-10 flex flex-wrap gap-2">
-          <Badge className="bg-primary/15 text-primary border-primary/30 border">
-            Оранж = акценты/CTA
-          </Badge>
-          <Badge className="bg-accent text-accent-foreground border-accent/40 border">
-            Персик = декор-подложка
-          </Badge>
-          <Badge variant="secondary">Никогда чистый #000 / #fff</Badge>
-          <Link
-            href="/calendar"
-            className="hover:border-primary hover:text-primary border-border bg-card flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-colors"
-          >
-            Календарь <ChevronRightIcon className="size-3" />
-          </Link>
-          <Link
-            href="/dashboard"
-            className="hover:border-primary hover:text-primary border-border bg-card flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-colors"
-          >
-            Дашборд <ChevronRightIcon className="size-3" />
-          </Link>
-        </div>
+        {/* ========== Hero · обложка ISSUE ========== */}
+        <header className="mb-10">
+          <div className="text-primary text-xs font-semibold tracking-wide">
+            BUREAU GLAGOL ·{" "}
+            <span className="text-foreground">ISSUE 04</span> · MAY 2026
+          </div>
+          <div className="mt-3 grid items-end gap-6 lg:grid-cols-[1fr_auto]">
+            <h1 className="font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
+              Дизайн-система{" "}
+              <span className="text-primary inline-block tabular-nums">
+                v1.4
+              </span>
+            </h1>
+            <dl className="text-muted-foreground grid grid-cols-3 gap-x-6 gap-y-1 text-xs sm:text-right">
+              <div className="text-foreground font-display text-2xl font-extrabold tabular-nums">
+                47
+              </div>
+              <div className="text-foreground font-display text-2xl font-extrabold tabular-nums">
+                3
+              </div>
+              <div className="text-foreground font-display text-2xl font-extrabold tabular-nums">
+                16
+              </div>
+              <div>компонентов</div>
+              <div>экрана</div>
+              <div>токенов</div>
+            </dl>
+          </div>
+          <p className="text-muted-foreground mt-5 max-w-2xl text-base leading-relaxed">
+            Брендовые цвета, типографика, радиусы и компоненты для веб-сервисов
+            бюро Глагол. Источник правды —{" "}
+            <code className="bg-muted rounded px-1.5 py-0.5 text-[0.85em]">
+              app/globals.css
+            </code>
+            .
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Badge className="bg-primary/15 text-primary border-primary/30 border">
+              Оранж = акценты/CTA
+            </Badge>
+            <Badge className="bg-accent text-accent-foreground border-accent/40 border">
+              Персик = декор-подложка
+            </Badge>
+            <Badge variant="secondary">Никогда чистый #000 / #fff</Badge>
+            <Link
+              href="/calendar"
+              className="hover:border-primary hover:text-primary border-border bg-card flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-colors"
+            >
+              Календарь <ChevronRightIcon className="size-3" />
+            </Link>
+            <Link
+              href="/dashboard"
+              className="hover:border-primary hover:text-primary border-border bg-card flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-colors"
+            >
+              Дашборд <ChevronRightIcon className="size-3" />
+            </Link>
+          </div>
+          <div className="bg-foreground/10 mt-8 h-px w-full" />
+        </header>
 
         {/* ========== Грид ========== */}
         <div className="grid gap-5 lg:grid-cols-12">
           {/* --- COL 1: токены, иконки, kpi --- */}
           <div className="flex flex-col gap-5 lg:col-span-7">
+            <div className="section-rule">
+              <span><b>01</b> · Бренд и токены</span>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle className="font-display">Логотип</CardTitle>
@@ -238,7 +259,7 @@ export function Demo() {
                   <TypeRow
                     sample={
                       <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight">
-                        Внутренний портал · v1.3.2
+                        Внутренний портал · v1.4
                       </h1>
                     }
                     meta="Display H1 · 30/800"
@@ -298,6 +319,9 @@ export function Demo() {
               </CardContent>
             </Card>
 
+            <div className="section-rule mt-2">
+              <span><b>02</b> · Метрики</span>
+            </div>
             <SalesPlanProgress
               title="План"
               month="Май 2026"
@@ -306,6 +330,9 @@ export function Demo() {
               plan={7_800_000}
             />
 
+            <div className="section-rule mt-2">
+              <span><b>03</b> · Данные</span>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>Список броней · май</CardTitle>
@@ -430,7 +457,10 @@ export function Demo() {
               </CardContent>
             </Card>
 
-            <div className="from-primary via-primary/95 to-primary/80 text-primary-foreground relative overflow-hidden rounded-2xl bg-gradient-to-br p-8 sm:p-10">
+            <div className="section-rule mt-2">
+              <span><b>04</b> · Промо</span>
+            </div>
+            <div className="grain from-primary via-primary/95 to-primary/80 text-primary-foreground relative overflow-hidden rounded-2xl bg-gradient-to-br p-8 sm:p-10">
               <div className="absolute -right-10 -top-10 size-48 rounded-full bg-white/10 blur-3xl" />
               <div className="text-primary-foreground/80 mb-3 text-xs font-medium">
                 бюро Глагол
@@ -462,6 +492,9 @@ export function Demo() {
 
           {/* --- COL 2: кнопки, форма, поиск --- */}
           <div className="flex flex-col gap-5 lg:col-span-5">
+            <div className="section-rule">
+              <span><b>A</b> · Действия</span>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>Кнопки</CardTitle>
@@ -777,6 +810,9 @@ export function Demo() {
               </CardContent>
             </Card>
 
+            <div className="section-rule mt-2">
+              <span><b>C</b> · Идентичность</span>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>Аватары</CardTitle>
@@ -871,6 +907,9 @@ export function Demo() {
               </CardContent>
             </Card>
 
+            <div className="section-rule mt-2">
+              <span><b>D</b> · События</span>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>Чипы календаря</CardTitle>
@@ -915,6 +954,9 @@ export function Demo() {
               </CardContent>
             </Card>
 
+            <div className="section-rule mt-2">
+              <span><b>E</b> · Состояния</span>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>Empty · Loading</CardTitle>
@@ -956,6 +998,9 @@ export function Demo() {
               </CardContent>
             </Card>
 
+            <div className="section-rule mt-2">
+              <span><b>F</b> · Код</span>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>CSS-переменные</CardTitle>
@@ -977,7 +1022,7 @@ export function Demo() {
           <div className="flex items-center gap-3">
             <BrandLogo size={24} withText={false} />
             <span>
-              бюро Глагол · Дизайн-система v1.3.2 · Next.js 16, Tailwind 4,
+              бюро Глагол · Дизайн-система v1.4 · Next.js 16, Tailwind 4,
               shadcn/ui
             </span>
           </div>

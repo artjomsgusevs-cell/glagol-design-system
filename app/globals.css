@@ -198,3 +198,83 @@
     letter-spacing: -0.015em;
   }
 }
+
+/* ============================================================
+   v1.4 Editorial Utility — Frontend-design skill
+   Page-load staggered reveal + grain noise overlay + utilities
+   ============================================================ */
+
+@layer utilities {
+  /* Staggered fade-up для контейнеров (page-shell). Применяется
+     к прямым дочерним элементам через CSS-каскад, без JS. */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .reveal > * {
+    animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  .reveal > *:nth-child(1) { animation-delay: 0ms; }
+  .reveal > *:nth-child(2) { animation-delay: 60ms; }
+  .reveal > *:nth-child(3) { animation-delay: 120ms; }
+  .reveal > *:nth-child(4) { animation-delay: 180ms; }
+  .reveal > *:nth-child(5) { animation-delay: 240ms; }
+  .reveal > *:nth-child(6) { animation-delay: 300ms; }
+  .reveal > *:nth-child(7) { animation-delay: 360ms; }
+  .reveal > *:nth-child(n + 8) { animation-delay: 420ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal > * { animation: none; }
+  }
+
+  /* Grain noise — SVG-фильтр turbulence, рендерится как PNG-блок.
+     Используется как ::after-оверлей с blend-mode для текстуры. */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+    background-size: 240px 240px;
+    border-radius: inherit;
+  }
+  .grain > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Section divider — magazine-style: 01 / Метка ──────────── */
+  .section-rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--muted-foreground);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .section-rule::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-rule b {
+    color: var(--primary);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -24,14 +24,16 @@ export function PageShell({
       {shell ? (
         <div
           className={cn(
-            "from-card via-card to-accent/40 border-border mx-auto max-w-6xl rounded-3xl border bg-gradient-to-br p-6 sm:p-8",
+            "grain reveal from-card via-card to-accent/40 border-border mx-auto max-w-6xl rounded-3xl border bg-gradient-to-br p-6 sm:p-8",
             className,
           )}
         >
           {children}
         </div>
       ) : (
-        <div className={cn("mx-auto max-w-6xl", className)}>{children}</div>
+        <div className={cn("reveal mx-auto max-w-6xl", className)}>
+          {children}
+        </div>
       )}
     </div>
   );
