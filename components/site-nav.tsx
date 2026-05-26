@@ -49,7 +49,7 @@ export function SiteNav() {
 
       <div className="order-2 flex items-center gap-2 sm:order-3">
         <Badge variant="secondary" className="hidden sm:inline-flex">
-          v1.3 · Next 16 · Tailwind 4
+          v1.3.2 · Next 16 · Tailwind 4
         </Badge>
         <ThemeToggle />
         <Button variant="outline" size="sm" asChild>

@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Шрифтовая шкала бюро Глагол v1.3.
+ * Шрифтовая шкала бюро Глагол v1.3.2.
  *
  * Display (Onest):
  *   H1   — 36/48px · 800

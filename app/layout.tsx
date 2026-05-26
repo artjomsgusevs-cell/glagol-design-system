@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
 /**
- * Кириллица v1.3: Manrope (text) + Onest (display).
+ * Кириллица v1.3.2: Manrope (text) + Onest (display).
  * Manrope — открытая «г», прямая «д», ровные «к/ж» — чище чем Wix Madefor.
  * Onest — гротеск с акцентом для заголовков. Оба специально оптимизированы под кириллицу.
  */
@@ -23,7 +23,7 @@ const fontDisplay = Onest({
 });
 
 export const metadata: Metadata = {
-  title: "Дизайн-система · бюро Глагол v1.3",
+  title: "Дизайн-система · бюро Глагол v1.3.2",
   description:
     "UI-кит для веб-сервисов бюро Глагол: токены, типографика, кнопки, инпуты, статусы, экраны календаря и дашборда.",
   icons: {

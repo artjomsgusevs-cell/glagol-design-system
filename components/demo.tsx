@@ -70,7 +70,7 @@ import {
 import { SalesPlanProgress } from "@/components/dashboard-widgets";
 
 /* =========================================================
-   Глагол · Дизайн-система v1.3 · демо-страница
+   Глагол · Дизайн-система v1.3.2 · демо-страница
    Структурно повторяет shadcn Demo (radix-nova / next-monorepo):
    двухколоночная сетка карточек с обзором стилей, иконками,
    кнопками, формой, таблицей и hero-блоком.
@@ -124,7 +124,7 @@ export function Demo() {
           eyebrow="бюро Глагол · UI-кит веб-сервисов"
           title={
             <>
-              Дизайн-система <span className="text-primary">v1.3</span>
+              Дизайн-система <span className="text-primary">v1.3.2</span>
             </>
           }
           description={
@@ -238,7 +238,7 @@ export function Demo() {
                   <TypeRow
                     sample={
                       <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight">
-                        Внутренний портал · v1.3
+                        Внутренний портал · v1.3.2
                       </h1>
                     }
                     meta="Display H1 · 30/800"
@@ -977,7 +977,7 @@ export function Demo() {
           <div className="flex items-center gap-3">
             <BrandLogo size={24} withText={false} />
             <span>
-              бюро Глагол · Дизайн-система v1.3 · Next.js 16, Tailwind 4,
+              бюро Глагол · Дизайн-система v1.3.2 · Next.js 16, Tailwind 4,
               shadcn/ui
             </span>
           </div>
