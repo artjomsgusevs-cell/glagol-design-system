@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   CalendarCheck,
   CalendarClock,
@@ -89,6 +90,79 @@ const DURATIONS = [15, 20, 30, 45, 50, 60, 90].map((d) => ({
   label: `${d} минут`,
 }));
 
+/**
+ * Экран после записи — образец обоих состояний.
+ *
+ * Один компонент на оба намеренно: расходиться им нельзя нигде, кроме главного
+ * действия. Появится третий вход (бот, партнёрская страница) — он собирается
+ * отсюда же, а не рисуется заново.
+ */
+function DoneScreen({ action }: { action: "manage" | "brief" }) {
+  return (
+    <div className="bg-card border-border mx-auto w-full max-w-[420px] rounded-3xl border p-6">
+      <div className="flex items-center gap-3">
+        <div className="bg-primary/10 flex size-11 shrink-0 items-center justify-center rounded-full">
+          <Check className="text-primary size-6" />
+        </div>
+        <div className="min-w-0">
+          <h1 className="font-display text-xl leading-tight font-extrabold tracking-tight">
+            Время забронировано
+          </h1>
+          <p className="text-muted-foreground truncate text-sm">Консультация · Артём Гусев</p>
+        </div>
+      </div>
+
+      <div className="bg-muted mt-6 rounded-2xl px-4 py-3.5">
+        <div className="font-display text-lg font-extrabold tabular-nums">30 июля (чт), 15:00</div>
+        <div className="text-muted-foreground mt-0.5 flex items-center gap-1.5 text-sm tabular-nums">
+          <Clock className="size-3.5" />
+          60 минут · Москва
+        </div>
+      </div>
+
+      <ol className="mt-6 space-y-4">
+        <Step icon={<Mail className="size-4" />} title="Приглашение отправлено">
+          Оно уже в вашем календаре и на почте artjom@example.com. Ссылка на звонок внутри.
+        </Step>
+        <Step icon={<Video className="size-4" />} title="Где встречаемся">
+          <span className="text-primary break-words">us02web.zoom.us/j/8398564201</span>
+        </Step>
+        <Step icon={<CalendarClock className="size-4" />} title="Если планы изменятся">
+          Перенести или отменить можно кнопкой ниже — она только ваша. Эта же ссылка лежит в
+          описании встречи в календаре.
+        </Step>
+      </ol>
+
+      {action === "brief" ? (
+        <div className="border-border mt-6 border-t pt-5">
+          <div className="text-sm font-semibold">Расскажите о выступлении подробнее</div>
+          <p className="text-muted-foreground mt-1 text-sm leading-snug">
+            Пять минут сейчас — и тренер придёт на встречу, уже зная вашу задачу.
+          </p>
+          <span className="bg-primary text-primary-foreground mt-3 flex h-12 w-full items-center justify-center rounded-full font-semibold">
+            Заполнить бриф
+          </span>
+          <span className="text-muted-foreground mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-full text-sm font-semibold">
+            <CalendarClock className="size-4" />
+            Управлять бронированием
+          </span>
+        </div>
+      ) : (
+        <div className="border-border mt-6 space-y-3 border-t pt-5">
+          <span className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full font-semibold">
+            <CalendarClock className="size-5" />
+            Управлять записью
+          </span>
+          <span className="bg-muted flex h-11 w-full items-center justify-center gap-2 rounded-full font-semibold">
+            <CalendarPlus className="size-5" />
+            Добавить в календарь
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function BookingPage() {
   const [selected, setSelected] = React.useState(DAYS[1].date);
   const [slot, setSlot] = React.useState("");
@@ -152,68 +226,39 @@ export default function BookingPage() {
         </span>
       </div>
 
-      {/* ── экран после записи: стандарт ──────────────────── */}
+      {/* ── экран после записи: два состояния ─────────────── */}
       <div className="grid gap-5 lg:grid-cols-12">
         <Card className="lg:col-span-7">
           <CardHeader>
             <CardTitle>Экран после записи</CardTitle>
             <CardDescription>
               Стандарт бюро. Любой новый финальный экран — оплата, отмена, перенос — собирается по
-              этой же схеме: что произошло → когда → что дальше → одно главное действие.
+              этой же схеме: что произошло → когда → что дальше → одно главное действие. Состояния
+              отличаются ровно одним: каким будет это действие.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="bg-muted/40 rounded-3xl p-4 sm:p-6">
-              <div className="bg-card border-border mx-auto w-full max-w-[420px] rounded-3xl border p-6">
-                <div className="flex items-center gap-3">
-                  <div className="bg-primary/10 flex size-11 shrink-0 items-center justify-center rounded-full">
-                    <Check className="text-primary size-6" />
-                  </div>
-                  <div className="min-w-0">
-                    <h1 className="font-display text-2xl leading-tight font-extrabold tracking-tight">
-                      Записались
-                    </h1>
-                    <p className="text-muted-foreground truncate text-sm">
-                      Консультация · Артём Гусев
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-muted/60 mt-6 rounded-2xl p-4">
-                  <div className="text-lg font-semibold">30 июля (чт), 15:00</div>
-                  <div className="text-muted-foreground mt-1 flex items-center gap-1.5 text-sm">
-                    <Clock className="size-3.5" />
-                    60 минут · Москва
-                  </div>
-                </div>
-
-                <ol className="mt-6 space-y-4">
-                  <Step icon={<Video className="size-4" />} title="Где встречаемся">
-                    <span className="text-primary break-all">https://us02web.zoom.us/j/8398…</span>
-                  </Step>
-                  <Step icon={<Mail className="size-4" />} title="Письмо">
-                    Приглашение уже отправлено вам на почту — artjom@example.com. Не пришло:
-                    загляните в «Промоакции» и спам.
-                  </Step>
-                  <Step icon={<CalendarClock className="size-4" />} title="Если планы изменятся">
-                    Перенести или отменить можно по ссылке ниже — она только ваша, сохраните её. Эта
-                    же ссылка лежит в описании встречи в календаре.
-                  </Step>
-                </ol>
-
-                <div className="mt-6 space-y-3">
-                  <span className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full font-semibold">
-                    <CalendarClock className="size-5" />
-                    Управлять записью
-                  </span>
-                  <CopyLink url="https://calendar.glagol.me/b/1a739d693a…" compact />
-                </div>
+          <CardContent className="space-y-6">
+            <div>
+              <Eyebrow tone="muted">Со страницы тренера</Eyebrow>
+              <div className="bg-muted/40 mt-2 rounded-3xl p-4 sm:p-6">
+                <DoneScreen action="manage" />
               </div>
+              <Spec
+                file="app/[slug]/[type]/booking-flow.tsx · Done"
+                rule="Главное действие чёрное. Оранжевого на этом экране нет: событие уже случилось."
+              />
             </div>
-            <Spec
-              file="app/[slug]/[type]/booking-flow.tsx · Done"
-              rule="Главное действие чёрное. Оранжевого на этом экране нет вовсе — событие уже случилось."
-            />
+
+            <div>
+              <Eyebrow tone="muted">Из витрины бюро — первая встреча</Eyebrow>
+              <div className="bg-muted/40 mt-2 rounded-3xl p-4 sm:p-6">
+                <DoneScreen action="brief" />
+              </div>
+              <Spec
+                file="app/trainers/[slug]/booking/booking-flow.tsx · DoneStep"
+                rule="Единственное место, где главное действие оранжевое: бриф первой встречи экономит полчаса на самой консультации."
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -226,8 +271,8 @@ export default function BookingPage() {
             {[
               ["1 · Что произошло", "Галочка в кружке и заголовок в одну строку. Ниже — тип встречи и тренер."],
               ["2 · Когда", "Единственная заливка на экране, поэтому глаз находит время первым."],
-              ["3 · Что дальше", "Три строки: где встречаемся, письмо, если планы изменятся. Не больше."],
-              ["4 · Действия", "Одно главное действие чёрной кнопкой, под ним — ссылка с копированием."],
+              ["3 · Что дальше", "Три строки: приглашение отправлено, где встречаемся, если планы изменятся. Не больше."],
+              ["4 · Действие", "Одно главное действие, отбитое разделителем. Вторичное — под ним, без заливки."],
               ["5 · Подвал", "Знак бюро и документы. Уводит на сайт с utm-метками."],
             ].map(([title, text]) => (
               <div key={title}>
@@ -235,6 +280,17 @@ export default function BookingPage() {
                 <p className="text-muted-foreground mt-1 text-sm">{text}</p>
               </div>
             ))}
+            <div className="border-border border-t pt-4">
+              <Eyebrow tone="muted">Что убрали и почему</Eyebrow>
+              <p className="text-muted-foreground mt-1 text-sm">
+                Ссылку с копированием: она вела туда же, куда кнопка над ней, и была третьим
+                оранжевым пятном. Прошлые версии — в{" "}
+                <Link href="/archive" className="text-foreground font-semibold underline-offset-4 hover:underline">
+                  архиве
+                </Link>
+                .
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

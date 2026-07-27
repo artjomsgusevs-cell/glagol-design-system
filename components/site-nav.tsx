@@ -14,6 +14,7 @@ const NAV = [
   { href: "/booking", label: "Календарь тренеров" },
   { href: "/calendar", label: "Календарь · демо" },
   { href: "/dashboard", label: "Дашборд" },
+  { href: "/archive", label: "Архив" },
 ];
 
 export function SiteNav() {
