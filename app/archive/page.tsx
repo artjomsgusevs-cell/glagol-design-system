@@ -1,4 +1,4 @@
-import { Check, CheckCircle2, CalendarClock, Clock, Mail, Video } from "lucide-react";
+import { Check, CheckCircle2, CalendarClock, Clock, Heart, Mail, Star, Video } from "lucide-react";
 import Link from "next/link";
 import { PageShell, PageHeader } from "@/components/page-shell";
 import { Eyebrow } from "@/components/typography";
@@ -157,6 +157,96 @@ export default function ArchivePage() {
                 <li>Оранжевая «Скопировать» была третьим акцентом на экране.</li>
                 <li>«Записались» и «Время забронировано» — два слова про одно и то же.</li>
               </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="section-rule">
+        <span>
+          <b>28.07.2026</b> · Избранное на витрине
+        </span>
+      </div>
+
+      <p className="text-muted-foreground max-w-2xl text-sm">
+        Сердечко на карточке тренера и раздел «Шорт-лист». Убрано, пока тренеров меньше десяти:
+        при таком списке человек не отбирает кандидатов, а просто листает и выбирает. Код живёт в
+        витрине (<code className="text-foreground">lib/shortlist.ts</code>) — вернуть значит снова
+        показать кнопку.
+      </p>
+
+      <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Сердечко на фотографии</CardTitle>
+            <CardDescription>Правый верхний угол карточки во весь экран.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-muted/40 flex items-center justify-center rounded-3xl p-8">
+              <span className="flex size-11 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-md">
+                <Heart className="size-5" />
+              </span>
+            </div>
+            <div className="border-border mt-4 border-t pt-4">
+              <Eyebrow tone="muted">Почему убрали</Eyebrow>
+              <ul className="text-muted-foreground mt-2 space-y-1.5 text-sm">
+                <li>Занимало лучшее место экрана — правый верх, куда глаз идёт первым.</li>
+                <li>Вело в раздел, который у большинства оставался пустым.</li>
+                <li>Восемь тренеров листают целиком, отбирать не из чего.</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Счётчик в шапке</CardTitle>
+            <CardDescription>Переключал ленту на отобранных.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-muted/40 flex items-center justify-center gap-2 rounded-3xl p-8">
+              <span className="bg-card border-border flex h-9 items-center gap-1.5 rounded-full border px-3 text-sm font-medium">
+                <Heart className="text-primary fill-primary size-4" />
+                <span className="tabular-nums">3</span>
+              </span>
+            </div>
+            <div className="border-border mt-4 border-t pt-4">
+              <Eyebrow tone="muted">Что вместо</Eyebrow>
+              <p className="text-muted-foreground mt-2 text-sm">
+                Пилюля «Бронирование» — она объясняет, куда ведёт календарь в шапке. Раньше там
+                стояла одна иконка, и человек не знал, свои это записи или чужое расписание.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="section-rule">
+        <span>
+          <b>28.07.2026</b> · Выдуманный рейтинг
+        </span>
+      </div>
+
+      <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>«4,7 · 17 отзывов»</CardTitle>
+            <CardDescription>Стояло под фотографией каждого тренера.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-muted/40 flex items-center justify-center rounded-3xl p-8">
+              <span className="flex items-center gap-1.5 text-sm">
+                <Star className="size-4 fill-amber-400 text-amber-400" />
+                <span className="font-semibold tabular-nums">4,7</span>
+                <span className="text-muted-foreground">· 17 отзывов</span>
+              </span>
+            </div>
+            <div className="border-border mt-4 border-t pt-4">
+              <Eyebrow tone="muted">Почему убрали</Eyebrow>
+              <p className="text-muted-foreground mt-2 text-sm">
+                Числа достались от макета: этих оценок никто не ставил, а стояли они под лицами
+                живых людей. Заменено на CSI из дашборда качества бюро — «9,7 из 10 · оценка
+                спикеров». Настоящие отзывы соберём отдельно.
+              </p>
             </div>
           </CardContent>
         </Card>
