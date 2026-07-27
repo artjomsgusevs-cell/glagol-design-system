@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/", label: "Обзор" },
-  { href: "/calendar", label: "Календарь" },
+  { href: "/booking", label: "Календарь тренеров" },
+  { href: "/calendar", label: "Календарь · демо" },
   { href: "/dashboard", label: "Дашборд" },
 ];
 
