@@ -36,6 +36,17 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+
+    // Неиспользуемые компоненты из дампа shadcn: никто их не импортирует, но
+    // они ссылаются на неустановленные модули и на изменившиеся API — и из-за
+    // них проверка типов была красной всегда, то есть бесполезной.
+    // Убрать эти строки вместе с самими файлами: используется 18 компонентов
+    // из 60, остальные 42 — мусор.
+    "components/ui/chart.tsx",
+    "components/ui/combobox.tsx",
+    "components/ui/command.tsx",
+    "components/ui/form.tsx",
+    "components/ui/resizable.tsx"
   ]
 }
