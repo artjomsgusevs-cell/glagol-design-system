@@ -109,7 +109,9 @@ export function DateField({
   };
 
   return (
-    <div ref={box} className="relative w-fit">
+    // max-w-full — чтобы поле, растянутое длинной подписью, не выносило форму
+    // за край экрана: w-fit считает ширину по содержимому и границ не знает.
+    <div ref={box} className="relative w-fit max-w-full">
       <button
         type="button"
         onClick={toggle}
