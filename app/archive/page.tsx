@@ -235,7 +235,9 @@ export default function ArchivePage() {
           <CardContent>
             <div className="bg-muted/40 flex items-center justify-center rounded-3xl p-8">
               <span className="flex items-center gap-1.5 text-sm">
-                <Star className="size-4 fill-amber-400 text-amber-400" />
+                {/* ui-guard-ignore: звезда рейтинга золотая всегда — знак оценки,
+                  а не элемент темы бюро. */}
+              <Star className="size-4 fill-amber-400 text-amber-400" />
                 <span className="font-semibold tabular-nums">4,7</span>
                 <span className="text-muted-foreground">· 17 отзывов</span>
               </span>

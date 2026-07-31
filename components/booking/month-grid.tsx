@@ -131,7 +131,7 @@ export function MonthGrid({
                 disabled={!free}
                 onClick={() => onSelectDate(date)}
                 className={cn(
-                  "flex size-10 flex-col items-center justify-center rounded-full text-[15px] font-semibold tabular-nums transition",
+                  "relative flex size-10 items-center justify-center rounded-full text-[15px] font-semibold tabular-nums transition",
                   active && "bg-primary text-primary-foreground",
                   !active && free && "bg-primary/10 text-primary hover:bg-primary/20 active:scale-90",
                   !free && "text-muted-foreground/40",
@@ -140,10 +140,13 @@ export function MonthGrid({
                 {Number(date.slice(-2))}
                 {/* Точка — только сегодняшний день. Свободные дни и так
                     отличаются заливкой, а точка у каждого читалась как «здесь
-                    что-то есть» и сбивала. */}
+                    что-то есть» и сбивала.
+                    Лежит absolute, а не в колонке с числом: в колонке она
+                    занимала место даже прозрачной и приподнимала число над
+                    серединой круга — во всей сетке числа стояли выше центра. */}
                 <span
                   className={cn(
-                    "mt-0.5 h-1 w-1 rounded-full",
+                    "absolute bottom-1.5 h-1 w-1 rounded-full",
                     isToday ? (active ? "bg-primary-foreground" : "bg-primary") : "bg-transparent",
                   )}
                 />
@@ -188,6 +191,10 @@ export function SlotList({
             type="button"
             onClick={() => onSelect(s.id)}
             className={cn(
+              // Невыбранный слот спокойный: серый контур на подложке карточки,
+              // цветом отмечен только выбранный. Так решено 31.07 — когда все
+              // варианты времени оранжевые, взгляду не за что зацепиться, и
+              // выбранный перестаёт читаться как выбранный.
               "h-11 rounded-xl border text-[15px] font-semibold tabular-nums transition active:scale-95",
               active
                 ? "border-primary bg-primary text-primary-foreground"

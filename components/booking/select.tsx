@@ -108,10 +108,10 @@ export function Select({
         className={cn(
           // Пилюля с тонким контуром — как в дизайн-системе бюро: высота h-10
           // у всех полей и кнопок, чтобы в ряду ничего не выпирало.
-          "flex h-10 items-center justify-between gap-2 rounded-full border border-border bg-card px-4 text-left transition hover:bg-muted",
+          "flex h-10 items-center justify-between gap-2 rounded-full bg-muted px-4 text-left transition hover:bg-muted/70",
           full ? "w-full" : "w-fit",
           compact && "px-3 text-sm",
-          open && "bg-muted",
+          open && "bg-muted/70",
         )}
       >
         <span className={cn("truncate", compact && "tabular-nums")}>

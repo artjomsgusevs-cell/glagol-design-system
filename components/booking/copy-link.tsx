@@ -7,6 +7,62 @@ import { useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/** Firefox без разрешения и http-контексты: запасной путь — выделение. */
+async function writeClipboard(url: string) {
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch {
+    const input = document.createElement("input");
+    input.value = url;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+  }
+}
+
+/**
+ * Кнопка «Скопировать» без строки адреса.
+ *
+ * В списке календарей сам адрес читать не нужно: тренер копирует его и
+ * отправляет клиенту. Постоянная строка с адресом делала карточку вдвое выше,
+ * поэтому здесь остаётся один жест. Без подписи кнопка становится иконкой.
+ *
+ * Ширина фиксирована, чтобы при смене подписи на «Скопировано» ряд не дёргался.
+ */
+export function CopyButton({
+  url,
+  label,
+  className,
+}: {
+  url: string;
+  label?: string;
+  className?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        await writeClipboard(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }}
+      aria-label={copied ? "Ссылка скопирована" : "Скопировать ссылку"}
+      title={url.replace(/^https?:\/\//, "")}
+      className={cn(
+        "flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full text-sm font-semibold transition active:scale-95",
+        label ? "w-[136px]" : "size-10",
+        className,
+      )}
+    >
+      {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+      {label && (copied ? "Скопировано" : label)}
+    </button>
+  );
+}
+
 /**
  * Ссылка с кнопкой «Скопировать» — главный жест этого продукта: тренер копирует
  * и отправляет клиенту.
@@ -24,17 +80,7 @@ export function CopyLink({ url, compact = false }: { url: string; compact?: bool
   const lastSegment = "/" + (shown.split("/").filter(Boolean).pop() ?? "");
 
   async function copy() {
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch {
-      // Firefox без разрешения и http-контексты: запасной путь — выделение.
-      const input = document.createElement("input");
-      input.value = url;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand("copy");
-      input.remove();
-    }
+    await writeClipboard(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
