@@ -52,6 +52,45 @@ export function humanRange(iso: string | Date, durationMin: number, tz?: string)
   return `${humanDateTime(start, tz)} — ${humanTime(end, tz)}`;
 }
 
+/**
+ * Город вместо кода пояса: «Екатеринбург», а не «Asia/Yekaterinburg».
+ *
+ * Лежит здесь, а не на экране: подпись пояса нужна и странице записи, и
+ * витрине, и письмам. Три копии этого словаря уже жили в трёх файлах и знали
+ * разные города.
+ */
+export function tzLabel(tz: string): string {
+  const last = tz.split("/").pop() ?? tz;
+  const known: Record<string, string> = {
+    Moscow: "Москва",
+    Kaliningrad: "Калининград",
+    Samara: "Самара",
+    Yekaterinburg: "Екатеринбург",
+    Omsk: "Омск",
+    Novosibirsk: "Новосибирск",
+    Krasnoyarsk: "Красноярск",
+    Irkutsk: "Иркутск",
+    Yakutsk: "Якутск",
+    Vladivostok: "Владивосток",
+    Magadan: "Магадан",
+    Kamchatka: "Камчатка",
+    Buenos_Aires: "Буэнос-Айрес",
+  };
+  return known[last] ?? last.replace(/_/g, " ");
+}
+
+/**
+ * Чьё время показано: «Москва» или «Москва · у тренера Екатеринбург».
+ *
+ * Пояса совпали — второй половины нет: она была бы лишним шумом. Разошлись —
+ * называем оба, иначе человек не поймёт, почему тренер зовёт его на другой час.
+ */
+export function tzNote(viewerTz: string, trainerTz: string): string {
+  return viewerTz === trainerTz
+    ? tzLabel(viewerTz)
+    : `${tzLabel(viewerTz)} · у тренера ${tzLabel(trainerTz)}`;
+}
+
 /** «27 июля 2026 (вт), 17:00» — там, где год не очевиден: письма о переносе. */
 export function humanDateTimeFull(iso: string | Date, tz?: string): string {
   const d = typeof iso === "string" ? new Date(iso) : iso;
