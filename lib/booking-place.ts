@@ -19,8 +19,18 @@ export const PLACE_OPTIONS: Array<{ value: Place; label: string }> = [
   { value: "offline", label: "Очно — по адресу" },
 ];
 
-/** Подпись места для клиента: коротко и без служебных слов. */
-export function placeLabel(location: string, details?: string | null): string {
+/**
+ * Подпись места для клиента: коротко и без служебных слов.
+ *
+ * `room` — постоянная комната тренера из профиля. Поле подписано как зумовское,
+ * но кладут туда что удобно: у Галы там Яндекс.Телемост. Слово «Zoom» в этом
+ * случае врёт — человек читает одно, а попадает в другое, — поэтому называем
+ * место по адресу, куда он на самом деле придёт (docs/RULES.md, «Тексты»).
+ *
+ * Саму ссылку наружу не отдаём: подпись считается на сервере, клиент получает
+ * только домен.
+ */
+export function placeLabel(location: string, details?: string | null, room?: string | null): string {
   switch (location) {
     case "offline":
       return details || "очно";
@@ -29,8 +39,14 @@ export function placeLabel(location: string, details?: string | null): string {
     case "phone":
       return details || "по телефону";
     default:
-      return "Zoom";
+      return room && !isZoom(room) ? hostOf(room) : "Zoom";
   }
+}
+
+/** Адрес ведёт в Zoom? Поддомены компаний тоже считаются: us02web.zoom.us. */
+function isZoom(url: string): boolean {
+  const host = hostOf(url).toLowerCase();
+  return host === "zoom.us" || host.endsWith(".zoom.us");
 }
 
 /** «telemost.yandex.ru» вместо простыни с идентификатором комнаты. */
