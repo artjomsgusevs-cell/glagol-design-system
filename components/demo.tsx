@@ -175,6 +175,14 @@ export function Demo() {
             >
               Дашборд <ChevronRightIcon className="size-3" />
             </Link>
+            {/* Рабочая ветка — вторая ветка вида бюро: экраны, в которых
+                работают каждый день. Правила словами в RULES_v2.md. */}
+            <Link
+              href="/rabota"
+              className="hover:border-primary hover:text-primary border-border bg-card flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-colors"
+            >
+              Рабочая ветка <ChevronRightIcon className="size-3" />
+            </Link>
           </div>
           <div className="bg-foreground/10 mt-8 h-px w-full" />
         </header>

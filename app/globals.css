@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* Рабочая ветка вида. Файл приезжает из календаря командой sync-design и
+   правится только там — витрина элементов на /rabota показывает ровно то,
+   что работает в продукте, а не похожие на него образцы. */
+@import "./work.css";
 
 @custom-variant dark (&:is(.dark *));
 
