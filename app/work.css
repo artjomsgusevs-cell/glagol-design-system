@@ -121,6 +121,80 @@
   color: var(--ink-soft);
 }
 
+/*
+ * КНОПКИ И ОТКЛИК НА НАВЕДЕНИЕ
+ *
+ * Нажимается — отвечает на наведение. Без отклика человек не знает, кнопка
+ * перед ним или подпись, и проверяет это нажатием: на десктопе это половина
+ * лишних кликов по экрану.
+ *
+ * Отклик один на все нажимаемые элементы и всегда одного рода — фон становится
+ * плотнее. Не сдвиг, не тень, не рамка: сдвиг читается как скачок (docs/RULES.md,
+ * «Ничего не скачет»), а тень и рамка меняют размер элемента и двигают соседей.
+ *
+ * Четыре кнопки на всю ветку, больше не заводим:
+ *   main   — действие экрана, сплошной фирменный. Одна на экран;
+ *   second — второе по важности внутри блока;
+ *   soft   — «добавить» внутри раздела, мелкая;
+ *   quiet  — отмена и всё, о чём не жалко забыть.
+ */
+.work-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    filter 0.14s ease,
+    background 0.14s ease,
+    color 0.14s ease,
+    transform 0.14s ease;
+}
+.work-btn:hover {
+  filter: brightness(0.93);
+}
+.work-btn:active {
+  transform: scale(0.96);
+}
+.work-btn:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.work-btn--main {
+  background: var(--flame);
+  color: #fff;
+}
+.work-btn--second {
+  background: var(--ink);
+  color: var(--paper);
+}
+.work-btn--soft {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 12px;
+  background: var(--paper-deep);
+  color: var(--ink);
+}
+/* У бумажных кнопок яркость не работает: осветлять бумагу некуда, а темнить —
+   значит красить в серый. Им отклик даёт подмешанные чернила. */
+.work-btn--soft:hover,
+.work-btn--quiet:hover {
+  filter: none;
+  background: color-mix(in oklab, var(--ink) 9%, var(--paper-deep));
+  color: var(--ink);
+}
+.work-btn--quiet {
+  background: transparent;
+  color: var(--ink-soft);
+}
+
 /* Плитка-строка — главный элемент списков. Скругление крупное, но не капсула:
    капсула съедает соседство блоков, и список рассыпается на отдельные пилюли. */
 .work-tile {
@@ -128,10 +202,17 @@
   background: var(--paper-deep);
   transition:
     transform 0.16s ease,
-    filter 0.16s ease;
+    background 0.16s ease;
 }
 .work-tile:active {
   transform: scale(0.985);
+}
+/* Отклик — только у той плитки, которая правда нажимается. Плитка-ссылка есть
+   в списке мероприятий, а плитка-строка спикера внутри карточки не нажимается
+   вовсе: подсвечивать её значит обещать переход, которого нет. */
+a.work-tile:hover,
+button.work-tile:hover {
+  background: color-mix(in oklab, var(--ink) 5%, var(--paper-deep));
 }
 
 /* Таблица. Правило бюро (RULES §9): шапка — мелкой подписью вразрядку, числа
@@ -227,6 +308,21 @@
 .work-chip[data-tone="sun"] {
   background: var(--sun);
   color: #12100e;
+}
+/* Чип бывает и ярлыком, и кнопкой — отметить спикера, снять тренера. Отклик
+   даём только кнопке: ярлык, который подсвечивается, обещает нажатие. */
+button.work-chip {
+  cursor: pointer;
+  transition:
+    filter 0.14s ease,
+    background 0.14s ease;
+}
+button.work-chip:hover {
+  filter: brightness(0.94);
+}
+button.work-chip:not([data-tone]):hover {
+  filter: none;
+  background: color-mix(in oklab, var(--ink) 9%, var(--paper-deep));
 }
 
 /* Точка этапа перед именем спикера: сам этап читается подписью, точка нужна,
