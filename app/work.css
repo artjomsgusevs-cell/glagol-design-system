@@ -540,27 +540,30 @@ html:not(.dark) .work {
    *
    * Только на десктопе: на телефоне листа нет, карточки лежат прямо на
    * странице, и там они светлее фона — как и должно быть.
+   *
+   * Задаём не фон, а сам токен `--card`. Прямая заливка фона перебивала
+   * подсветку под курсором: у строк календарей и встреч разметка просит
+   * персиковую (`hover:bg-accent/25`), а моё правило весило больше и гасило её
+   * молча. Через токен побеждает разметка, как и должно быть: подложка — это
+   * состояние покоя, а наведение сильнее покоя.
    */
-  .work-sheet .bg-card,
-  .work-sheet .work-tile {
-    background: var(--page);
+  .work-sheet {
+    --card: color-mix(in oklab, var(--ink) 2.5%, var(--popover));
+    /* Плитки, чипы и мелкие кнопки берут краску отсюда — на листе им нужен
+       тот же шаг. Пишем явно, а не через `--card`: цепочка переменных
+       вычисляется в месте использования, и лист под собственным правилом
+       окрасился бы в тот же тон, что карточки на нём. */
+    --paper-deep: color-mix(in oklab, var(--ink) 2.5%, var(--popover));
   }
-  html:not(.dark) .work-sheet .bg-card,
-  html:not(.dark) .work-sheet .work-tile {
-    background: color-mix(in oklab, var(--ink) 2.5%, var(--paper-deep));
-  }
-  /* Плитка-ссылка отвечает на курсор, и на листе её отклик тоже свой: шаг от
-     той же подложки, а не от прежней. */
-  html:not(.dark) .work-sheet a.work-tile:hover,
-  html:not(.dark) .work-sheet button.work-tile:hover {
-    background: color-mix(in oklab, var(--ink) 6%, var(--paper-deep));
+  .dark .work-sheet {
+    --card: var(--background);
+    --paper-deep: var(--background);
   }
 
   /* Карточка внутри цветного блока подложку не берёт: на персиковом серая
      мутнеет, а белая читается как лист поверх. */
-  .work-sheet .work-plain,
-  html:not(.dark) .work-sheet .work-plain {
-    background: var(--paper-deep);
+  .work-sheet .work-plain {
+    background: var(--popover);
   }
 }
 
@@ -577,7 +580,10 @@ html:not(.dark) .work {
    по краям съедал бы ширину, которой там и так нет. */
 @media (min-width: 1024px) {
   .work-sheet {
-    background: var(--paper-deep);
+    /* Не `--paper-deep` и не `--card`: оба лист сам же и переопределяет под
+       карточки на себе. `--popover` — та же поверхность бюро, и её никто не
+       трогает. */
+    background: var(--popover);
     border-radius: 24px;
     /* Поля по бокам не наши: их держит ряд оболочки (`hub-shell-row`) полем в
        16 и зазором до колонки. Свои поля здесь ломали бы симметрию P = G + 4,
