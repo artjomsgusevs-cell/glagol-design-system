@@ -17,7 +17,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type Option = { value: string; label: string };
+export type Option = {
+  value: string;
+  label: string;
+  /**
+   * Знак слева от подписи: портрет тренера, значок места.
+   *
+   * Список людей без лиц читается медленнее списка с лицами — человека узнают
+   * по портрету раньше, чем дочитывают имя. Необязательный: у списков этапов и
+   * длительностей никаких знаков нет и не нужно.
+   */
+  icon?: React.ReactNode;
+};
 
 export function Select({
   value,
@@ -26,6 +37,7 @@ export function Select({
   ariaLabel,
   full,
   compact,
+  bare,
   custom,
 }: {
   value: string | number;
@@ -41,6 +53,14 @@ export function Select({
   full?: boolean;
   /** Узкий вариант для плотных строк расписания. */
   compact?: boolean;
+  /**
+   * Без пилюли — выбор строкой текста.
+   *
+   * Для фактов вида «менеджер проекта — такой-то»: там рядом стоит подпись
+   * в десять пикселей, и пилюля в сорок рядом с ней выглядит вдвое тяжелее
+   * самого значения. Список при этом тот же — меняется только вид кнопки.
+   */
+  bare?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
@@ -108,17 +128,27 @@ export function Select({
         className={cn(
           // Пилюля с тонким контуром — как в дизайн-системе бюро: высота h-10
           // у всех полей и кнопок, чтобы в ряду ничего не выпирало.
-          "flex h-10 items-center justify-between gap-2 rounded-full bg-muted px-4 text-left transition hover:bg-muted/70",
+          "flex items-center justify-between gap-2 text-left transition",
+          bare
+            ? "-mx-1.5 rounded-lg px-1.5 py-0.5 text-sm font-semibold hover:bg-muted"
+            : "h-10 rounded-full bg-muted px-4 hover:bg-muted/70",
           full ? "w-full" : "w-fit",
-          compact && "px-3 text-sm",
-          open && "bg-muted/70",
+          compact && !bare && "px-3 text-sm",
+          open && (bare ? "bg-muted" : "bg-muted/70"),
         )}
       >
-        <span className={cn("truncate", compact && "tabular-nums")}>
-          {current?.label ?? (custom ? `${value} ${custom.unit}` : "—")}
+        <span className={cn("flex min-w-0 items-center gap-1.5", compact && "tabular-nums")}>
+          {current?.icon}
+          <span className="truncate">
+            {current?.label ?? (custom ? `${value} ${custom.unit}` : "—")}
+          </span>
         </span>
         <ChevronDown
-          className={cn("size-4 shrink-0 text-muted-foreground transition", open && "rotate-180")}
+          className={cn(
+            "shrink-0 text-muted-foreground transition",
+            bare ? "size-3.5" : "size-4",
+            open && "rotate-180",
+          )}
           aria-hidden
         />
       </button>
@@ -153,7 +183,10 @@ export function Select({
                   on ? "font-semibold" : "hover:bg-muted",
                 )}
               >
-                <span className="truncate">{o.label}</span>
+                <span className="flex min-w-0 items-center gap-1.5">
+                  {o.icon}
+                  <span className="truncate">{o.label}</span>
+                </span>
                 {on && <Check className="size-4 shrink-0" aria-hidden />}
               </button>
             );

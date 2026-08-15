@@ -2,6 +2,10 @@ import Link from "next/link";
 import {
   CalendarDays,
   Check,
+  Copy,
+  ExternalLink,
+  GripVertical,
+  Pencil,
   Plus,
   Presentation,
   Settings2,
@@ -183,6 +187,68 @@ export default function RabotaPage() {
               </span>
             </div>
           </div>
+        </Block>
+
+        <Block
+          name="Строка списка"
+          job="Та же плитка, но со своими действиями. Одинакова во всех списках ветки: подсвечивается персиком целиком, открывается нажатием в любое место, тащится мышью за любое место, а поделиться, изменить и открыть соседней вкладкой носит при себе. Персик, а не серый: серым в ветке отвечают кнопки, и одинаковый отклик у строки и у кнопки внутри неё слил бы их в одно пятно. Подсветка — одна заливка: обводку пробовали и убрали, она читалась как рамка выделения."
+        >
+          <ul className="space-y-2">
+            {[
+              { title: "Конференция МТС True Tech", about: "17 сентября (чт) · МТС · 450 000 ₽", n: 1, word: "спикер" },
+              { title: "Хайлоад 2026", about: "дата не назначена", n: 0, word: "спикеров" },
+            ].map((row) => (
+              <li key={row.title}>
+                <div data-row className="work-tile relative flex items-center gap-3 p-4">
+                  {/* Ссылка-прямоугольник: строка открывается откуда угодно, а
+                      кнопки поднимаются над ней слоем. */}
+                  <a href="#" aria-label={row.title} className="absolute inset-0 rounded-[20px]" />
+                  {/* Ручка по центру строки: тащат запись целиком. */}
+                  <GripVertical
+                    className="relative z-10 hidden size-4 shrink-0 cursor-grab self-center sm:block"
+                    style={{ color: "var(--ink-soft)" }}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="work-title text-xl">{row.title}</div>
+                    <div className="mt-1 text-sm" style={{ color: "var(--ink-soft)" }}>
+                      {row.about}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="work-num text-2xl">{row.n}</div>
+                    <div className="work-label mt-1">{row.word}</div>
+                  </div>
+                  <div className="relative z-10 flex items-center gap-2">
+                    <button
+                      type="button"
+                      aria-label="Скопировать ссылку"
+                      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-foreground transition hover:brightness-95 active:scale-95"
+                    >
+                      <Copy className="size-4" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Изменить"
+                      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition hover:text-foreground active:scale-95"
+                    >
+                      <Pencil className="size-4" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Открыть в новой вкладке"
+                      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition hover:text-foreground active:scale-95"
+                    >
+                      <ExternalLink className="size-4" />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 max-w-2xl text-xs" style={{ color: "var(--ink-soft)" }}>
+            <b style={{ color: "var(--ink)" }}>Ручки нет на телефоне.</b> Перетаскивания пальцем в
+            вебе не существует, и нарисованная ручка обещала бы жест, которого нет.
+          </p>
         </Block>
 
         <Block
