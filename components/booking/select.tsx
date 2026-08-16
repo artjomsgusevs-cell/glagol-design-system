@@ -14,6 +14,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +39,8 @@ export function Select({
   full,
   compact,
   bare,
+  chip,
+  tone,
   custom,
 }: {
   value: string | number;
@@ -61,13 +64,40 @@ export function Select({
    * самого значения. Список при этом тот же — меняется только вид кнопки.
    */
   bare?: boolean;
+  /**
+   * Чипом — когда выбор и есть ярлык состояния.
+   *
+   * Этап спикера и его беда стоят наверху карточки чипами и там же меняются:
+   * ярлык, который нельзя нажать, заставляет искать вторую копию себя ниже по
+   * экрану, и она там была — отдельным списком в блоке.
+   */
+  chip?: boolean;
+  /** Тон чипа: тот же, что у `work-chip[data-tone]`. */
+  tone?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
-  // Открывать вверх, если снизу не хватает места: у полей внизу страницы меню
-  // иначе уходит за край экрана, и не видно, что выбираешь.
-  const [up, setUp] = useState(false);
+  /**
+   * Где стоит меню: считаем сами, потому что рисуем его не на своём месте.
+   *
+   * Меню лежит в конце страницы (портал в `body`) и держится на `fixed`, а
+   * значит знает только координаты на экране. Отсюда четыре числа: сверху или
+   * снизу от кнопки, слева или справа от неё, и не уже самой кнопки.
+   *
+   * Вверх — если снизу не хватает места: у полей внизу страницы меню уходило за
+   * край, и не видно, что выбираешь. Вправо — если мало места справа: выпадашки
+   * стоят в правой части строки спикера, и меню, растущее вправо от своего
+   * края, вылезало за лист, а страница вбок не прокручивается.
+   */
+  const [pos, setPos] = useState<{
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+    minWidth: number;
+  } | null>(null);
   const box = useRef<HTMLDivElement>(null);
+  const menu = useRef<HTMLDivElement | null>(null);
   const current = options.find((o) => String(o.value) === String(value));
 
   // Показать выбранное сразу: в списке времени 96 пунктов, и открывать его на
@@ -82,12 +112,42 @@ export function Select({
     node.scrollTop = sel.offsetTop - node.clientHeight / 2 + sel.offsetHeight / 2;
   }, []);
 
+  /**
+   * Мышью список открывается по нажатию, а не по отпусканию.
+   *
+   * Кнопка переключала список по `click`, а `click` — это уже отпускание:
+   * между нажатием и меню лежала вся длительность нажатия, десятые доли
+   * секунды. Само меню строится за десяток миллисекунд, поэтому задержка
+   * читалась не как «медленно рисует», а как «не сработало» — и человек жал
+   * второй раз, тут же закрывая только что открытое.
+   *
+   * Так открываются списки в операционной системе: нажал — увидел. Пальцем и с
+   * клавиатуры остаётся `click`: на телефоне нажатие ещё не выбор, с него
+   * начинается и прокрутка страницы, а у клавиатуры своего `pointerdown` нет
+   * вовсе.
+   */
+  const byMouse = useRef(false);
+
+  /** Померить кнопку и поставить меню рядом с ней. */
+  const place = useCallback(() => {
+    const el = box.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const needed = Math.min(options.length * 40 + 12, 320);
+    const up = window.innerHeight - r.bottom < needed && r.top > needed;
+    // Ширина меню — по самому длинному пункту, но не уже кнопки. Точно её не
+    // знаем до отрисовки, поэтому берём запас в две ширины кнопки: этого
+    // хватает на «Выступление отменено» и «Отказался от подготовки».
+    const right = window.innerWidth - r.left < Math.max(r.width * 2, 260);
+    setPos({
+      minWidth: r.width,
+      ...(up ? { bottom: window.innerHeight - r.top + 8 } : { top: r.bottom + 8 }),
+      ...(right ? { right: window.innerWidth - r.right } : { left: r.left }),
+    });
+  }, [options.length]);
+
   function toggle() {
-    if (!open && box.current) {
-      const r = box.current.getBoundingClientRect();
-      const needed = Math.min(options.length * 40 + 12, 320);
-      setUp(window.innerHeight - r.bottom < needed && r.top > needed);
-    }
+    if (!open) place();
     setOpen((v) => !v);
   }
 
@@ -103,38 +163,65 @@ export function Select({
   useEffect(() => {
     if (!open) return;
     const onDoc = (e: MouseEvent) => {
-      if (!box.current?.contains(e.target as Node)) setOpen(false);
+      const t = e.target as Node;
+      // Меню лежит вне кнопки — в конце страницы, — поэтому спрашиваем обоих.
+      if (box.current?.contains(t) || menu.current?.contains(t)) return;
+      setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
-    // mousedown, а не click: иначе меню закроется раньше, чем сработает выбор.
+    // Страница уехала — меню едет следом: оно держится на координатах экрана, и
+    // без этого осталось бы висеть там, где кнопка была раньше. Слушаем с
+    // перехватом: прокручивается не только страница, но и карточка спикера.
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
+    window.addEventListener("scroll", place, true);
+    window.addEventListener("resize", place);
     return () => {
       document.removeEventListener("mousedown", onDoc);
       document.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", place, true);
+      window.removeEventListener("resize", place);
     };
-  }, [open]);
+  }, [open, place]);
 
   return (
     <div ref={box} className={cn("relative", full ? "w-full" : "w-fit")}>
       <button
         type="button"
-        onClick={toggle}
+        onPointerDown={(e) => {
+          if (e.pointerType !== "mouse" || e.button !== 0) return;
+          byMouse.current = true;
+          toggle();
+        }}
+        onClick={(e) => {
+          // Мышью список уже открыт нажатием — второй раз не переключаем.
+          // У нажатия с клавиатуры `detail` нулевой: там `pointerdown` не было,
+          // и закрывать нечего.
+          if (byMouse.current && e.detail !== 0) {
+            byMouse.current = false;
+            return;
+          }
+          byMouse.current = false;
+          toggle();
+        }}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
+        data-tone={chip ? tone : undefined}
         className={cn(
           // Пилюля с тонким контуром — как в дизайн-системе бюро: высота h-10
           // у всех полей и кнопок, чтобы в ряду ничего не выпирало.
           "flex items-center justify-between gap-2 text-left transition",
-          bare
-            ? "-mx-1.5 rounded-lg px-1.5 py-0.5 text-sm font-semibold hover:bg-muted"
-            : "h-10 rounded-full bg-muted px-4 hover:bg-muted/70",
-          full ? "w-full" : "w-fit",
-          compact && !bare && "px-3 text-sm",
-          open && (bare ? "bg-muted" : "bg-muted/70"),
+          chip
+            ? "work-chip"
+            : bare
+              ? "-mx-1.5 rounded-lg px-1.5 py-0.5 text-sm font-semibold hover:bg-muted"
+              : "h-10 rounded-full bg-muted px-4 hover:bg-muted/70",
+          full && !chip ? "w-full" : "w-fit",
+          compact && !bare && !chip && "px-3 text-sm",
+          open && !chip && (bare ? "bg-muted" : "bg-muted/70"),
         )}
       >
         <span className={cn("flex min-w-0 items-center gap-1.5", compact && "tabular-nums")}>
@@ -145,24 +232,45 @@ export function Select({
         </span>
         <ChevronDown
           className={cn(
-            "shrink-0 text-muted-foreground transition",
-            bare ? "size-3.5" : "size-4",
+            "shrink-0 transition",
+            chip ? "size-3 opacity-70" : "text-muted-foreground",
+            bare || chip ? "size-3.5" : "size-4",
             open && "rotate-180",
           )}
           aria-hidden
         />
       </button>
 
-      {open && (
-        <div
-          role="listbox"
-          ref={scrollToSelected}
-          className={cn(
+      {/*
+       * Меню рисуется в конце страницы, а не внутри строки.
+       *
+       * Внутри его накрывали дважды и по разным причинам: сперва соседняя
+       * строка со своей прозрачной кнопкой «открыть спикера», потом сама
+       * строка — у плитки было сжатие по нажатию (`transform`), а предок с
+       * `transform` забирает всё абсолютное внутрь себя и запирает его среди
+       * соседей. Оба раза чинилось слоями, и оба раза находилась третья
+       * причина: пока меню лежит внутри списка, любой предок может им накрыть.
+       *
+       * В конце страницы накрывать нечем: над ним только окна согласия и
+       * карточка спикера, а он поверх них, потому что открыт последним. Платим
+       * за это счётом координат — их считает `place`.
+       */}
+      {open &&
+        pos &&
+        createPortal(
+          <div
+            role="listbox"
+            ref={(node) => {
+              menu.current = node;
+              scrollToSelected(node);
+            }}
+            style={{ position: "fixed", ...pos }}
             // Карточка меню: крупное скругление и «тень v1.3» из правил бюро.
-            "absolute z-50 max-h-[320px] min-w-full overflow-y-auto rounded-2xl border border-border bg-card p-1.5 shadow-[0_18px_44px_-22px_rgba(26,26,26,0.34)]",
-            up ? "bottom-full mb-2" : "top-full mt-2",
-          )}
-        >
+            // `work-menu` — только чтобы рабочая ветка спрятала полосу
+            // прокрутки: правило живёт в `.work`, а сюда, в конец страницы, оно
+            // не достаёт.
+            className="work-menu z-[60] max-h-[320px] overflow-y-auto rounded-2xl border border-border bg-card p-1.5 shadow-[0_18px_44px_-22px_rgba(26,26,26,0.34)]"
+          >
           {options.map((o) => {
             const on = String(o.value) === String(value);
             return (
@@ -221,8 +329,9 @@ export function Select({
               </div>
             </div>
           )}
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
