@@ -499,71 +499,6 @@ button.work-chip:not([data-tone]):hover {
   }
 }
 
-/* Нижняя капсула на телефоне: плавает над листом, а не панель во всю ширину —
-   под ней виден лист, и экран не выглядит обрубленным по нижнему краю.
-   Капсула — объект поверх страницы, поэтому и красится наоборот к ней: на
-   светлом листе тёмная. В тёмной теме «наоборот» дало бы белое пятно на пол-
-   экрана, поэтому там она просто приподнятая поверхность с волосяной
-   границей. Поймано на телефоне после того, как ветка перешла на краски
-   календаря: до этого `--ink` был всегда тёмным и вопроса не возникало. */
-.work-dock {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(10px + var(--app-safe-bottom));
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px;
-  border-radius: 999px;
-  background: var(--ink);
-  box-shadow: 0 18px 44px -18px rgba(10, 9, 8, 0.6);
-}
-/* Высота 50: пункт меньше сорока четырёх пикселей человек продавливает со
-   второго раза. */
-.work-dock a {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  height: 50px;
-  padding: 0 14px;
-  border-radius: 999px;
-  color: color-mix(in oklab, var(--paper) 62%, transparent);
-  font-size: 13.5px;
-  /* По умолчанию пункт тонкий: в покое меню — это список мест, а не набор
-     призывов. Полужирным становится только тот, где ты сейчас. */
-  font-weight: 500;
-  white-space: nowrap;
-}
-.work-dock a:active {
-  transform: scale(0.95);
-}
-
-.dark .work-dock {
-  background: var(--paper-deep);
-  border: 1px solid var(--hairline);
-}
-.dark .work-dock a {
-  color: var(--ink-soft);
-}
-
-/*
- * Активный пункт: нейтральная подсветка, текст жирнее, цветная пиктограмма.
- *
- * МЕНЮ НЕ СПОРИТ С ДЕЙСТВИЕМ. Сплошной фирменный оранжевый — это язык кнопок:
- * «Новое мероприятие», «Записаться», «Сохранить». Когда им же залит пункт меню,
- * на экране два одинаково громких пятна, и глаз идёт к тому, что просто
- * сообщает, где ты находишься, вместо того, что делает работу.
- *
- * Пробовали и мягкую оранжевую подсветку — всё равно цветное пятно рядом с
- * цветной кнопкой. Работает разделение по ролям: место обозначает НЕЙТРАЛЬНАЯ
- * подложка и вес буквы, а фирменный цвет достаётся одной пиктограмме. Она
- * мелкая, кнопку не перекрикивает, но взгляд по колонке ведёт.
- *
- * Так же сделано в панели аналитики, и это не совпадение: приём проверен
- * работой, поэтому взят как есть.
- */
 /*
  * Пункт колонки. Тот же пункт меню, что и в капсуле, и вид у него описан
  * здесь же — иначе описаний становится два.
@@ -586,32 +521,8 @@ button.work-chip:not([data-tone]):hover {
   color: var(--flame);
 }
 
-.work-dock a[aria-current="page"] {
-  background: color-mix(in oklab, var(--paper) 14%, transparent);
-  color: var(--paper);
-  font-weight: 800;
-}
-.dark .work-dock a[aria-current="page"] {
-  background: color-mix(in oklab, var(--ink) 8%, transparent);
-  color: var(--ink);
-}
-/* Цвет достаётся только знаку. `color` у самой ссылки уже занят текстом,
-   поэтому знаку он назначается отдельно — иначе оранжевой станет и подпись. */
-.work-dock a[aria-current="page"] svg {
-  color: var(--flame);
-}
 
 @media (min-width: 1024px) {
-  /* Капсула — только телефонная. На десктопе меню живёт в колонке, и второе
-     такое же ниже читалось как рудимент — оно и было им.
-     Через display, а не через `lg:hidden` в разметке: правила этого файла
-     лежат вне слоёв Tailwind и его утилиты перебивают. Класс в разметке стоял
-     и не работал — ровно то, о чём предупреждает CLAUDE.md мини-аппа. */
-  .work-dock {
-    display: none;
-  }
-
-
   /*
    * Карточки разделов на листе — своей подложкой.
    *
@@ -721,4 +632,62 @@ button.work-chip:not([data-tone]):hover {
   --bone-deep: var(--paper-deep);
   --on-ink-faint: color-mix(in oklab, var(--paper) 14%, transparent);
   --on-ink: var(--paper);
+}
+
+/*
+ * Меню телефона: лист во весь экран, бургер в шапке.
+ *
+ * Приём взят из мини-аппа (`glagol-hub`, `hub-phone-*`) вместе с размерами:
+ * лист на три четверти ширины, разделы в двадцать четыре пункта жирным,
+ * служебное — мелким за чертой.
+ *
+ * Пришло на смену нижней капсуле 18.08.2026. Капсула стояла над листом всегда
+ * и съедала последнюю строку любого экрана — «Доступ заказчика» на телефоне
+ * читался из-под неё. Плюс третий пункт в неё уже не помещался, а профиль и
+ * выход просились именно туда.
+ */
+.work-phone-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+}
+.work-phone-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 9, 8, 0.45);
+  animation: work-phone-fade 0.16s ease-out;
+}
+.work-phone-panel {
+  position: relative;
+  display: flex;
+  width: 75%;
+  max-width: 340px;
+  flex-direction: column;
+  overflow-y: auto;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 0 60px -12px rgba(10, 9, 8, 0.55);
+  animation: work-phone-slide 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes work-phone-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* Выезжает из-под левого края — оттуда, где стоит бургер. Появись оно из
+   середины, связь между нажатием и листом пришлось бы додумывать. */
+@keyframes work-phone-slide {
+  from {
+    transform: translateX(-12%);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
