@@ -100,17 +100,31 @@ export function Select({
   const menu = useRef<HTMLDivElement | null>(null);
   const current = options.find((o) => String(o.value) === String(value));
 
-  // Показать выбранное сразу: в списке времени 96 пунктов, и открывать его на
-  // полуночи, когда выбрано 10:00, — значит заставить человека листать.
-  //
-  // Прокручиваем само меню, а не через scrollIntoView: тот двигает все
-  // прокручиваемые предки, включая страницу. Заметнее всего это когда меню
-  // открылось вверх — экран дёргался под курсором (docs/RULES.md).
-  const scrollToSelected = useCallback((node: HTMLDivElement | null) => {
+  /**
+   * Показать выбранное сразу: в списке времени 96 пунктов, и открывать его на
+   * полуночи, когда выбрано 10:00, — значит заставить человека листать.
+   *
+   * Прокручиваем само меню, а не через scrollIntoView: тот двигает все
+   * прокручиваемые предки, включая страницу. Заметнее всего это когда меню
+   * открылось вверх — экран дёргался под курсором (docs/RULES.md).
+   *
+   * Ровно один раз на открытие. Пока это жило в `ref`-обработчике, оно
+   * повторялось на каждой перерисовке: React пересоздаёт встроенную функцию
+   * ссылки, отцепляет её и цепляет заново — а с ней заново отматывал список к
+   * выбранному пункту. Человек тянул список вниз, тот отпрыгивал назад, и это
+   * читалось как «прокрутка не работает» (Артём, прод, 19.08.26).
+   */
+  const держать = useCallback((node: HTMLDivElement | null) => {
+    menu.current = node;
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const node = menu.current;
     const sel = node?.querySelector<HTMLElement>('[data-selected="1"]');
     if (!node || !sel) return;
     node.scrollTop = sel.offsetTop - node.clientHeight / 2 + sel.offsetHeight / 2;
-  }, []);
+  }, [open]);
 
   /**
    * Мышью список открывается по нажатию, а не по отпусканию.
@@ -176,12 +190,18 @@ export function Select({
     // перехватом: прокручивается не только страница, но и карточка спикера.
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
-    window.addEventListener("scroll", place, true);
+    // Прокрутку внутри самого списка пропускаем: меню от неё не уезжает, а
+    // пересчёт положения означал бы перерисовку на каждый шаг колеса.
+    const onScroll = (e: Event) => {
+      if (menu.current && (e.target === menu.current || menu.current.contains(e.target as Node))) return;
+      place();
+    };
+    window.addEventListener("scroll", onScroll, true);
     window.addEventListener("resize", place);
     return () => {
       document.removeEventListener("mousedown", onDoc);
       document.removeEventListener("keydown", onKey);
-      window.removeEventListener("scroll", place, true);
+      window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", place);
     };
   }, [open, place]);
@@ -260,10 +280,7 @@ export function Select({
         createPortal(
           <div
             role="listbox"
-            ref={(node) => {
-              menu.current = node;
-              scrollToSelected(node);
-            }}
+            ref={держать}
             style={{ position: "fixed", ...pos }}
             // Карточка меню: крупное скругление и «тень v1.3» из правил бюро.
             // `work-menu` — только чтобы рабочая ветка спрятала полосу
