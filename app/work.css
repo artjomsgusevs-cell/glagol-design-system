@@ -691,3 +691,148 @@ button.work-chip:not([data-tone]):hover {
     opacity: 1;
   }
 }
+
+/*
+ * Афиша тренера — из галереи мини-аппа, дословно.
+ *
+ * Числа и градиент скопированы из `glagol-hub/app/hub/hub.css` (`.hub-poster`):
+ * скругление 28, затемнение к низу тремя ступенями, подпись поверх градиента.
+ * Живёт на странице заказчика; появится второй потребитель — уедет в эталон.
+ */
+.work-poster {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  isolation: isolate;
+}
+.work-poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 9, 8, 0.88) 0%,
+    rgba(10, 9, 8, 0.45) 34%,
+    rgba(10, 9, 8, 0) 62%
+  );
+  z-index: 1;
+}
+.work-poster .work-poster-body {
+  z-index: 2;
+}
+
+/* Горизонтальная лента карточек — из мини-аппа (`.hub-rail`): полоса
+   прокрутки спрятана, элементы не сжимаются, листается вбок. Живёт на
+   странице тренера у заказчика — там же, где постер. */
+.work-rail {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.work-rail::-webkit-scrollbar {
+  display: none;
+}
+.work-rail > * {
+  scroll-snap-align: center;
+  flex: 0 0 auto;
+}
+.work-rail-тянется {
+  cursor: grab;
+}
+.work-rail-тянут {
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* ── Карточка тренера у заказчика: компоновка «а» из мини-аппа ──
+   Экран заперт в высоту листа: лицо с виджетом брони стоит на месте, а
+   прокручивается только колонка дела — имя липнет к её верху, низ уходит в
+   растушёвку. Устройство и числа — из hub.css (`.hub-solo-*`): кадр забирает
+   высоту, оставшуюся после виджета, и сжимается на низких окнах. */
+@media (min-width: 1024px) {
+  .work-solo-ряд {
+    height: calc(100vh - 108px);
+    align-items: stretch;
+  }
+  .work-solo-лицо {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+  .work-solo-лицо .work-poster {
+    aspect-ratio: auto;
+    flex: 1;
+    min-height: 220px;
+  }
+  .work-solo-дело {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 28px;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent);
+  }
+  .work-solo-дело::-webkit-scrollbar {
+    display: none;
+  }
+  .work-solo-имя {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--paper);
+  }
+  /* Заголовки разделов в деле тише имени — как в хабе. */
+  .work-solo-дело h3.work-title {
+    font-size: 20px;
+  }
+}
+
+/*
+ * ВИД ЗАКАЗЧИКА — КРАСКИ МИНИ-АППА
+ *
+ * Решение Артёма 20.08.26: странице заказчика — кремовая бумага и акценты
+ * хаба, «более красивая версия». Это осознанное исключение из правила «ветка
+ * ничего не красит сама»: заказчик видит один-единственный экран бюро, и
+ * расхождение красок с кабинетом ему не с чем заметить. Значения — из
+ * glagol-hub/app/hub/hub.css, дословно.
+ *
+ * Скоупом поверх `.work`: вся геометрия, панель и плитки остаются общими,
+ * меняются только переменные.
+ */
+.client-look {
+  --paper: #ece9e0;
+  --paper-deep: #e3dfd2;
+  --ink: #12100e;
+  --ink-soft: #6f6a5f;
+  --hairline: rgb(18 16 14 / 8%);
+  --page: #dcd7c9;
+  background: var(--page);
+}
+/* Ночная бумага хаба — не инверсия: фон в тёплый тёмный, плитки светлеют. */
+.dark .client-look {
+  --paper: #17140f;
+  --paper-deep: #211d17;
+  --ink: #ece9e0;
+  --ink-soft: #9a948a;
+  --hairline: rgb(236 233 224 / 12%);
+  --page: #0e0c09;
+}
+/* Лист берёт кремовую бумагу: общее правило красит его в var(--popover)
+   календаря, а у заказчика лист и есть бумага хаба. */
+@media (min-width: 1024px) {
+  .client-look .work-sheet {
+    background: var(--paper);
+  }
+}
+/* Акцент хаба: активный пункт колонки — оранжевая капсула с белым знаком.
+   В кабинете актив — бумажная плитка; заказчику берём хабовский, он и есть
+   «акценты из хаба». */
+.client-look .work-side-item[aria-current="page"] {
+  background: var(--flame);
+  color: #fff;
+}
+.client-look .work-side-item[aria-current="page"] svg {
+  color: #fff;
+}
