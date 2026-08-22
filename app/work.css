@@ -836,3 +836,178 @@ button.work-chip:not([data-tone]):hover {
 .client-look .work-side-item[aria-current="page"] svg {
   color: #fff;
 }
+
+/*
+ * ── СЛОЙ ТЕЛЕФОНА: ГАЛЕРЕЯ ТРЕНЕРОВ ПЕРЕСТАЁТ БЫТЬ СТРАНИЦЕЙ ──
+ *
+ * Перенос из мини-аппа (`glagol-hub/app/hub/hub.css`, `.hub-layer-*`) по
+ * решению Артёма 22.08.26: телефонный вид тренеров в хабе доведён до образца
+ * кабинета, и заказчик должен видеть ровно его.
+ *
+ * Устройство: фотография занимает экран целиком, а шапка, отбор, точки и
+ * кнопки лежат поверх неё. На листе с полями такого не собрать — поля не дают
+ * кадру дойти до краёв, поэтому слой выходит из потока страницы.
+ */
+@media (max-width: 1023px) {
+  .work-layer {
+    position: fixed;
+    inset: 0;
+    /* Выше телефонной шапки оболочки (`sticky z-40`): слой забирает экран
+       целиком, вместе с маркой и колоколом — свои стоят в его шапке. */
+    z-index: 45;
+    background: var(--ink);
+  }
+  .work-layer-rail {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .work-layer-rail::-webkit-scrollbar {
+    display: none;
+  }
+  .work-layer-page {
+    position: relative;
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    overflow: hidden;
+  }
+  .work-layer-scrim {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 62%;
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 9, 8, 0) 0%,
+      rgba(10, 9, 8, 0.55) 45%,
+      rgba(10, 9, 8, 0.85) 100%
+    );
+  }
+  .work-layer-body {
+    position: absolute;
+    inset-inline: 20px;
+    /* Над кнопками: точки, «Профиль» и «Выбрать время» стоят ниже. */
+    bottom: calc(104px + var(--app-safe-bottom));
+    color: #fff;
+  }
+  .work-layer-top {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    /* Без своего z-index намеренно: он создавал бы слой, внутри которого
+       выпадающие панели отбора оказывались ниже нижних кнопок. Порядок и так
+       верный — блок идёт после ленты. */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Поля шапки как в кабинете: 16 по бокам, 12 сверху, 8 до строки отбора. */
+    padding: 12px 16px 8px;
+    color: #fff;
+  }
+  /* Цель касания 44 при знаке 36 — невидимой накладкой, не растя сам знак:
+     знаки кабинета ровно 36, растить их значит ломать копию. */
+  .work-layer-top button,
+  .work-layer-top a {
+    position: relative;
+  }
+  .work-layer-top button::after,
+  .work-layer-top a::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    /* Ниже содержимого: иначе невидимая накладка съедает нажатие по знаку. */
+    z-index: -1;
+  }
+  /* Колокольчик приезжает готовым узлом с сервера — своего «на фотографии»
+     вида у него нет. Перекрашиваем правилом: правила `work.css` лежат вне
+     слоёв Tailwind и перебивают его утилиты (`bg-muted` внутри кнопки). */
+  .work-layer:not(.work-layer-list) .work-колокол > button {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    backdrop-filter: blur(12px);
+  }
+
+  /* Задачи в строке списка — одной лентой с прокруткой, как компетенции в
+     мини-аппе. Полосы прокрутки не показываем: серая палка на бумаге читается
+     как деталь чужого интерфейса. */
+  .work-теги {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .work-теги::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Списком: слой перестаёт быть фотографией и становится страницей — как в
+     кабинете. Шапка стоит в потоке, под ней прокручиваются карточки.
+     Липкой её делать нельзя: `position: sticky` создаёт слой, и выпадающие
+     панели отбора — они живут внутри шапки — уходят под карточки. Того же
+     рода запрет и на `backdrop-filter`. */
+  .work-layer-list {
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+  }
+  .work-layer-list .work-layer-top {
+    position: static;
+    inset-inline: auto;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .work-layer-list-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 16px calc(40px + var(--app-safe-bottom));
+  }
+
+  .work-layer-bottom {
+    position: absolute;
+    /* Поля как в кабинете: кнопки стоят на 20 от края, а не на 12. */
+    inset-inline: 20px;
+    bottom: calc(10px + var(--app-safe-bottom));
+    z-index: 2;
+  }
+
+  /* Две кнопки внизу: слева спокойный «Профиль», справа целевое действие.
+     Ширины неравные — главное действие держит свою по надписи и читается как
+     точка, а не как половина экрана. Размеры сняты с кабинета: 48 в высоту,
+     16 полужирным. */
+  .work-shelf-second,
+  .work-shelf-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 48px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 18px 44px -18px rgba(10, 9, 8, 0.45);
+  }
+  .work-shelf-second {
+    flex: 1 1 0;
+    min-width: 0;
+    /* На фотографии подложка стеклянная: плотная бумага закрывала бы кадр,
+       ради которого слой и сделан. */
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    backdrop-filter: blur(12px);
+  }
+  .work-shelf-main {
+    flex: 0 0 auto;
+    padding-inline: 20px;
+    background: var(--flame);
+    color: #fff;
+  }
+  .work-shelf-second:active,
+  .work-shelf-main:active {
+    transform: scale(0.97);
+  }
+}
