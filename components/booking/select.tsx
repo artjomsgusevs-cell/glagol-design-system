@@ -35,6 +35,11 @@ export function Select({
   value,
   options,
   onChange,
+  small,
+  multi,
+  values,
+  onToggle,
+  emptyLabel,
   ariaLabel,
   full,
   compact,
@@ -74,6 +79,30 @@ export function Select({
   chip?: boolean;
   /** Тон чипа: тот же, что у `work-chip[data-tone]`. */
   tone?: string;
+  /**
+   * Флажками: выбрано сколько угодно пунктов сразу.
+   *
+   * Отдельным режимом того же списка, а не вторым компонентом: у отбора по
+   * мероприятиям та же пилюля, тот же портал и то же поведение при прокрутке,
+   * и вторая копия разошлась бы с этой на первой же правке. Выбранное
+   * приходит списком `values`, нажатие отдаётся в `onToggle`, меню при этом не
+   * закрывается — иначе три флажка требуют трёх открытий.
+   */
+  multi?: boolean;
+  values?: string[];
+  onToggle?: (value: string) => void;
+  /** Подпись кнопки, когда не выбрано ничего: «Все мероприятия». */
+  emptyLabel?: string;
+  /**
+   * Мелкий кегль — для рядов отбора.
+   *
+   * Список стоит в одном ряду с кнопками-пилюлями («Все спикеры»), а у них
+   * подпись 13 полужирным. Обычный кегль списка выбивался из строки, и ряд
+   * читался как два разных элемента. Кегль меняется и у меню: там те же
+   * названия мероприятий, и разный рост одного слова в кнопке и в списке
+   * заметен сразу (Артём, 25.08.26).
+   */
+  small?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
@@ -99,6 +128,16 @@ export function Select({
   const box = useRef<HTMLDivElement>(null);
   const menu = useRef<HTMLDivElement | null>(null);
   const current = options.find((o) => String(o.value) === String(value));
+  const выбраны = values ?? [];
+  // Подпись кнопки при флажках: пусто — «все», один — его имя, больше — счёт.
+  // Перечислять два-три названия в пилюле нельзя: она растягивает ряд и рвёт
+  // строку фильтров на телефоне.
+  const подписьМного =
+    выбраны.length === 0
+      ? (emptyLabel ?? "Все")
+      : выбраны.length === 1
+        ? (options.find((o) => o.value === выбраны[0])?.label ?? emptyLabel ?? "Все")
+        : `${emptyLabel ?? "Выбрано"}: ${выбраны.length}`;
 
   /**
    * Показать выбранное сразу: в списке времени 96 пунктов, и открывать его на
@@ -241,13 +280,14 @@ export function Select({
               : "h-10 rounded-full bg-muted px-4 hover:bg-muted/70",
           full && !chip ? "w-full" : "w-fit",
           compact && !bare && !chip && "px-3 text-sm",
+          small && !bare && !chip && "text-[13px] font-bold",
           open && !chip && (bare ? "bg-muted" : "bg-muted/70"),
         )}
       >
         <span className={cn("flex min-w-0 items-center gap-1.5", compact && "tabular-nums")}>
           {current?.icon}
           <span className="truncate">
-            {current?.label ?? (custom ? `${value} ${custom.unit}` : "—")}
+            {multi ? подписьМного : (current?.label ?? (custom ? `${value} ${custom.unit}` : "—"))}
           </span>
         </span>
         <ChevronDown
@@ -286,10 +326,15 @@ export function Select({
             // `work-menu` — только чтобы рабочая ветка спрятала полосу
             // прокрутки: правило живёт в `.work`, а сюда, в конец страницы, оно
             // не достаёт.
-            className="work-menu z-[60] max-h-[320px] overflow-y-auto rounded-2xl border border-border bg-card p-1.5 shadow-[0_18px_44px_-22px_rgba(26,26,26,0.34)]"
+            className={cn(
+              "work-menu z-[60] max-h-[320px] overflow-y-auto rounded-2xl border border-border bg-card p-1.5 shadow-[0_18px_44px_-22px_rgba(26,26,26,0.34)]",
+              small && "text-[13px]",
+            )}
           >
           {options.map((o) => {
-            const on = String(o.value) === String(value);
+            const on = multi
+              ? выбраны.includes(String(o.value))
+              : String(o.value) === String(value);
             return (
               <button
                 key={o.value}
@@ -298,6 +343,10 @@ export function Select({
                 aria-selected={on}
                 data-selected={on ? "1" : "0"}
                 onClick={() => {
+                  if (multi) {
+                    onToggle?.(String(o.value));
+                    return;
+                  }
                   onChange(o.value);
                   setOpen(false);
                 }}
