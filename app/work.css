@@ -198,7 +198,11 @@
 .work-btn--soft {
   height: 40px;
   padding: 0 16px;
-  background: var(--paper-deep);
+  /* На ступень плотнее плитки, а не в тон ей — как у чипа. В тон было почти
+     невидимо: на светлой теме подложка кнопки отличалась от панели на
+     полпроцента светлоты, и пять кнопок карточки читались просто текстом с
+     иконкой (визуальное ревью 25.08.26). */
+  background: color-mix(in oklab, var(--ink) 6%, var(--paper-deep));
   color: var(--ink);
 }
 /* У бумажных кнопок яркость не работает: осветлять бумагу некуда, а темнить —
@@ -206,7 +210,7 @@
 .work-btn--soft:hover,
 .work-btn--quiet:hover {
   filter: none;
-  background: color-mix(in oklab, var(--ink) 9%, var(--paper-deep));
+  background: color-mix(in oklab, var(--ink) 12%, var(--paper-deep));
   color: var(--ink);
 }
 .work-btn--quiet {
