@@ -328,7 +328,10 @@ export function Select({
             // не достаёт.
             className={cn(
               "work-menu z-[60] max-h-[320px] overflow-y-auto rounded-2xl border border-border bg-card p-1.5 shadow-[0_18px_44px_-22px_rgba(26,26,26,0.34)]",
-              small && "text-[13px]",
+              // Пункты — тем же кеглем, что кнопка списка. Меню рисуется в конце
+              // страницы и наследует кегль тела, а не кнопки: у чипа и малого
+              // списка пункты выходили крупнее своей кнопки (Артём, 02.09.26).
+              (small || chip) && "text-[13px]",
             )}
           >
           {options.map((o) => {
