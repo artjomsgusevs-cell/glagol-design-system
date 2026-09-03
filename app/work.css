@@ -224,6 +224,29 @@
   color: var(--ink-soft);
 }
 
+/* Пилюля ленты выступлений: их у спикера бывает несколько, и лента стоит над
+   разделом. Открытая — плотнее остальных, но не чёрная: чёрная читалась как
+   главное действие карточки, хотя это всего лишь переключатель (Артём,
+   03.09.26). Отклик тот же, что у мягких кнопок, — подмешанные чернила. */
+.work-pill {
+  background: var(--paper-deep);
+  color: var(--ink-soft);
+  transition:
+    background 0.14s ease,
+    color 0.14s ease;
+}
+.work-pill:hover {
+  background: color-mix(in oklab, var(--ink) 6%, var(--paper-deep));
+  color: var(--ink);
+}
+.work-pill[aria-current="true"] {
+  background: color-mix(in oklab, var(--ink) 10%, var(--paper-deep));
+  color: var(--ink);
+}
+.work-pill[aria-current="true"]:hover {
+  background: color-mix(in oklab, var(--ink) 14%, var(--paper-deep));
+}
+
 /* Кнопка, стоящая в одном ряду с полями, берёт их рост. Лестница требует, чтобы
    внутри ряда высоты совпадали, а поле в бюро — сорок: кнопка в сорок четыре
    рядом с полями торчала на четыре пикселя и ломала линию ряда. */
