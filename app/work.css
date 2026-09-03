@@ -229,22 +229,23 @@
    главное действие карточки, хотя это всего лишь переключатель (Артём,
    03.09.26). Отклик тот же, что у мягких кнопок, — подмешанные чернила. */
 .work-pill {
-  background: var(--paper-deep);
+  background: transparent;
   color: var(--ink-soft);
   transition:
     background 0.14s ease,
     color 0.14s ease;
 }
+/* Подложка только под мышью — как у кнопок шапки карточки. Постоянная заливка
+   у переключателя из двух-трёх выступлений давала ряд плашек там, где нужен
+   ряд слов (Артём, 03.09.26). */
 .work-pill:hover {
   background: color-mix(in oklab, var(--ink) 6%, var(--paper-deep));
   color: var(--ink);
 }
+/* Открытое выступление отличается цветом буквы, а не подложкой: вес оставляем
+   общий, иначе ряд дёргается по ширине при переключении. */
 .work-pill[aria-current="true"] {
-  background: color-mix(in oklab, var(--ink) 10%, var(--paper-deep));
   color: var(--ink);
-}
-.work-pill[aria-current="true"]:hover {
-  background: color-mix(in oklab, var(--ink) 14%, var(--paper-deep));
 }
 
 /* Кнопка, стоящая в одном ряду с полями, берёт их рост. Лестница требует, чтобы
