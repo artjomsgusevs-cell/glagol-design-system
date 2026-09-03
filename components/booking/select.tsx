@@ -270,14 +270,14 @@ export function Select({
         aria-label={ariaLabel}
         data-tone={chip ? tone : undefined}
         className={cn(
-          // Пилюля с тонким контуром — как в дизайн-системе бюро: высота h-10
+          // Пилюля с тонким контуром — как в дизайн-системе бюро: высота h-9 (36)
           // у всех полей и кнопок, чтобы в ряду ничего не выпирало.
           "flex items-center justify-between gap-2 text-left transition",
           chip
             ? "work-chip"
             : bare
               ? "-mx-1.5 rounded-lg px-1.5 py-0.5 text-sm font-semibold hover:bg-muted"
-              : "h-10 rounded-full bg-muted px-4 hover:bg-muted/70",
+              : "h-9 rounded-full bg-muted px-4 hover:bg-muted/70",
           full && !chip ? "w-full" : "w-fit",
           compact && !bare && !chip && "px-3 text-sm",
           small && !bare && !chip && "text-[13px] font-bold",
