@@ -34,6 +34,27 @@ export function humanDate(iso: string | Date, tz?: string): string {
   return `${day} (${weekday})`;
 }
 
+/**
+ * «27 июля 2026 (вт)» — дата, у которой год важен сам по себе.
+ *
+ * Для дат мероприятий. Конференция повторяется каждый год, и «Яндекс Про»
+ * 2025-го от 2026-го отличает только год: приписывать его к названию — значит
+ * держать год в двух местах и в одном из них врать (Артём, 03.09.26).
+ *
+ * Рабочим датам внутри сезона год не нужен: дедлайн «не позднее 12 сентября
+ * 2026» читается канцелярски и ничего не добавляет.
+ */
+export function humanDateFull(iso: string | Date, tz?: string): string {
+  const d = typeof iso === "string" ? new Date(iso) : iso;
+  // Русский Intl приписывает « г.» — в бюро так не пишут: год стоит числом,
+  // как в «Яндекс Про 2026», откуда мы его сюда и перенесли.
+  const day = fmt(tz, { day: "numeric", month: "long", year: "numeric" })
+    .format(d)
+    .replace(/\s*г\.$/, "");
+  const weekday = fmt(tz, { weekday: "short" }).format(d).replace(".", "");
+  return `${day} (${weekday})`;
+}
+
 /** «17:00» */
 export function humanTime(iso: string | Date, tz?: string): string {
   const d = typeof iso === "string" ? new Date(iso) : iso;
