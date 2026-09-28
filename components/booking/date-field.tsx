@@ -41,6 +41,7 @@ export function DateField({
   placeholder = "Выберите дату",
   ariaLabel,
   clearLabel,
+  chip,
 }: {
   /** YYYY-MM-DD или пусто. */
   value: string;
@@ -51,6 +52,13 @@ export function DateField({
   ariaLabel?: string;
   /** Подпись кнопки очистки. Не задана — очистка не показывается. */
   clearLabel?: string;
+  /**
+   * Чипом — когда поле стоит в ряду чипов.
+   *
+   * В строках паспорта рядом с ним живут выборы-чипы, и обычное поле высотой
+   * в сорок пикселей выглядело вдвое тяжелее соседей (Артём, 28.09.26).
+   */
+  chip?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [up, setUp] = useState(false);
@@ -119,11 +127,16 @@ export function DateField({
         aria-expanded={open}
         aria-label={ariaLabel}
         className={cn(
-          "flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-left text-sm transition hover:bg-muted",
-          open && "bg-muted",
+          "flex items-center gap-2 text-left transition",
+          chip
+            ? "work-chip"
+            : "h-10 rounded-full border border-border bg-card px-4 text-sm hover:bg-muted",
+          open && !chip && "bg-muted",
         )}
       >
-        <CalendarDays className="size-4 shrink-0 text-muted-foreground" />
+        <CalendarDays
+          className={cn("shrink-0 text-muted-foreground", chip ? "size-3.5" : "size-4")}
+        />
         <span className={cn("truncate", !value && "text-muted-foreground")}>
           {value ? humanDate(`${value}T12:00:00`) : placeholder}
         </span>
