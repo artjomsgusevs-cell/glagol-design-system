@@ -35,6 +35,13 @@ html, body { margin: 0; padding: 0 }
  * строки вместо двух.
  */
 [hidden] { display: none !important }
+/*
+ * Сброс кнопки. В продукте его делает preflight Tailwind, здесь Tailwind нет —
+ * и браузер рисовал кнопкам свою рамку `2px outset`: на странице `.work-btn`
+ * выглядела обведённой, хотя в проде обводки нет (01.11.26).
+ */
+button, input, select, textarea { font: inherit; color: inherit }
+button { margin: 0; border: 0; background: transparent }
 body { padding-top: env(safe-area-inset-top, 0px); min-height: 100vh }
 
 .bar {

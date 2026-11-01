@@ -16,6 +16,26 @@ body {
   color: var(--foreground);
 }
 
+/*
+ * Сброс кнопки. В продукте его делает preflight Tailwind, здесь Tailwind нет —
+ * и браузер рисовал кнопкам свою рамку `2px outset`. На снимках `.work-btn`
+ * выглядела обведённой, хотя в проде обводки нет, и Артём 01.11.26 выбрал
+ * вариант главного действия по этой несуществующей рамке. Это ровно та цена,
+ * которую платит витрина, когда врёт о продукте: решение принимается по ней.
+ */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
 .св {
   --поле: max(16px, env(safe-area-inset-left));
   max-width: 1120px;
