@@ -1,0 +1,1138 @@
+<title>Глагол · Сверка интерфейса</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="work.css">
+<link rel="stylesheet" href="review.css">
+<script src="review.js"></script>
+
+<div class="work св">
+
+<div class="св-верх">
+  <span class="св-знак"><i>&rsaquo;</i> Глагол · сверка интерфейса</span>
+  <span class="св-тумблер">
+    <span>тема</span>
+    <button data-тема="light">светлая</button>
+    <button data-тема="dark">тёмная</button>
+    <button data-тема="system">системная</button>
+  </span>
+  <span class="св-тумблер" data-только-компьютер>
+    <span>сцены</span>
+    <button data-ширина="free">свободно</button>
+    <button data-ширина="375">375</button>
+  </span>
+</div>
+
+<header class="св-шапка">
+  <h1>Кнопки<br>и буквы</h1>
+  <p class="лид">Шаг первый: собрано всё, что в работающих продуктах бюро делает
+    одно и то же, но выглядит по-разному. Ничего не изменено — ни в продукте,
+    ни в токенах, ни в правилах. Это лист для твоего решения.</p>
+
+  <dl class="счёт">
+    <div>
+      <dt>кнопок в календаре</dt>
+      <dd>265</dd>
+      <small>написаны 180 разными строками классов</small>
+    </div>
+    <div>
+      <dt>продукта</dt>
+      <dd>3</dd>
+      <small>календарь, витрина, хаб — общего класса кнопки нет ни одного</small>
+    </div>
+    <div>
+      <dt>строк с&nbsp;кеглем 14</dt>
+      <dd>198</dd>
+      <small>в кабинете, где кеглей утверждено три: 12, 13, 15</small>
+    </div>
+    <div>
+      <dt>заголовка экрана</dt>
+      <dd>7</dd>
+      <small>на двух взаимоисключающих решениях</small>
+    </div>
+  </dl>
+
+  <nav class="св-оглавление">
+    <a href="#как">Как читать</a>
+    <a href="#кнопки">Кнопки</a>
+    <a href="#типографика">Типографика</a>
+    <a href="#утверждено">Что уже утверждено</a>
+    <a href="#вопросы">Решить тебе</a>
+    <a href="#архитектура">Чтобы правка расходилась сама</a>
+  </nav>
+</header>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+
+<section class="раздел" id="как">
+  <div class="черта"><b>00</b> Как читать</div>
+  <h2>Что здесь живое,<br>а что нарисовано</h2>
+
+  <p>Краски, шрифты и системные элементы на этой странице — настоящие. Файлы
+    <code>tokens.css</code> и <code>work.css</code> вынуты из
+    <code>app/globals.css</code> и <code>app/work.css</code> продукта, тех самых,
+    по которым работает <code>calendar.glagol.me</code>. Кнопка
+    <code>.work-btn</code> здесь — это она и есть.</p>
+
+  <p><b>Исключение одно.</b> Самодельные кнопки написаны в коде строкой утилит
+    Tailwind прямо на экране, а Tailwind в статической странице нет. Каждая
+    переведена в CSS один к одному, числом из той же строки:
+    <code>h-12</code>&nbsp;→&nbsp;48, <code>text-sm</code>&nbsp;→&nbsp;14,
+    <code>font-semibold</code>&nbsp;→&nbsp;600. Токены те же. Под каждым таким
+    образцом стоит ссылка на файл и строку — проверяется глазами за минуту.</p>
+
+  <p>У карточки четыре вида метки. <span class="метка" data-м="утверждено">утверждено</span>
+    — решение принято раньше, с причиной; трогать нечего.
+    <span class="метка" data-м="предлагаю">предлагаю</span> — расхождение
+    есть, но равнозначных ответов нет, и я называю один.
+    <span class="метка" data-м="выбор">нужен твой выбор</span> — ответов
+    несколько, и они не равны по вкусу; решаешь ты.
+    <span class="метка" data-м="долг">долг</span> — правило уже записано, а код
+    ему не следует.</p>
+</section>
+
+<!-- ─── КНОПКИ ───────────────────────────────────────────────── -->
+
+<section class="раздел" id="кнопки">
+  <div class="черта"><b>А</b> Кнопки</div>
+  <h2>Одно действие,<br>четыре внешности</h2>
+
+  <p>В календаре 265 кнопок и 180 различных написаний. Системным классом
+    написаны 86 из них — 65 кнопкой, 15 чипом, 6 прочими; остальные 179 собраны
+    руками на месте.
+    В витрине и хабе системных нет вовсе: 124 кнопки, каждая со своими числами.
+    Именно отсюда берётся «одинаковые кнопки приходится править на каждом
+    экране отдельно» — править приходится 180 строк.</p>
+
+  <div style="margin:18px 0 0">
+    <div class="полоса"><span>календарь</span><u style="width:32%"></u><i>86 системных из 265</i></div>
+    <div class="полоса" data-свой><span>витрина</span><u style="width:0"></u><i>0 из 40</i></div>
+    <div class="полоса" data-свой><span>хаб</span><u style="width:0"></u><i>0 из 84</i></div>
+  </div>
+
+  <!-- А1 -->
+  <article class="р" id="а1">
+    <div class="р-верх">
+      <span class="р-номер">А1</span>
+      <h3>Главное действие экрана</h3>
+      <span class="метка" data-м="выбор">нужен твой выбор</span>
+    </div>
+    <p class="р-суть">Самое дорогое расхождение. В своде записано, что главную
+      кнопку отличает фирменный оранжевый. В коде оранжевая
+      <code>--main</code> стоит шесть раз, и ни одного — в кабинете: там главным
+      действием работает чёрная <code>--second</code>, то есть буквально
+      «второстепенная». А в формах входа и брони главной становится третья
+      кнопка, на 12&nbsp;пикселей выше.</p>
+
+    <div class="варианты">
+      <figure class="в" data-реко>
+        <div class="сцена">
+          <button class="work-btn work-btn--second">Назначить встречу</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Чёрная — <code>.work-btn--second</code></span>
+          <dl class="мет">
+            <div><dt>рост</dt><dd>36</dd></div>
+            <div><dt>кегль</dt><dd>13</dd></div>
+            <div><dt>вес</dt><dd>700</dd></div>
+            <div><dt>нажатие</dt><dd>0,96</dd></div>
+          </dl>
+          <p class="где"><b>32</b> места. Кабинет, карточка выступления, лог
+            времени. Это то, что ты видишь на своих снимках.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена">
+          <button class="work-btn work-btn--main">Назначить встречу</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Оранжевая — <code>.work-btn--main</code></span>
+          <dl class="мет">
+            <div><dt>рост</dt><dd>36</dd></div>
+            <div><dt>кегль</dt><dd>13</dd></div>
+            <div><dt>вес</dt><dd>700</dd></div>
+            <div><dt>нажатие</dt><dd>0,96</dd></div>
+          </dl>
+          <p class="где"><b>6</b> мест, все публичные: подписка, бриф, кабинет
+            заказчика. В рабочей среде не встречается ни разу.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена столбик">
+          <button class="о о-вход">Войти</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Форма входа — своя</span>
+          <dl class="мет">
+            <div><dt>рост</dt><dd>48</dd></div>
+            <div><dt>кегль</dt><dd>16</dd></div>
+            <div><dt>вес</dt><dd>600</dd></div>
+            <div><dt>нажатие</dt><dd>0,99</dd></div>
+          </dl>
+          <p class="где"><b>8</b> мест. <code>login-form.tsx:129</code>,
+            <code>register-form.tsx:92</code>, <code>invite-form.tsx:78</code>.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена">
+          <button class="о о-аккаунт">Сохранить</button>
+          <button class="о о-бронь">Перенести</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Ещё две своих</span>
+          <dl class="мет">
+            <div><dt>рост</dt><dd>44 и 48</dd></div>
+            <div><dt>кегль</dt><dd>14 и 16</dd></div>
+            <div><dt>вес</dt><dd>600</dd></div>
+            <div><dt>нажатие</dt><dd>0,95</dd></div>
+          </dl>
+          <p class="где"><b>13</b> мест. <code>account-screen.tsx:161</code> —
+            оранжевая в 44; <code>manage-booking.tsx:408</code> — подложка
+            <code>accent</code> в 48.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Признать то, что уже случилось на экранах: главное
+        действие — <b>чёрное</b>, а оранжевый остаётся краской внимания (срочно,
+        просрочено, сверх бюджета) и знака бюро. Тогда имена классов перестают
+        врать: сегодня «главная» — та, которой нигде нет.</p>
+      <p>Роли при этом две, а не одна, и это честно:</p>
+      <ul>
+        <li><b>кнопка в ряду</b> — рост 36 на компьютере, 44 на телефоне, как
+          «Назначить» и «Внести прошедшую» на твоём снимке;</li>
+        <li><b>главное действие формы</b> — во всю ширину, рост 48, одна на
+          экран: вход, регистрация, отправка брифа. Это не та же кнопка,
+          которой стало тесно, а другая роль.</li>
+      </ul>
+      <p>Что требует именно твоего слова: <b>оранжевая кнопка исчезает с
+        экранов совсем</b> — или остаётся одной, последней в сценарии
+        («Отправить бриф», «Записаться»). Вариант «оранжевая — главная везде»
+        тоже рабочий, но тогда меняются 32 места в кабинете, и это уже не
+        уборка, а смена облика.</p>
+    </div>
+  </article>
+
+  <!-- А2 -->
+  <article class="р" id="а2">
+    <div class="р-верх">
+      <span class="р-номер">А2</span>
+      <h3>Второе, мягкое, тихое</h3>
+      <span class="метка" data-м="утверждено">утверждено</span>
+    </div>
+    <p class="р-суть">Три оставшихся вида кнопки расхождений не дают: написаны
+      одним классом, применяются по смыслу, причина каждого записана в
+      <code>work.css</code> датой. Показаны здесь, чтобы ряд был полным.</p>
+
+    <div class="варианты">
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="work-btn work-btn--soft">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Внести прошедшую
+          </button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Мягкая — <code>--soft</code></span>
+          <p class="где"><b>19</b> мест. «Добавить» внутри раздела. Подложка на
+            ступень плотнее листа — в тон было почти невидимо (ревью 25.08.26).</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="work-btn work-btn--quiet">Отмена</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Тихая — <code>--quiet</code></span>
+          <p class="где"><b>19</b> мест. Отмена и всё, о чём не жалко забыть.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="work-btn work-btn--second work-btn--row">В ряду с полем</button>
+          <input style="height:40px;border-radius:999px;border:1px solid var(--hairline);background:var(--paper-deep);padding:0 16px;font:inherit;font-size:13px;color:var(--ink);width:120px" value="12 октября" readonly>
+        </div>
+        <figcaption>
+          <span class="в-имя">В ряду с полями — <code>--row</code></span>
+          <p class="где"><b>2</b> места. Рост 40 — ровно столько, сколько у поля.
+            Только с полями: в ряду «Сохранить · Отмена» сорок уже торчат.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Ничего не меняю.</b> Эти три работают и описаны. Единственное, что
+        их касается, — общая область касания на телефоне (А7).</p>
+    </div>
+  </article>
+
+  <!-- А3 -->
+  <article class="р" id="а3">
+    <div class="р-верх">
+      <span class="р-номер">А3</span>
+      <h3>Круглая кнопка-иконка</h3>
+      <span class="метка" data-м="предлагаю">предлагаю</span>
+    </div>
+    <p class="р-суть">Закрыть, развернуть, листать, править. 55 штук в
+      календаре, системного класса нет ни одного. Шесть ростов, четыре разных
+      отклика на наведение и три на нажатие — и всё это встречается на одном
+      экране. На твоём снимке панели «Слава Чальцев» в шапке стоят три такие
+      кнопки подряд.</p>
+
+    <div class="варианты">
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="о-кружок" data-рост="28" data-нажатие="90" data-отклик="muted" aria-label="Назад">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+        </div>
+        <figcaption>
+          <span class="в-имя">28&nbsp;px</span>
+          <dl class="мет">
+            <div><dt>нажатие</dt><dd>0,90</dd></div>
+            <div><dt>наведение</dt><dd>muted</dd></div>
+          </dl>
+          <p class="где"><b>9</b> мест. <code>week-editor.tsx:136</code>,
+            <code>availability-screen.tsx:185</code>.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="о-кружок" data-рост="32" data-нажатие="95" data-отклик="card" aria-label="Закрыть">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <figcaption>
+          <span class="в-имя">32&nbsp;px</span>
+          <dl class="мет">
+            <div><dt>нажатие</dt><dd>0,95 / нет</dd></div>
+            <div><dt>наведение</dt><dd>card, muted, accent</dd></div>
+          </dl>
+          <p class="где"><b>16</b> мест. Три разных наведения на
+            один рост: <code>bureau-screen.tsx:239</code>,
+            <code>meeting-card.tsx:218</code>, <code>date-field.tsx:151</code>.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="о-кружок" data-рост="36" data-отклик="muted" aria-label="Править">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+          </button>
+        </div>
+        <figcaption>
+          <span class="в-имя">36&nbsp;px</span>
+          <dl class="мет">
+            <div><dt>нажатие</dt><dd>нет</dd></div>
+          </dl>
+          <p class="где"><b>8</b> мест. Ещё 2 кружка в 44 и 1 в 24 — в галерее
+            тренеров и настройках.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="о-кружок" data-рост="40" data-нажатие="95" data-отклик="paper" data-заливка="muted" aria-label="Открыть">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v7H3V3h7"/></svg>
+          </button>
+        </div>
+        <figcaption>
+          <span class="в-имя">40&nbsp;px</span>
+          <dl class="мет">
+            <div><dt>нажатие</dt><dd>0,95 / нет</dd></div>
+            <div><dt>заливка</dt><dd>есть и нет</dd></div>
+          </dl>
+          <p class="где"><b>19</b> мест — самый частый.
+            <code>client-board.tsx:219</code>, <code>events-screen.tsx:480</code>.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Один класс <code>.work-icon</code>, два роста и ни
+        одного исключения:</p>
+      <ul>
+        <li><b>36</b> — общий рост, тот же, что у кнопки: в ряду с кнопкой и
+          полем ничего не торчит;</li>
+        <li><b>28</b> — только внутри плотной строки (стрелки недели,
+          счётчики), где 36 ломает ритм;</li>
+        <li>на телефоне обе — <b>44</b> по области касания, за счёт невидимого
+          поля вокруг, а не роста кружка;</li>
+        <li>отклик один: подмешанные чернила, как у <code>--soft</code>.
+          Нажатие 0,96, как у всех.</li>
+      </ul>
+      <p>Выбора между 32 и 36 я не вижу: 36 уже есть у кнопки, и это
+        единственное число, которое ничего не ломает в ряду.</p>
+    </div>
+  </article>
+
+  <!-- А4 -->
+  <article class="р" id="а4">
+    <div class="р-верх">
+      <span class="р-номер">А4</span>
+      <h3>Отбор и состояние</h3>
+      <span class="метка" data-м="предлагаю">предлагаю</span>
+    </div>
+    <p class="р-суть">Чип работает двумя способами: как ярлык состояния
+      («Сбор обратной связи», «Всё ок») и как переключатель отбора («Все спикеры
+      72», «Все мероприятия»). Первый — системный класс, второй собран руками,
+      и числа у них почти совпадают — что и обидно.</p>
+
+    <div class="варианты по-два">
+      <figure class="в" data-реко>
+        <div class="сцена лист">
+          <span class="work-chip">Сбор обратной связи</span>
+          <span class="work-chip" data-tone="lime">Открыта заказчику</span>
+          <span class="work-chip" data-tone="brick">Отменено</span>
+        </div>
+        <figcaption>
+          <span class="в-имя">Системный — <code>.work-chip</code></span>
+          <p class="где"><b>43</b> места. Цвет кодирует этап: солнечный — идёт,
+            лаймовый — закрыто, кирпичный — беда.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="о о-отбор">Все спикеры&nbsp; 72</button>
+          <button class="о о-отбор" style="background:transparent">Все мероприятия</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Отбор — свой</span>
+          <dl class="мет">
+            <div><dt>рост</dt><dd>36</dd></div>
+            <div><dt>кегль</dt><dd>13</dd></div>
+            <div><dt>вес</dt><dd>700</dd></div>
+          </dl>
+          <p class="где"><b>4</b> места. <code>log-screen.tsx:192</code>,
+            <code>gigs-screen.tsx:252</code>. Мерки — те же, что у чипа.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Развести по смыслу, а не по виду: <code>.work-chip</code>
+        остаётся ярлыком (не нажимается, цвет = состояние), а отбор становится
+        кнопкой <code>.work-btn</code> в мягком и втором виде — он и есть
+        кнопка. Сегодня они различаются тем, что одна написана классом, а
+        другая строкой, — и это не различие.</p>
+    </div>
+  </article>
+
+  <!-- А5 -->
+  <article class="р" id="а5">
+    <div class="р-верх">
+      <span class="р-номер">А5</span>
+      <h3>Ссылка, которая ведёт себя как кнопка</h3>
+      <span class="метка" data-м="предлагаю">предлагаю</span>
+    </div>
+    <p class="р-суть">Восемь написаний на одно действие. Разница — в
+      подчёркивании, отступе под ним и в том, появляется ли подчёркивание
+      только под мышью.</p>
+
+    <div class="варианты">
+      <figure class="в" data-реко>
+        <div class="сцена лист">
+          <button class="о-ссылка" data-вид="подчёрк">Смотреть все встречи</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Подчёркнута всегда, отступ 4</span>
+          <p class="где"><b>20</b> мест — самый частый.
+            <code>text-foreground underline underline-offset-4</code>.</p>
+        </figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="о-ссылка" data-вид="блёклая">Смотреть все встречи</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Без подчёркивания, блёкнет</span>
+          <p class="где"><b>2</b> места. Нажимаемость видна только по наведению —
+            на телефоне не видна вовсе.</p>
+        </figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист">
+          <button class="о-ссылка" data-вид="строка">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v7H3V3h7"/></svg>
+            Открыть форму
+          </button>
+        </div>
+        <figcaption>
+          <span class="в-имя">С иконкой</span>
+          <p class="где"><b>2</b> места. Отступ подчёркивания не задан — черта
+            липнет к буквам.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Один вид: подчёркнута всегда, отступ 4, цвет —
+        обычный текст. Вариант «подчёркивается под мышью» выбывает не по вкусу,
+        а по правилу: на телефоне наведения нет, и ссылка становится
+        неотличимой от текста.</p>
+    </div>
+  </article>
+
+  <!-- А6 -->
+  <article class="р" id="а6">
+    <div class="р-верх">
+      <span class="р-номер">А6</span>
+      <h3>Отклик на нажатие</h3>
+      <span class="метка" data-м="предлагаю">предлагаю</span>
+    </div>
+    <p class="р-суть">Четыре значения сжатия и 107 самодельных кнопок вообще без отклика.
+      Разницу между 0,95 и 0,96 человек не видит, а вот между «отвечает» и
+      «не отвечает» — видит всегда, и на телефоне это единственный признак,
+      что нажатие засчитано.</p>
+
+    <div class="варианты">
+      <figure class="в" data-реко>
+        <div class="сцена лист"><button class="work-btn work-btn--second">0,96 — системное</button></div>
+        <figcaption><p class="где"><b>65</b> кнопок. <code>work.css</code>, одно
+          место на всю ветку.</p></figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист"><button class="о о-аккаунт">0,95</button></div>
+        <figcaption><p class="где"><b>54</b> места.</p></figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист"><button class="о о-вход" style="width:auto;padding:0 20px">0,99</button></div>
+        <figcaption><p class="где"><b>10</b> мест. Сжатие на процент не
+          замечается — это отклик, которого нет.</p></figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист"><button class="о о-отбор" style="cursor:default">без отклика</button></div>
+        <figcaption><p class="где"><b>107</b> мест из 179 самодельных. На телефоне
+          это единственный признак, что нажатие засчитано.</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Одно значение — 0,96, то, что уже в
+        <code>work.css</code>. Исключение остаётся одно и оно с причиной:
+        плитка-строка со своими кнопками внутри не сжимается никогда
+        (<code>:active</code> достаётся и предкам, и меню внутри строки
+        запиралось среди соседей — 16.08.26).</p>
+    </div>
+  </article>
+
+  <!-- А7 -->
+  <article class="р" id="а7">
+    <div class="р-верх">
+      <span class="р-номер">А7</span>
+      <h3>Область касания на телефоне</h3>
+      <span class="метка" data-м="долг">долг</span>
+    </div>
+    <p class="р-суть">Правило записано: на телефоне всё нажимаемое — минимум
+      44&nbsp;×&nbsp;44. Код ему не следует: <code>.work-btn</code> остаётся 36
+      на любой ширине, круглые кнопки — 28 и 32. Это не выбор между вариантами,
+      это невыполненное правило.</p>
+
+    <div class="варианты по-два">
+      <figure class="в">
+        <div class="сцена лист">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:36px;outline:1px dashed var(--brick);outline-offset:0">
+            <button class="work-btn work-btn--second" style="padding:0 12px">36</button>
+          </span>
+        </div>
+        <figcaption>
+          <span class="в-имя">Сегодня</span>
+          <p class="где">36 на телефоне. До минимума не хватает 8&nbsp;px по
+            высоте.</p>
+        </figcaption>
+      </figure>
+      <figure class="в" data-реко>
+        <div class="сцена лист">
+          <button class="work-btn work-btn--second" style="height:44px">44</button>
+        </div>
+        <figcaption>
+          <span class="в-имя">Под 1024</span>
+          <p class="где">Одно правило в <code>work.css</code> — и расходится на
+            все 65 системных кнопок разом. Остальные 179 придётся трогать
+            руками, пока они самодельные.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Закрыть долг там же, где он описан, — в
+        <code>work.css</code>, одним правилом под 1024. Рост кнопки на
+        компьютере не меняется: 36 остаётся 36, и ряды не разъезжаются.</p>
+    </div>
+  </article>
+</section>
+
+<!-- ─── ТИПОГРАФИКА ──────────────────────────────────────────── -->
+
+<section class="раздел" id="типографика">
+  <div class="черта"><b>Б</b> Типографика</div>
+  <h2>Лестницы нет,<br>поэтому её собирают заново</h2>
+
+  <p>Токенов размера в продукте не существует: в <code>globals.css</code> заданы
+    только шрифты. Поэтому каждый экран выбирает кегль сам, и в кабинете их
+    сегодня девять. В <code>work.css</code> при этом записано, что кеглей
+    три — 12, 13 и 15. Самый частый размер кабинета — четырнадцатый, которого
+    в этой тройке нет.</p>
+
+  <div style="margin:18px 0 0">
+    <div class="полоса" data-свой><span>14&nbsp;px</span><u style="width:100%"></u><i>198</i></div>
+    <div class="полоса"><span>13&nbsp;px</span><u style="width:37%"></u><i>73</i></div>
+    <div class="полоса"><span>12&nbsp;px</span><u style="width:24%"></u><i>47</i></div>
+    <div class="полоса"><span>15&nbsp;px</span><u style="width:12%"></u><i>24</i></div>
+    <div class="полоса"><span>18&nbsp;px</span><u style="width:11%"></u><i>22</i></div>
+    <div class="полоса" data-свой><span>20–36&nbsp;px</span><u style="width:8%"></u><i>16</i></div>
+  </div>
+  <p style="margin-top:10px;font-size:12px;color:var(--muted-foreground)">Строки
+    кода в <code>app/app/</code> и <code>app/(work)/</code>, где встречается
+    размер. Оранжевым — то, чего в утверждённой тройке нет.</p>
+
+  <!-- Б1 -->
+  <article class="р" id="б1">
+    <div class="р-верх">
+      <span class="р-номер">Б1</span>
+      <h3>Заголовок экрана</h3>
+      <span class="метка" data-м="выбор">нужен твой выбор</span>
+    </div>
+    <p class="р-суть">Семь экранов кабинета, два взаимоисключающих решения.
+      Три экрана носят плакат — его ты видишь на снимке как «ЛОГ ВРЕМЕНИ».
+      Четыре — строчку в восемнадцатом кегле, в полтора раза мельче, чем
+      заголовок раздела внутри карточки.</p>
+
+    <div class="варианты по-два">
+      <figure class="в" data-реко>
+        <div class="сцена лист столбик">
+          <h4 class="о-плакат">Лог времени</h4>
+          <p style="margin:8px 0 0;font-size:14px;color:var(--ink-soft)">Ваши
+            спикеры: где кто идёт и сколько времени оказано за месяц</p>
+        </div>
+        <figcaption>
+          <span class="в-имя">Плакат — <code>.work-title</code></span>
+          <dl class="мет">
+            <div><dt>кегль</dt><dd>30 → 36</dd></div>
+            <div><dt>вес</dt><dd>900</dd></div>
+            <div><dt>шрифт</dt><dd>Onest</dd></div>
+          </dl>
+          <p class="где"><b>3</b> экрана. <code>work-top.tsx:64</code>,
+            <code>gigs-screen.tsx:218</code>, <code>gig-screen.tsx:174</code>.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в">
+        <div class="сцена лист столбик">
+          <h4 class="о-мелкий-заголовок">Рабочее время</h4>
+          <p style="margin:8px 0 0;font-size:14px;color:var(--ink-soft)">Когда вы
+            готовы встречаться со спикерами</p>
+        </div>
+        <figcaption>
+          <span class="в-имя">Строчка — <code>font-display text-lg</code></span>
+          <dl class="мет">
+            <div><dt>кегль</dt><dd>18</dd></div>
+            <div><dt>вес</dt><dd>800</dd></div>
+            <div><dt>шрифт</dt><dd>Onest</dd></div>
+          </dl>
+          <p class="где"><b>4</b> экрана. Настройки, Рабочее время, Аналитика,
+            Календари — <code>settings-screen.tsx:162</code> и соседние.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Плакат на всех экранах верхнего уровня — тех, что
+        стоят в колонке слева. Сегодня «Лог времени» носит плакат, а «Аналитика»
+        рядом с ним в той же колонке — строчку, и экран читается как чужой.</p>
+      <p>Что решаешь ты: <b>плакат на телефоне</b>. Он съедает 60–70&nbsp;px
+        первого экрана, а их там всего 812. Три ответа, все рабочие:</p>
+      <ul>
+        <li>оставить как есть, плакат уменьшается до 30;</li>
+        <li>на телефоне плакат уезжает в шапку строкой и исчезает при
+          прокрутке — как делает «Лог времени» сейчас в панели;</li>
+        <li>плакат только там, где экран начинается с цифр (лог, аналитика), а
+          на экранах-списках — строчка.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- Б2 -->
+  <article class="р" id="б2">
+    <div class="р-верх">
+      <span class="р-номер">Б2</span>
+      <h3>Заголовок раздела внутри экрана</h3>
+      <span class="метка" data-м="предлагаю">предлагаю</span>
+    </div>
+    <p class="р-суть">Карточка выступления собрана безупречно: разделы
+      «ВСТРЕЧИ», «ОБРАТНАЯ СВЯЗЬ», «СТОИМОСТЬ» — один класс, один кегль,
+      прописные. Ровно это на твоих снимках. Беда в соседях: в аккаунте,
+      качестве и приглашениях то же место занято ещё тремя решениями.</p>
+
+    <div class="варианты">
+      <figure class="в" data-реко>
+        <div class="сцена лист столбик">
+          <h4 class="work-title" style="font-size:18px;margin:0">Встречи</h4>
+        </div>
+        <figcaption>
+          <span class="в-имя"><code>.work-title</code> 18</span>
+          <p class="где"><b>5</b> разделов карточки.
+            <code>gig-screen.tsx:1447</code> и далее.</p>
+        </figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист столбик">
+          <h4 style="font-family:var(--font-sans);font-weight:600;font-size:16px;margin:0">Встречи</h4>
+        </div>
+        <figcaption>
+          <span class="в-имя">Без кегля, вес 600</span>
+          <p class="где"><b>13</b> мест. <code>account-screen.tsx:228</code>.
+            Размер наследуется от родителя — то есть разный.</p>
+        </figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист столбик">
+          <h4 class="о-мелкий-заголовок">Встречи</h4>
+        </div>
+        <figcaption>
+          <span class="в-имя">Onest 18, вес 800</span>
+          <p class="где"><b>6</b> мест. Тот же кегль, что у заголовка экрана
+            в Б1, — раздел и экран неразличимы.</p>
+        </figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист столбик">
+          <h4 style="font-family:var(--font-sans);font-size:18px;margin:0">Встречи</h4>
+        </div>
+        <figcaption>
+          <span class="в-имя">18 без веса</span>
+          <p class="где"><b>6</b> мест. Заголовок весом 400 — это уже не
+            заголовок.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Решение карточки выступления — на все экраны:
+        <code>.work-title</code>, кегль 18, прописные. Оно уже прошло твою
+        приёмку глазами: это те самые «ВСТРЕЧИ» и «СТОИМОСТЬ», которые ты
+        прислал как работающий экран.</p>
+    </div>
+  </article>
+
+  <!-- Б3 -->
+  <article class="р" id="б3">
+    <div class="р-верх">
+      <span class="р-номер">Б3</span>
+      <h3>Подпись-ярлык</h3>
+      <span class="метка" data-м="предлагаю">предлагаю</span>
+    </div>
+    <p class="р-суть">«ТЕЛЕГРАМ», «МЕРОПРИЯТИЕ», «КТО ПЛАТИТ» — две системы в
+      одном продукте, и отличаются они разрядкой: 0,14&nbsp;em против 0,025. На
+      глаз это разница между «подписью» и «просто мелким текстом».</p>
+
+    <div class="варианты по-два">
+      <figure class="в" data-реко>
+        <div class="сцена лист столбик">
+          <span class="work-label">Мероприятие</span>
+          <span style="font-size:15px">Подписка · Ecom.tech</span>
+        </div>
+        <figcaption>
+          <span class="в-имя"><code>.work-label</code></span>
+          <dl class="мет">
+            <div><dt>кегль</dt><dd>12</dd></div>
+            <div><dt>вес</dt><dd>700</dd></div>
+            <div><dt>разрядка</dt><dd>0,14</dd></div>
+          </dl>
+          <p class="где"><b>67</b> мест.</p>
+        </figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист столбик">
+          <span class="о-подпись-своя">Мероприятие</span>
+          <span style="font-size:15px">Подписка · Ecom.tech</span>
+        </div>
+        <figcaption>
+          <span class="в-имя">Своя — <code>text-xs … uppercase</code></span>
+          <dl class="мет">
+            <div><dt>кегль</dt><dd>12</dd></div>
+            <div><dt>вес</dt><dd>600</dd></div>
+            <div><dt>разрядка</dt><dd>0,025</dd></div>
+          </dl>
+          <p class="где"><b>13</b> мест, в основном шапки таблиц.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> <code>.work-label</code> везде, включая шапки таблиц.
+        Равнозначного выбора тут нет: один вариант встречается в пять раз чаще,
+        описан и уже стоит на экранах, которые ты принял.</p>
+    </div>
+  </article>
+
+  <!-- Б4 -->
+  <article class="р" id="б4">
+    <div class="р-верх">
+      <span class="р-номер">Б4</span>
+      <h3>Лестница кеглей</h3>
+      <span class="метка" data-м="выбор">нужен твой выбор</span>
+    </div>
+    <p class="р-суть">Главный корень всей правки. Пока размер пишется числом на
+      экране, «сделать текст на полпункта крупнее» — это 198 правок вручную.
+      Лестница с именами делает это одной.</p>
+
+    <div class="варианты по-два">
+      <figure class="в">
+        <div class="сцена лист столбик">
+          <div class="лестница">
+            <div><b>12</b><span class="work-label">подпись</span></div>
+            <div><b>13</b><span style="font-size:13px">кнопки, чипы, служебное</span></div>
+            <div><b>14</b><span style="font-size:14px;color:var(--brick)">198 строк — лишний</span></div>
+            <div><b>15</b><span style="font-size:15px">основной текст</span></div>
+            <div><b>17</b><span style="font-size:17px;color:var(--brick)">одиночный — лишний</span></div>
+            <div><b>18</b><span class="work-title" style="font-size:18px">раздел</span></div>
+            <div><b>20–36</b><span class="work-title" style="font-size:22px">экран</span></div>
+          </div>
+        </div>
+        <figcaption>
+          <span class="в-имя">Сегодня в кабинете</span>
+          <p class="где">Девять кеглей при трёх утверждённых. Лишние —
+            кирпичным.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="в" data-реко>
+        <div class="сцена лист столбик">
+          <div class="лестница">
+            <div><b>12</b><span class="work-label">подпись</span></div>
+            <div><b>13</b><span style="font-size:13px">служебное, кнопки, чипы</span></div>
+            <div><b>15</b><span style="font-size:15px">основной текст и поля</span></div>
+            <div><b>18</b><span class="work-title" style="font-size:18px">раздел</span></div>
+            <div><b>30</b><span class="work-title" style="font-size:30px">экран</span></div>
+          </div>
+        </div>
+        <figcaption>
+          <span class="в-имя">Предлагаю: пять ступеней</span>
+          <p class="где">Три рабочих кегля — те самые утверждённые 12, 13, 15 —
+            и два плакатных. Четырнадцатый уходит в пятнадцатый, семнадцатый —
+            в восемнадцатый.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Предлагаю.</b> Назвать ступени токенами в <code>globals.css</code>
+        — <code>--кегль-подпись</code>, <code>--кегль-служебный</code>,
+        <code>--кегль-текст</code>, <code>--кегль-раздел</code>,
+        <code>--кегль-экран</code> — и запретить голые числа проверкой.
+        Тогда правка кегля — одна строка на весь продукт.</p>
+      <p>Что решаешь ты: <b>основной текст кабинета — 14 или 15</b>. Разница
+        мелкая на вид и крупная по работе.</p>
+      <ul>
+        <li><b>15</b> — то, что записано и что стоит на карточке выступления.
+          Крупнее, спокойнее, меньше влезает в строку таблицы;</li>
+        <li><b>14</b> — то, что по факту победило в коде: 198 строк против 24.
+          Плотнее, больше данных на экран, но это признание того, что правило
+          не соблюдалось.</li>
+      </ul>
+      <p>Я бы взял 15 и чинил 198 строк постепенно, по мере работы над каждым
+        разделом, — но это ровно тот выбор, который не мой.</p>
+    </div>
+  </article>
+
+  <!-- Б5 -->
+  <article class="р" id="б5">
+    <div class="р-верх">
+      <span class="р-номер">Б5</span>
+      <h3>Числа</h3>
+      <span class="метка" data-м="утверждено">утверждено</span>
+    </div>
+    <p class="р-суть">Плакатные числа — часы, суммы, «3 из 5» — живут классом
+      <code>.work-num</code> и всегда моноширинными цифрами: иначе счётчик
+      дёргается при обновлении. 25 мест, расхождений два, оба мелкие.</p>
+
+    <div class="варианты по-два">
+      <figure class="в" data-реко>
+        <div class="сцена лист столбик">
+          <span class="work-num" style="font-size:38px">72</span>
+          <span class="work-label" style="margin-top:4px">спикеров</span>
+        </div>
+        <figcaption>
+          <span class="в-имя"><code>.work-num</code></span>
+          <p class="где"><b>25</b> мест. То, что на снимке лога: 72, 0&nbsp;₽.</p>
+        </figcaption>
+      </figure>
+      <figure class="в">
+        <div class="сцена лист столбик">
+          <span style="font-family:var(--font-onest);font-weight:800;font-size:18px;font-variant-numeric:tabular-nums">23,5 ч</span>
+          <span class="work-label" style="margin-top:4px">за месяц</span>
+        </div>
+        <figcaption>
+          <span class="в-имя">Своё — 18, вес 800</span>
+          <p class="где"><b>2</b> места. Не плакат, а строка: здесь это
+            уместно, но написано мимо класса.</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="реко">
+      <p><b>Ничего не меняю.</b> Нужен второй, строчный размер того же класса —
+        <code>.work-num--строка</code>, — чтобы два места перестали писать
+        своё.</p>
+    </div>
+  </article>
+</section>
+
+<!-- ─── УТВЕРЖДЕНО ───────────────────────────────────────────── -->
+
+<section class="раздел" id="утверждено">
+  <div class="черта"><b>В</b> Не трогаем</div>
+  <h2>Решения с причиной<br>и датой</h2>
+
+  <p>Это не предложения — это то, что уже стоит в коде и в своде, с записанным
+    случаем, из которого выросло. Включено в сверку, чтобы при уборке
+    случайно не отменить.</p>
+
+  <div class="обёртка-таблицы">
+    <table class="св-таблица">
+      <thead>
+        <tr><th>Решение</th><th>Почему</th><th>Когда</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Высота кнопки 36, а не лестница 40/44/48</td>
+          <td>Главную отличает краска, а не размер. Раньше 48 делали её выше
+            всех соседей в ряду.</td>
+          <td>03.09.26</td>
+        </tr>
+        <tr>
+          <td>Четыре вида кнопки, больше не заводим</td>
+          <td>main, second, soft, quiet. Пятый вид появляется там, где не
+            разобрались со смыслом.</td>
+          <td>work.css</td>
+        </tr>
+        <tr>
+          <td>Кнопка в ряду с полями — 40</td>
+          <td>Внутри ряда высоты обязаны совпадать; поле в бюро — сорок.</td>
+          <td>03.09.26</td>
+        </tr>
+        <tr>
+          <td>Отклик один на всё: фон плотнее</td>
+          <td>Не сдвиг, не тень, не рамка: сдвиг читается как скачок, рамка
+            двигает соседей.</td>
+          <td>work.css</td>
+        </tr>
+        <tr>
+          <td>Плитка-строка со своими кнопками не сжимается</td>
+          <td><code>:active</code> достаётся предкам: меню внутри строки
+            запиралось среди соседей, выбор не срабатывал вовсе.</td>
+          <td>16.08.26</td>
+        </tr>
+        <tr>
+          <td>Подложка мягкой кнопки — на ступень плотнее листа</td>
+          <td>В тон было почти невидимо: пять кнопок карточки читались текстом
+            с иконкой.</td>
+          <td>25.08.26</td>
+        </tr>
+        <tr>
+          <td>Обрезанный плакат с запасом по вертикали</td>
+          <td>Строка в 0,9 кегля режет точки у Ё и бреве у Й: «Ё-ТАКСИ»
+            читалось «Е-ТАКСИ».</td>
+          <td>03.09.26</td>
+        </tr>
+        <tr>
+          <td>Открытая пилюля — цветом буквы, не подложкой</td>
+          <td>Чёрная читалась как главное действие карточки, хотя это
+            переключатель.</td>
+          <td>03.09.26</td>
+        </tr>
+        <tr>
+          <td>Цвет как код состояния: солнечный, лаймовый, кирпичный</td>
+          <td>Этап и беда. Придумывать новые смыслы существующим нельзя.</td>
+          <td>work.css</td>
+        </tr>
+        <tr>
+          <td>Полос прокрутки в рабочей среде не видно</td>
+          <td>Правило ветки; держится самим <code>.work</code>.</td>
+          <td>work.css</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─── ВОПРОСЫ ──────────────────────────────────────────────── -->
+
+<section class="раздел" id="вопросы">
+  <div class="черта"><b>Г</b> Решить тебе</div>
+  <h2>Четыре вопроса,<br>остальное беру на себя</h2>
+
+  <p>Всё прочее на этой странице я готов собрать без тебя: там расхождения, у
+    которых нет равнозначных ответов. Эти четыре — про вкус и про облик, и
+    ответ на них меняет то, как продукт выглядит.</p>
+
+  <div class="вопрос">
+    <h3>1. Главное действие — чёрное или оранжевое?</h3>
+    <p>Сегодня в кабинете чёрное, в публичных экранах оранжевое, а в своде
+      написано, что главное — оранжевое. Врёт что-то одно.</p>
+    <ol>
+      <li><b>Чёрное главное, оранжевый — краска внимания.</b> Меняются имена
+        классов и шесть публичных кнопок. Кабинет не трогаем. <i>Моё
+        предложение.</i></li>
+      <li><b>Оранжевое главное везде.</b> Меняются 32 места в кабинете; экраны
+        станут заметно ярче. Это уже смена облика, а не уборка.</li>
+      <li><b>Оранжевая — последняя кнопка сценария</b> («Записаться»,
+        «Отправить бриф»), чёрная — везде ещё. Правило тонкое, его придётся
+        объяснять каждому новому экрану.</li>
+    </ol>
+  </div>
+
+  <div class="вопрос">
+    <h3>2. Плакат на телефоне — оставить, спрятать или по типу экрана?</h3>
+    <p>Заголовок-плакат съедает 60–70&nbsp;px из 812. Он же — главный приём, по
+      которому рабочую среду узнают.</p>
+    <ol>
+      <li><b>Оставить, уменьшив до 30.</b> Узнаваемость дороже экрана.
+        <i>Моё предложение.</i></li>
+      <li><b>Уводить в шапку строкой при прокрутке.</b> Красиво, но это новый
+        приём, которого в продукте нет, — и его придётся держать на всех
+        экранах.</li>
+      <li><b>Плакат только там, где экран начинается с цифр.</b> Лог и
+        аналитика — плакат, списки — строчка.</li>
+    </ol>
+  </div>
+
+  <div class="вопрос">
+    <h3>3. Основной текст кабинета — 14 или 15?</h3>
+    <p>Записано 15, в коде победило 14 (198 строк против 24).</p>
+    <ol>
+      <li><b>15, чиним постепенно.</b> Спокойнее, читается лучше, меньше влезает
+        в строку таблицы. <i>Моё предложение.</i></li>
+      <li><b>14, узакониваем сложившееся.</b> Плотнее, больше данных на экран,
+        править почти нечего — но тогда признаём, что записанное правило
+        проиграло коду, и это прецедент.</li>
+    </ol>
+  </div>
+
+  <div class="вопрос">
+    <h3>4. Куда это внедряем первым?</h3>
+    <p>Единый стандарт можно вводить по-разному, и это решение про риск.</p>
+    <ol>
+      <li><b>Сначала кабинет</b> (<code>/app</code>, <code>/log</code>,
+        карточка выступления): там 65 системных кнопок, правка расходится сама,
+        а видишь результат ты первым. <i>Моё предложение.</i></li>
+      <li><b>Сначала публичные экраны</b> — их видят клиенты, но там всё
+        самодельное, и это ручная работа без рычага.</li>
+      <li><b>Только «Глагол 2.0», продукты не трогаем.</b> Безопаснее всего, но
+        расхождение между продуктами останется и будет расти.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─── АРХИТЕКТУРА ──────────────────────────────────────────── -->
+
+<section class="раздел" id="архитектура">
+  <div class="черта"><b>Д</b> Чтобы правка расходилась сама</div>
+  <h2>Четыре слоя,<br>и ни одного числа на экране</h2>
+
+  <p>Главный критерий, который ты назвал: правка общего правила должна
+    применяться ко всем подходящим экранам без ручного обхода. Сегодня она не
+    применяется, и причина не в лени, а в устройстве: <b>значение живёт на
+    экране</b>. 180 написаний кнопки — это 180 мест, где значение было решено
+    заново.</p>
+
+  <div class="обёртка-таблицы">
+    <table class="св-таблица">
+      <thead>
+        <tr><th>Слой</th><th>Что в нём живёт</th><th>Правка расходится</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1. Токены<br><code>app/globals.css</code></td>
+          <td>Краски и — чего сегодня нет — пять кеглей и высоты с именами.</td>
+          <td>На весь продукт, включая самодельное.</td>
+        </tr>
+        <tr>
+          <td>2. Классы ветки<br><code>app/work.css</code></td>
+          <td>Кнопка, чип, подпись, плакат, плитка. Поведение и отклик.</td>
+          <td>На всё, что написано классом. Сегодня это 86 кнопок из 265.</td>
+        </tr>
+        <tr>
+          <td>3. Компонент<br><code>components/ui/</code></td>
+          <td><code>&lt;Кнопка вид="главная"&gt;</code> вместо строки классов.
+            Занятость, область касания, иконка, доступность.</td>
+          <td>На всё, что через него написано. Сейчас таких мест почти нет.</td>
+        </tr>
+        <tr>
+          <td>4. Проверки<br><code>ui-guard</code>, атлас</td>
+          <td>Запрет на самодельную кнопку, кегль вне лестницы, своё сжатие.</td>
+          <td>Не даёт развалиться обратно.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="margin-top:20px"><b>Чего не хватает прямо сейчас — по порядку
+    важности.</b></p>
+
+  <div class="вопрос" style="border-left-color:var(--border)">
+    <h3>Токенов размера нет вовсе</h3>
+    <p>В <code>globals.css</code> заданы только шрифты. Это и есть причина
+      девяти кеглей: назвать размер нечем, поэтому его пишут числом. Пять
+      токенов — самая дешёвая правка на этой странице и самая действенная.</p>
+  </div>
+
+  <div class="вопрос" style="border-left-color:var(--border)">
+    <h3>Компонента кнопки нет, а место под него есть</h3>
+    <p><code>components/ui/button.tsx</code> стоит в обоих репозиториях и
+      используется четыре раза. Его мерки чужие — 32&nbsp;px, скругление 12,
+      вес 500, — и как есть он не подходит. Но устройство у него правильное:
+      варианты через <code>cva</code>, подмена тега через <code>asChild</code>,
+      состояния через <code>data-</code>. Предлагаю оставить устройство,
+      заменить варианты на четыре наших и размеры на наши два. Это не новая
+      библиотека — это уже установленный файл.</p>
+  </div>
+
+  <div class="вопрос" style="border-left-color:var(--border)">
+    <h3>Проверка ловит причину, браузер — следствие</h3>
+    <p><code>ui-guard</code> умеет запрещать по тексту кода. Три правила
+      закрывают три трети этой страницы: <code>&lt;button&gt;</code> с
+      <code>h-</code> и <code>rounded-full</code> вне
+      <code>components/ui/</code>; кегль числом вне лестницы;
+      <code>active:scale-</code> со своим значением. Атлас потом показывает,
+      что именно изменилось на экранах, — но первым должен сработать запрет,
+      иначе через месяц здесь будет сто восемьдесят первое написание.</p>
+  </div>
+
+  <div class="вопрос" style="border-left-color:var(--border)">
+    <h3>Общие и экранные — не одно и то же</h3>
+    <p>В библиотеку идут только кнопка, подпись, чип, плакат, поле, круглая
+      кнопка и плитка-строка — семь штук, всё остальное остаётся вёрсткой
+      экрана. Панель карточки спикера, ряд отборов лога, лента выступлений —
+      это предметные приёмы «Глагола», и превращать их в компоненты рано:
+      компонент из одного места применения — это просто файл подальше от
+      глаз.</p>
+  </div>
+</section>
+
+<footer class="св-подвал">
+  <p><b>Что сделано и чего не сделано.</b> Эта страница — только разбор.
+    Продукт, токены, общие компоненты и правила не тронуты; версия системы не
+    поднята; концепции A, B и C лежат отдельно и ни один их элемент сюда не
+    перенесён. Данные на образцах выдуманные.</p>
+  <p>Источники: <code>app/globals.css</code> и <code>app/work.css</code>
+    календаря (вынуты сборкой, не скопированы), 265&nbsp;кнопок и
+    заголовки экранов — разбором кода <code>glagol-calendar</code>,
+    <code>glagol-vitrina</code>, <code>glagol-hub</code>; снимки работающих
+    экранов <code>calendar.glagol.me</code> — твои от 01.11.2026.</p>
+  <p>Бюро&nbsp;2.0 · сессия&nbsp;4 · шаг&nbsp;1 из&nbsp;6: кнопки и типографика.
+    Дальше по твоему порядку — формы, навигация, списки, панели, состояния,
+    адаптивность.</p>
+</footer>
+
+</div>
