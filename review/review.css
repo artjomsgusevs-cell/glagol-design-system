@@ -1,0 +1,802 @@
+/*
+ * Обстановка страницы сверки: сетка, карточки расхождений, подписи.
+ *
+ * Здесь нет ни одного цвета числом — всё из токенов продукта (tokens.css) и
+ * красок рабочей среды (work.css). Образцы интерфейса этот файл не красит:
+ * системные образцы рисует настоящий work.css, самодельные — классы `.о-*`,
+ * собранные ниже по классам Tailwind из кода. Смешивать нельзя: если обстановка
+ * начнёт подкрашивать образцы, страница перестанет быть сверкой.
+ */
+
+/* ── Лист ─────────────────────────────────────────────────────────── */
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/*
+ * Сброс кнопки. В продукте его делает preflight Tailwind, здесь Tailwind нет —
+ * и браузер рисовал кнопкам свою рамку `2px outset`. На снимках `.work-btn`
+ * выглядела обведённой, хотя в проде обводки нет, и Артём 01.11.26 выбрал
+ * вариант главного действия по этой несуществующей рамке. Это ровно та цена,
+ * которую платит витрина, когда врёт о продукте: решение принимается по ней.
+ */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
+/* Кольцо наводки. Своего у браузера синее, к бюро отношения не имеющее, и на
+   этой странице оно врёт о продукте ровно так же, как врала рамка кнопки.
+   Берём фирменный оранжевый: кольцо остаётся видимым — убирать его нельзя,
+   клавиатурой по странице ходят. */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.св {
+  --поле: max(16px, env(safe-area-inset-left));
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 var(--поле) 120px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.св p {
+  margin: 0 0 12px;
+  max-width: 68ch;
+}
+.св p:last-child {
+  margin-bottom: 0;
+}
+
+.св code {
+  font-family: var(--font-mono, ui-monospace, Menlo, monospace);
+  font-size: 0.86em;
+  background: var(--muted);
+  border-radius: 5px;
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+
+.св b,
+.св strong {
+  font-weight: 700;
+}
+
+/* ── Верхняя полоса ───────────────────────────────────────────────── */
+
+.св-верх {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin: 0 calc(-1 * var(--поле));
+  padding: 10px max(16px, env(safe-area-inset-left));
+  background: color-mix(in oklab, var(--background) 86%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.св-знак {
+  font-family: var(--font-onest);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: 14px;
+  margin-right: auto;
+}
+.св-знак i {
+  font-style: normal;
+  color: var(--primary);
+}
+
+.св-тумблер {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.св-тумблер button {
+  font: inherit;
+  font-weight: 700;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.св-тумблер button[aria-pressed="true"] {
+  background: var(--foreground);
+  border-color: var(--foreground);
+  color: var(--background);
+}
+
+/* ── Шапка ────────────────────────────────────────────────────────── */
+
+.св-шапка {
+  padding: 56px 0 36px;
+  border-bottom: 1px solid var(--border);
+}
+.св-шапка h1 {
+  font-family: var(--font-onest);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  font-size: clamp(34px, 9vw, 64px);
+  margin: 0 0 14px;
+}
+.св-шапка .лид {
+  font-size: 17px;
+  max-width: 62ch;
+}
+
+.счёт {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  margin-top: 28px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 1.2);
+  overflow: hidden;
+}
+.счёт > div {
+  background: var(--card);
+  padding: 16px 18px;
+}
+.счёт dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-bottom: 6px;
+}
+.счёт dd {
+  margin: 0;
+  font-family: var(--font-onest);
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.счёт small {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+/* ── Оглавление ───────────────────────────────────────────────────── */
+
+.св-оглавление {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 20px 0 0;
+}
+.св-оглавление a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: inherit;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+.св-оглавление a:hover {
+  background: var(--muted);
+}
+
+/* ── Раздел ───────────────────────────────────────────────────────── */
+
+.раздел {
+  padding-top: 64px;
+  scroll-margin-top: 64px;
+}
+.раздел > h2 {
+  font-family: var(--font-onest);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  font-size: clamp(26px, 5.5vw, 38px);
+  margin: 0 0 14px;
+}
+.черта {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-bottom: 14px;
+}
+.черта::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.черта b {
+  color: var(--primary);
+}
+
+/* ── Карточка расхождения ─────────────────────────────────────────── */
+
+.р {
+  margin-top: 28px;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 1.4);
+  background: var(--card);
+  overflow: hidden;
+  scroll-margin-top: 72px;
+}
+
+.р-верх {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 18px 20px 0;
+}
+.р-номер {
+  font-family: var(--font-onest);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--primary);
+}
+.р-верх h3 {
+  font-family: var(--font-onest);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-size: 19px;
+  line-height: 1.1;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.метка {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.метка[data-м="выбор"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.метка[data-м="предлагаю"] {
+  background: color-mix(in oklab, var(--foreground) 10%, var(--card));
+  color: var(--foreground);
+}
+.метка[data-м="решено"] {
+  background: var(--foreground);
+  color: var(--background);
+}
+.метка[data-м="утверждено"] {
+  background: color-mix(in oklab, var(--lime, #c2d86b) 40%, var(--card));
+  color: var(--foreground);
+}
+.метка[data-м="долг"] {
+  background: color-mix(in oklab, var(--brick, #c8503a) 22%, var(--card));
+  color: var(--foreground);
+}
+
+.р-суть {
+  padding: 10px 20px 0;
+}
+
+/* Полка вариантов. Каждый вариант — живой образец и его мерка. */
+.варианты {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1px;
+  margin: 18px 0 0;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+.варианты.по-два {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.в {
+  margin: 0;
+  background: var(--card);
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+.в[data-реко] {
+  background: color-mix(in oklab, var(--primary) 7%, var(--card));
+}
+.в[data-реко]::before {
+  content: "предлагаю";
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-bottom-left-radius: 10px;
+}
+
+/* Сцена: подложка, на которой элемент живёт в продукте. */
+.сцена {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-height: 76px;
+  padding: 14px;
+  border-radius: calc(var(--radius) * 0.9);
+  background: var(--background);
+  border: 1px dashed var(--border);
+}
+.сцена.столбик {
+  flex-direction: column;
+  align-items: stretch;
+}
+.сцена.лист {
+  background: var(--card);
+}
+/* Проверка на телефонной ширине, не уходя с компьютера. */
+[data-сцена="375"] .сцена {
+  max-width: 343px;
+}
+
+.в figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.в-имя {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.мет {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.мет > div {
+  display: flex;
+  gap: 5px;
+}
+.мет dt {
+  color: var(--muted-foreground);
+}
+.мет dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.где {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.где code {
+  background: transparent;
+  padding: 0;
+  white-space: normal;
+}
+.где b {
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Рекомендация — единственное место карточки, где говорю я. */
+.реко {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  font-size: 14px;
+}
+.реко > :first-child {
+  margin-top: 0;
+}
+.реко b:first-child {
+  color: var(--primary);
+}
+.реко ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+.реко li {
+  margin-bottom: 5px;
+}
+
+/* ── Вопросы ──────────────────────────────────────────────────────── */
+
+.вопрос {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: calc(var(--radius) * 1.2);
+  background: var(--card);
+}
+.вопрос h3 {
+  font-family: var(--font-onest);
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+.вопрос ol {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+.вопрос li {
+  margin-bottom: 6px;
+}
+.вопрос li b {
+  font-weight: 700;
+}
+
+/* ── Таблица ──────────────────────────────────────────────────────── */
+
+.св-таблица {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.св-таблица th,
+.св-таблица td {
+  text-align: left;
+  vertical-align: top;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.св-таблица th {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.св-таблица td:first-child {
+  font-weight: 700;
+}
+.обёртка-таблицы {
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--поле));
+  padding: 0 var(--поле);
+}
+
+/* ── Подвал ───────────────────────────────────────────────────────── */
+
+.св-подвал {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.св-подвал b {
+  color: var(--foreground);
+}
+
+/* ── Образцы, собранные по классам Tailwind из кода ───────────────── */
+/*
+ * Ниже — самодельные кнопки продукта. В коде они написаны строкой утилит
+ * прямо на экране; Tailwind в статической странице нет, поэтому каждая
+ * переведена в CSS один к одному. Числа взяты из той же строки: h-12 → 48,
+ * text-sm → 14, font-semibold → 600. Токены — те же, что в продукте.
+ */
+
+.о {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  border-radius: 999px;
+  transition:
+    background 0.14s ease,
+    color 0.14s ease,
+    transform 0.14s ease;
+}
+.о svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+/* login-form.tsx:129 — h-12 w-full rounded-full bg-foreground font-semibold
+   text-background active:scale-[0.99] */
+.о-вход {
+  height: 48px;
+  width: 100%;
+  padding: 0 24px;
+  font-size: 16px;
+  font-weight: 600;
+  background: var(--foreground);
+  color: var(--background);
+}
+.о-вход:active {
+  transform: scale(0.99);
+}
+
+/* account-screen.tsx:161 — h-11 rounded-full bg-primary px-5 text-sm
+   font-semibold text-primary-foreground active:scale-95 */
+.о-аккаунт {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.о-аккаунт:active {
+  transform: scale(0.95);
+}
+
+/* manage-booking.tsx:408 — h-12 rounded-full bg-accent font-semibold
+   hover:bg-accent/70 active:scale-95 */
+.о-бронь {
+  height: 48px;
+  padding: 0 24px;
+  font-size: 16px;
+  font-weight: 600;
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+.о-бронь:active {
+  transform: scale(0.95);
+}
+
+/* log-screen.tsx:192 — h-9 rounded-full px-4 text-[13px] font-bold */
+.о-отбор {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+/* Круглые кнопки-иконки, четыре роста из кода. */
+.о-кружок {
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+  color: var(--muted-foreground);
+  background: transparent;
+  transition:
+    background 0.14s ease,
+    color 0.14s ease,
+    transform 0.14s ease;
+}
+.о-кружок svg {
+  width: 16px;
+  height: 16px;
+}
+.о-кружок[data-рост="28"] {
+  width: 28px;
+  height: 28px;
+}
+.о-кружок[data-рост="32"] {
+  width: 32px;
+  height: 32px;
+}
+.о-кружок[data-рост="36"] {
+  width: 36px;
+  height: 36px;
+}
+.о-кружок[data-рост="40"] {
+  width: 40px;
+  height: 40px;
+}
+.о-кружок[data-отклик="card"]:hover {
+  background: var(--card);
+  color: var(--foreground);
+}
+.о-кружок[data-отклик="muted"]:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+.о-кружок[data-отклик="accent"]:hover {
+  background: var(--accent);
+  color: var(--foreground);
+}
+.о-кружок[data-отклик="paper"]:hover {
+  background: var(--paper-deep);
+  color: var(--foreground);
+}
+.о-кружок[data-нажатие="95"]:active {
+  transform: scale(0.95);
+}
+.о-кружок[data-нажатие="90"]:active {
+  transform: scale(0.9);
+}
+.о-кружок[data-заливка="muted"] {
+  background: var(--muted);
+}
+
+/* Ссылки-кнопки, как написаны в коде. */
+.о-ссылка {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+.о-ссылка[data-вид="подчёрк"] {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.о-ссылка[data-вид="блёклая"]:hover {
+  opacity: 0.7;
+}
+.о-ссылка[data-вид="строка"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: underline;
+}
+
+/* Заголовки экранов, два решения из кода. */
+.о-плакат {
+  font-family: var(--font-onest);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  font-size: 36px;
+  margin: 0;
+}
+.о-мелкий-заголовок {
+  font-family: var(--font-onest);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.4;
+  margin: 0;
+}
+.о-подпись-своя {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Лестница кеглей — наглядно. */
+.лестница {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.лестница > div {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.лестница b {
+  flex: 0 0 52px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.лестница span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Полоса «сколько раз встречается» — столбик вместо таблицы цифр. */
+.полоса {
+  display: grid;
+  grid-template-columns: 92px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+.полоса i {
+  font-style: normal;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.полоса u {
+  text-decoration: none;
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--foreground) 16%, transparent);
+  display: block;
+}
+.полоса[data-свой] u {
+  background: var(--primary);
+}
+
+/* ── Телефон ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .св {
+    font-size: 15px;
+  }
+  .р-верх h3 {
+    font-size: 17px;
+  }
+  .варианты,
+  .варианты.по-два {
+    grid-template-columns: 1fr;
+  }
+  .св-верх button {
+    min-height: 32px;
+  }
+  /* Переключатель ширины сцен нужен, чтобы посмотреть телефонный вид с
+     компьютера. На самом телефоне он только отнимает треть липкой полосы. */
+  .св-тумблер[data-только-компьютер] {
+    display: none;
+  }
+  .о-плакат {
+    font-size: 30px;
+  }
+  .полоса {
+    grid-template-columns: 78px 1fr auto;
+  }
+}

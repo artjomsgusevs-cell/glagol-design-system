@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Глагол 2.0 · Мастерская</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="work.css">
+<script src="lab.js"></script>
+<style>
+/*
+ * КОНЦЕПЦИЯ B · «Мастерская»
+ *
+ * Композиционная идея одна: разворот рукописи. Широкая полоса — сам доклад,
+ * узкая правая — поля, куда уходит всё, что не текст: замечания, версии,
+ * вес аргумента. Инструменты появляются у абзаца, а не над страницей, поэтому
+ * тулбара здесь нет вовсе.
+ *
+ * Узнаваемый элемент — шкала веса у каждого аргумента: четыре ступени
+ * (не работает / неполно / работает / сильно), та же шкала, по которой
+ * разбирает выступления скилл бюро. Она стоит слева от аргумента вертикально
+ * и читается как отметка на полях.
+ *
+ * Краски, чипы, кнопки, числа — work.css и токены бюро. Своё — раскладка
+ * разворота и шкала веса.
+ */
+* { box-sizing: border-box }
+html, body { margin: 0; padding: 0 }
+/*
+ * Страница концепции — самостоятельный документ, и сброса браузера ей мало:
+ * у элемента с `display: flex` правило UA `[hidden] { display: none }`
+ * перебивается собственным display, и скрытое остаётся на экране. Ровно это и
+ * случилось с фильтром списка в концепции A — снимок показал все четыре
+ * строки вместо двух.
+ */
+[hidden] { display: none !important }
+/*
+ * Сброс кнопки. В продукте его делает preflight Tailwind, здесь Tailwind нет —
+ * и браузер рисовал кнопкам свою рамку `2px outset`: на странице `.work-btn`
+ * выглядела обведённой, хотя в проде обводки нет (01.11.26).
+ */
+button, input, select, textarea { font: inherit; color: inherit }
+button { margin: 0; border: 0; background: transparent }
+body { padding-top: env(safe-area-inset-top, 0px); min-height: 100vh }
+
+.bar {
+  position: sticky; top: 0; z-index: 30;
+  /* Переносится, а не обрезается: на 375 три переключателя темы в одну строку
+     не встают, и последний уезжал под правый край. */
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; padding-block: 8px;
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
+  background: var(--background); border-bottom: 1px solid var(--border); font-size: 12px;
+}
+.bar a { color: var(--muted-foreground); text-decoration: none; font-weight: 600 }
+.bar a:hover { color: var(--foreground) }
+.bar b { font-family: var(--font-onest); font-weight: 900; text-transform: uppercase;
+  letter-spacing: -0.01em; font-size: 13px; margin-right: auto }
+.bar b i { font-style: normal; color: var(--primary) }
+.bar button {
+  appearance: none; border: 1px solid var(--border); background: var(--card);
+  color: var(--muted-foreground); font: inherit; font-size: 11px; font-weight: 700;
+  height: 28px; padding: 0 10px; border-radius: 999px; cursor: pointer;
+}
+.bar button[aria-pressed="true"] { background: var(--foreground); color: var(--background);
+  border-color: var(--foreground) }
+
+/* ── Шапка документа ────────────────────────────────────────────────── */
+.b-pad {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.b-top { border-bottom: 1px solid var(--hairline); padding-block: 18px 0 }
+.b-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap }
+.b-title h1 { margin: 0; font-size: clamp(24px, 6vw, 40px) }
+.b-title .work-chip { flex: 0 0 auto }
+.b-meta {
+  display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px;
+  color: var(--ink-soft); margin-top: 9px;
+}
+.b-meta b { color: var(--ink); font-weight: 700 }
+
+/* Навигация документа — лента разделов, а не колонка: у рукописи разделы
+   идут по длине, а не по сторонам. */
+.b-tabs { display: flex; gap: 2px; margin-top: 16px; overflow-x: auto; scrollbar-width: none }
+.b-tabs::-webkit-scrollbar { display: none }
+.b-tabs a {
+  flex: 0 0 auto; height: 40px; display: inline-flex; align-items: center;
+  padding: 0 14px; text-decoration: none; font-size: 13px; font-weight: 600;
+  color: var(--ink-soft); border-bottom: 2px solid transparent;
+}
+.b-tabs a:hover { color: var(--ink) }
+.b-tabs a[aria-current="page"] { color: var(--ink); font-weight: 800; border-bottom-color: var(--flame) }
+
+/* ── Разворот ───────────────────────────────────────────────────────── */
+.b-spread { display: grid; gap: 0; padding-bottom: 96px }
+@media (min-width: 1024px) {
+  .b-spread {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 40px; padding-bottom: 48px;
+  }
+  .b-margin { border-left: 1px solid var(--hairline); padding-left: 24px }
+}
+
+.b-measure { min-width: 0; padding-block: 24px; max-width: 68ch }
+
+.b-block { padding: 0 0 4px }
+.b-block + .b-block { margin-top: 26px }
+.b-block > h2 {
+  font-family: var(--font-onest); font-weight: 900; font-size: 13px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft);
+  margin: 0 0 10px; display: flex; align-items: baseline; gap: 9px;
+}
+.b-block > h2 em { font-style: normal; color: var(--flame); font-variant-numeric: tabular-nums }
+@media (max-width: 1023px) { .b-block > h2 .work-label { display: none } }
+.b-block p { margin: 0 0 11px; font-size: 15px; line-height: 1.62 }
+
+/*
+ * Аргумент. Шкала веса слева, текст в меру строки. Нажатие выбирает аргумент:
+ * на полях показываются именно его замечания — так связь «абзац — замечание»
+ * видна без выносок и линий, которые на телефоне всё равно не нарисовать.
+ */
+.b-arg {
+  display: flex; gap: 14px; align-items: stretch; width: 100%; text-align: left;
+  appearance: none; border: 0; background: transparent; font: inherit; cursor: pointer;
+  padding: 12px 14px 12px 10px; border-radius: 18px; color: inherit;
+}
+.b-arg + .b-arg { margin-top: 4px }
+.b-arg:hover { background: color-mix(in oklab, var(--accent) 25%, transparent) }
+.b-arg[aria-pressed="true"] { background: color-mix(in oklab, var(--accent) 42%, transparent) }
+.b-arg .gauge {
+  flex: 0 0 5px; width: 5px; border-radius: 999px; display: flex; flex-direction: column-reverse;
+  gap: 2px; min-height: 52px;
+}
+.b-arg .gauge i {
+  flex: 1; border-radius: 999px;
+  background: color-mix(in oklab, var(--ink) 13%, transparent);
+}
+.b-arg .gauge i[data-on="true"] { background: var(--flame) }
+.b-arg[data-weight="0"] .gauge i[data-on="true"] { background: var(--brick) }
+.b-arg[data-weight="1"] .gauge i[data-on="true"] { background: var(--sun) }
+.b-arg[data-weight="3"] .gauge i[data-on="true"] { background: var(--lime) }
+.b-arg .txt { min-width: 0; flex: 1 }
+.b-arg .txt .t { font-size: 15px; line-height: 1.55 }
+.b-arg .txt .u {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-soft); margin-top: 7px;
+}
+
+/* Поля. На телефоне полей нет — замечания раскрываются под выбранным
+   аргументом, потому что узкая колонка рядом на 375 просто не живёт. */
+.b-margin { padding-block: 24px; min-width: 0 }
+.b-note-head {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-soft); margin-bottom: 11px;
+}
+.b-note { padding: 14px }
+.b-note .who { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700 }
+.b-note .who i {
+  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px;
+  background: var(--paper-deep); font-style: normal; font-size: 10px; font-weight: 800;
+}
+.b-note p { margin: 9px 0 0; font-size: 13px; line-height: 1.55; color: var(--ink-soft) }
+.b-note + .b-note { margin-top: 8px }
+
+.b-weight { margin-top: 18px; padding: 14px }
+.b-weight > div:first-child {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-soft); margin-bottom: 10px;
+}
+.b-steps { display: grid; gap: 4px }
+.b-steps button {
+  appearance: none; display: flex; align-items: center; gap: 9px; width: 100%;
+  min-height: 44px; padding: 0 11px; border-radius: 12px; cursor: pointer;
+  border: 1px solid transparent; background: transparent; color: var(--ink-soft);
+  font: inherit; font-size: 13px; text-align: left;
+}
+.b-steps button:hover { background: color-mix(in oklab, var(--ink) 5%, transparent) }
+.b-steps button[aria-pressed="true"] {
+  background: var(--paper-deep); color: var(--ink); font-weight: 700;
+}
+.b-steps button i {
+  flex: 0 0 9px; width: 9px; height: 9px; border-radius: 999px;
+  background: color-mix(in oklab, var(--ink) 20%, transparent);
+}
+.b-steps button[data-step="0"] i { background: var(--brick) }
+.b-steps button[data-step="1"] i { background: var(--sun) }
+.b-steps button[data-step="2"] i { background: var(--flame) }
+.b-steps button[data-step="3"] i { background: var(--lime) }
+
+.b-sum { margin-top: 18px; padding: 14px }
+.b-sum .work-num { font-size: 34px }
+.b-sum .work-label { display: block; margin-top: 2px }
+.b-sum p { margin: 11px 0 0; font-size: 12px; line-height: 1.55; color: var(--ink-soft) }
+
+/* Версии — на полях, а не в шапке: это свойство текста, а не экрана. */
+.b-vers { display: flex; gap: 4px; margin-bottom: 16px }
+.b-vers button {
+  appearance: none; border: 1px solid var(--hairline); background: transparent;
+  color: var(--ink-soft); font: inherit; font-size: 12px; font-weight: 700;
+  height: 32px; padding: 0 12px; border-radius: 999px; cursor: pointer;
+}
+.b-vers button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink) }
+
+/* Полка на телефоне */
+.b-dock {
+  position: fixed; inset: auto 0 0; z-index: 25; display: flex; gap: 10px;
+  padding: 10px max(14px, env(safe-area-inset-left, 0px))
+           calc(10px + env(safe-area-inset-bottom, 0px))
+           max(14px, env(safe-area-inset-right, 0px));
+  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  backdrop-filter: blur(14px); border-top: 1px solid var(--hairline);
+}
+.b-dock .work-btn { height: 48px; border-radius: 999px; font-size: 15px }
+/* Обе кнопки делят строку поровну: «Подкрепить аргумент» в одну строку на
+   375 не влезало и уезжало за край, а переносить подпись нельзя — переписали
+   её короче, как велит правило про подпись кнопки. */
+.b-dock .work-btn { flex: 1 1 0; min-width: 0; padding: 0 12px }
+@media (min-width: 1024px) { .b-dock { display: none } }
+
+/* Состояния полей */
+.b-states { margin-top: 18px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center }
+.b-states span { font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft); margin-right: 4px }
+.b-states button {
+  appearance: none; border: 1px solid var(--hairline); background: transparent;
+  color: var(--ink-soft); font: inherit; font-size: 11px; font-weight: 700;
+  height: 30px; padding: 0 11px; border-radius: 999px; cursor: pointer;
+}
+.b-states button[aria-pressed="true"] { background: var(--paper-deep); color: var(--ink) }
+.b-skel > i {
+  display: block; height: 40px; border-radius: 14px; margin-bottom: 7px;
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--ink) 7%, transparent) 25%,
+    color-mix(in oklab, var(--ink) 12%, transparent) 37%,
+    color-mix(in oklab, var(--ink) 7%, transparent) 50%);
+  background-size: 300% 100%; animation: b-shine 1.3s linear infinite;
+}
+@keyframes b-shine { from { background-position: 100% 0 } to { background-position: -100% 0 } }
+.b-err { padding: 14px; border: 1px solid var(--brick); border-radius: 18px }
+.b-err b { display: block; font-size: 13px; margin-bottom: 5px }
+.b-err p { margin: 0 0 11px; font-size: 12px; line-height: 1.5; color: var(--ink-soft) }
+@media (prefers-reduced-motion: reduce) { .b-skel > i { animation: none } }
+
+/* ── Палец ──────────────────────────────────────────────────────────── */
+/*
+ * 36 — это высота кнопки на компьютере. Переносить её на телефон значит
+ * уменьшать интерфейс вместо того, чтобы его приспосабливать, а требование от
+ * 01.11.26 говорит ровно обратное. Поэтому на телефоне кнопка, пилюля и пункт
+ * меню не ниже 44, а главное действие на полке — 48, как и было.
+ *
+ * Поймано не глазами: node lab/shoot.mjs мерит каждую нажимаемую область на
+ * 375 и показал всё, что меньше.
+ */
+@media (max-width: 1023px) {
+  .work-btn,
+  .b-tabs a,
+  .b-vers button { min-height: 44px }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a href="index.html">← Design Lab</a>
+  <b>B <i>·</i> Мастерская</b>
+  <button data-theme-btn="light">светлая</button>
+  <button data-theme-btn="dark">тёмная</button>
+  <button data-theme-btn="system">системная</button>
+</div>
+
+<div class="work">
+  <header class="b-top b-pad">
+    <div class="b-title">
+      <h1 class="work-title">Рост без найма</h1>
+      <span class="work-chip" style="color:var(--sun)">черновик</span>
+    </div>
+    <div class="b-meta">
+      <span>Рост 2026 · <b>15 ноября</b>, через 14 дней</span>
+      <span>регламент <b>12 мин</b>, сейчас читается за 17</span>
+      <span>цель: конверсия <b>4% → 10%</b></span>
+    </div>
+    <nav class="b-tabs">
+      <a href="#" aria-current="page">Структура</a>
+      <a href="#">Аргументы</a>
+      <a href="#">Прогоны</a>
+      <a href="#">Разборы</a>
+      <a href="#">Материалы</a>
+    </nav>
+  </header>
+
+  <div class="b-spread b-pad">
+
+    <main class="b-measure" id="measure">
+      <section class="b-block">
+        <h2><em>01</em> Завязка · 1,5 мин</h2>
+        <p data-v1>Начинаю с цифры, которую зал знает про себя: половина
+          компаний в зале за год выросла меньше, чем выросли их расходы на
+          найм. Это не упрёк, это общая точка.</p>
+        <p data-v2 hidden>Начинаю с вопроса в зал: кто за последний год нанял
+          больше, чем вырос? Руки поднимут не все, и дальше говорю уже с теми,
+          кто поднял — им есть что терять.</p>
+      </section>
+
+      <section class="b-block">
+        <h2><em>02</em> Напряжение · 2 мин</h2>
+        <p>Найм выглядит способом вырасти, а на деле переносит узкое место:
+          людей больше, решения те же.</p>
+      </section>
+
+      <section class="b-block">
+        <h2><em>03</em> Аргументы · 5 мин <span class="work-label" style="margin-left:auto">нажмите аргумент</span></h2>
+
+        <button class="b-arg" data-arg="1" data-weight="0" aria-pressed="false">
+          <span class="gauge"><i data-on="true"></i><i></i><i></i><i></i></span>
+          <span class="txt">
+            <span class="t">Рост без найма начинается с отказа: пока список дел
+              не уменьшился, новый человек просто разделит хаос на двоих.</span>
+            <span class="u">не подкреплено</span>
+          </span>
+        </button>
+
+        <button class="b-arg" data-arg="2" data-weight="1" aria-pressed="false">
+          <span class="gauge"><i data-on="true"></i><i data-on="true"></i><i></i><i></i></span>
+          <span class="txt">
+            <span class="t">Второй рычаг — цена решения. Там, где решение стоит
+              неделю согласований, десять человек работают как три.</span>
+            <span class="u">неполно</span>
+          </span>
+        </button>
+
+        <button class="b-arg" data-arg="3" data-weight="3" aria-pressed="false">
+          <span class="gauge"><i data-on="true"></i><i data-on="true"></i><i data-on="true"></i><i data-on="true"></i></span>
+          <span class="txt">
+            <span class="t">Третий — то, что уже посчитано: за восемь месяцев
+              мы отдали наружу четыре процесса и закрыли год с тем же штатом.</span>
+            <span class="u">сильно</span>
+          </span>
+        </button>
+      </section>
+
+      <section class="b-block">
+        <h2><em>04</em> Вывод · 2 мин</h2>
+        <p>Один вывод вместо трёх: перед тем как нанимать, посчитайте цену
+          одного решения. Дальше либо найм, либо отказ — но уже осознанный.</p>
+      </section>
+
+      <section class="b-block">
+        <h2><em>05</em> Переход к обращению · 1,5 мин</h2>
+        <p>QR на последнем слайде и одна фраза: «пришлите свой список дел — скажу,
+          что из него снимается без найма». Именно по этим письмам и считается
+          конверсия доклада.</p>
+      </section>
+    </main>
+
+    <aside class="b-margin">
+      <div class="b-vers" role="group" aria-label="Версия текста">
+        <button data-ver="1" aria-pressed="true">Версия 1</button>
+        <button data-ver="2" aria-pressed="false">Версия 2</button>
+      </div>
+
+      <div class="b-note-head" id="notes-head">Замечания · весь доклад</div>
+
+      <div id="notes">
+        <div class="work-tile b-note">
+          <div class="who"><i>АМ</i>Айрат, разбор от 28 октября</div>
+          <p>Первые два аргумента держатся на обещании, третий — на цифрах. Зал
+            поверит третьему и забудет первые два. Либо подкрепить, либо снять.</p>
+        </div>
+        <div class="work-tile b-note">
+          <div class="who"><i>Г</i>Глагол, автоматический разбор</div>
+          <p>17 минут при регламенте 12. Блок 03 занимает 7 минут из 17 — там же
+            и самый слабый аргумент.</p>
+        </div>
+      </div>
+
+      <div id="notes-empty" class="work-empty" hidden>
+        У этого аргумента замечаний пока нет. Будут после прогона — или добавьте своё.
+      </div>
+      <div id="notes-loading" class="b-skel" hidden><i></i><i></i></div>
+      <div id="notes-error" class="b-err" hidden>
+        <b>Замечания не загрузились</b>
+        <p>Текст доклада на месте, не доехали только замечания.</p>
+        <button class="work-btn work-btn--second" data-retry>Повторить</button>
+      </div>
+
+      <div class="work-tile b-weight" id="weight" hidden>
+        <div>Вес аргумента</div>
+        <div class="b-steps" role="group" aria-label="Вес аргумента">
+          <button data-step="0" aria-pressed="false"><i></i>не работает</button>
+          <button data-step="1" aria-pressed="false"><i></i>неполно</button>
+          <button data-step="2" aria-pressed="false"><i></i>работает</button>
+          <button data-step="3" aria-pressed="false"><i></i>сильно</button>
+        </div>
+      </div>
+
+      <div class="work-tile b-sum">
+        <div class="work-num" id="sum-num">1 из 3</div>
+        <span class="work-label">аргументов держат вывод</span>
+        <p>Вывод доклада держится на аргументах со весом «работает» и выше.
+          Пока такой один — вывод опирается на него одного.</p>
+      </div>
+
+      <div class="b-states" role="group" aria-label="Состояния замечаний">
+        <span>состояния</span>
+        <button data-state="data" aria-pressed="true">с данными</button>
+        <button data-state="empty" aria-pressed="false">пусто</button>
+        <button data-state="loading" aria-pressed="false">грузится</button>
+        <button data-state="error" aria-pressed="false">ошибка</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="b-dock">
+    <button class="work-btn work-btn--second">Прогон</button>
+    <button class="work-btn work-btn--main">Подкрепить</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const СЛОВА = ["не работает", "неполно", "работает", "сильно"];
+  const ЗАМЕЧАНИЯ = {
+    1: [["АМ", "Айрат, 28 октября", "Это обещание, а не аргумент: «начинается с отказа» нечем проверить. Нужен пример отказа и что он дал."]],
+    2: [["АМ", "Айрат, 28 октября", "Цена решения — сильная мысль, но «неделя согласований» звучит как оценка. Поставьте свою цифру."],
+        ["Г", "Глагол, автоматический разбор", "В этом абзаце два утверждения подряд без перехода — на слух сливаются в одно."]],
+    3: [],
+  };
+
+  const notes = document.getElementById("notes");
+  const head = document.getElementById("notes-head");
+  const weight = document.getElementById("weight");
+  const panes = {
+    data: notes,
+    empty: document.getElementById("notes-empty"),
+    loading: document.getElementById("notes-loading"),
+    error: document.getElementById("notes-error"),
+  };
+  let выбран = null;
+  /* Замечания «по всему докладу» — то, что лежит на полях до выбора абзаца.
+     Запоминаем разметку на старте: снятие выбора возвращает именно её. */
+  const общие = notes.innerHTML;
+
+  function состояние(key) {
+    for (const [name, el] of Object.entries(panes)) el.hidden = name !== key;
+    for (const b of document.querySelectorAll("[data-state]")) {
+      b.setAttribute("aria-pressed", String(b.dataset.state === key));
+    }
+  }
+
+  function сводка() {
+    const держат = [...document.querySelectorAll(".b-arg")]
+      .filter((a) => Number(a.dataset.weight) >= 2).length;
+    const всего = document.querySelectorAll(".b-arg").length;
+    document.getElementById("sum-num").textContent = `${держат} из ${всего}`;
+  }
+
+  function показатьЗамечания(arg) {
+    const список = ЗАМЕЧАНИЯ[arg] || [];
+    notes.innerHTML = список
+      .map(
+        ([ini, кто, текст]) =>
+          `<div class="work-tile b-note"><div class="who"><i>${ini}</i>${кто}</div><p>${текст}</p></div>`,
+      )
+      .join("");
+    состояние(список.length ? "data" : "empty");
+  }
+
+  document.addEventListener("click", (e) => {
+    const arg = e.target.closest(".b-arg");
+    if (arg) {
+      const n = arg.dataset.arg;
+      const тот_же = выбран === n;
+      for (const a of document.querySelectorAll(".b-arg")) a.setAttribute("aria-pressed", "false");
+      if (тот_же) {
+        выбран = null;
+        weight.hidden = true;
+        head.textContent = "Замечания · весь доклад";
+        notes.innerHTML = общие;
+        состояние("data");
+        return;
+      }
+      arg.setAttribute("aria-pressed", "true");
+      выбран = n;
+      head.textContent = `Замечания · аргумент ${n}`;
+      weight.hidden = false;
+      for (const b of weight.querySelectorAll("[data-step]")) {
+        b.setAttribute("aria-pressed", String(b.dataset.step === arg.dataset.weight));
+      }
+      состояние("loading");
+      setTimeout(() => показатьЗамечания(n), 420);
+      return;
+    }
+
+    const step = e.target.closest("[data-step]");
+    if (step && выбран) {
+      const arg = document.querySelector(`.b-arg[data-arg="${выбран}"]`);
+      const вес = Number(step.dataset.step);
+      arg.dataset.weight = String(вес);
+      arg.querySelectorAll(".gauge i").forEach((i, idx) => {
+        if (idx <= вес) i.dataset.on = "true";
+        else delete i.dataset.on;
+      });
+      arg.querySelector(".u").textContent = СЛОВА[вес];
+      for (const b of weight.querySelectorAll("[data-step]")) {
+        b.setAttribute("aria-pressed", String(b === step));
+      }
+      сводка();
+      return;
+    }
+
+    const ver = e.target.closest("[data-ver]");
+    if (ver) {
+      const v = ver.dataset.ver;
+      for (const b of document.querySelectorAll("[data-ver]")) {
+        b.setAttribute("aria-pressed", String(b === ver));
+      }
+      document.querySelector("[data-v1]").hidden = v !== "1";
+      document.querySelector("[data-v2]").hidden = v !== "2";
+      return;
+    }
+
+    const st = e.target.closest("[data-state]");
+    if (st) return состояние(st.dataset.state);
+
+    if (e.target.closest("[data-retry]")) {
+      состояние("loading");
+      setTimeout(() => (выбран ? показатьЗамечания(выбран) : состояние("data")), 700);
+    }
+  });
+
+  сводка();
+})();
+</script>
+</body>
+</html>
