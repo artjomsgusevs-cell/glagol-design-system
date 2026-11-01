@@ -401,3 +401,35 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Раздел Г: библиотека возможностей ──────────────────────────────── */
+/*
+ * Рамка для приёмов, которые в продукте занимают весь экран: слой, телефонный
+ * лист меню. Правим здесь исключительно ПОЛОЖЕНИЕ — тот же приём и та же
+ * причина, что в app/rabota/rabota.css: витрина, показывающая подкрашенные
+ * образцы, хуже, чем её отсутствие. Краски, размеры и веса приезжают из
+ * настоящего work.css и не трогаются.
+ */
+.frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 1.2);
+  background: var(--card);
+}
+.frame--phone { width: 100%; max-width: 320px; height: 460px }
+.frame .work-phone-sheet,
+.frame .work-layer { position: absolute }
+
+.caps { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) }
+.caps > div { min-width: 0 }
+.caps h4 {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted-foreground); margin: 0 0 9px;
+}
+
+/* Пометка в таблице каталога: что с этим делать. */
+.verdict { font-weight: 700; white-space: nowrap }
+.verdict[data-v="брать"] { color: var(--primary) }
+.verdict[data-v="позже"] { color: var(--muted-foreground) }
+.verdict[data-v="нет"] { color: var(--muted-foreground); font-weight: 500 }

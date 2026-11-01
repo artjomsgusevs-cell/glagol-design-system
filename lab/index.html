@@ -43,6 +43,7 @@
   <a href="#a"><b>А · Действующая система</b><i>Краски, типографика, высоты, кнопки, поля, строки, навигация, состояния</i></a>
   <a href="#b"><b>Б · Реальные экраны</b><i>Публичная и рабочая среды в их нынешнем виде, снимки на 1440 и 375</i></a>
   <a href="#c"><b>В · Три концепции 2.0</b><i>Инструмент, Мастерская, Маршрут — один сценарий, три композиции</i></a>
+  <a href="#g"><b>Г · Библиотека возможностей</b><i>Что уже установлено или написано в бюро и до сих пор не используется</i></a>
 </nav>
 
 <!-- ═══════════════ А ═══════════════ -->
@@ -550,6 +551,183 @@
   </div>
   <p class="spec">Выбор за Артёмом. Моя рекомендация — ниже, в отчёте сессии;
     на этой странице она намеренно не стоит, чтобы не подталкивать взгляд.</p>
+</div>
+</section>
+
+<!-- ═══════════════ Г ═══════════════ -->
+
+<section id="g">
+<div class="lab-h">
+  <div class="section-rule"><b>04</b> Библиотека возможностей</div>
+  <h2>Что у нас уже есть и не используется</h2>
+  <p>Каталог, а не склад. Здесь то, что <b>уже оплачено установкой</b> — лежит в
+    зависимостях или в коде бюро, — но не доехало ни до продукта, ни до этой
+    витрины. Новых библиотек в списке нет намеренно: прежде чем ставить
+    что-то ещё, стоит потратить то, что стоит без дела.</p>
+  <p>Правило отбора: попадает сюда только то, для чего в «Глаголе 2.0» уже
+    виден сценарий. Компонент без сценария — это не возможность, а лишний
+    файл, который через месяц придётся объяснять.</p>
+</div>
+
+<div class="shelf">
+  <h3>Уже в work.css, но до сих пор не показано</h3>
+  <p class="note">Двадцать классов из сорока трёх не было ни на одной полке
+    этой витрины. Ниже они живые — это тот же <code>work.css</code>, что
+    загружен на странице, без единой копии. Приёмам, которые в продукте
+    занимают весь экран, витрина правит <b>только положение</b>: так же и по
+    той же причине, что <code>app/rabota/rabota.css</code>.</p>
+
+  <div class="caps">
+    <div>
+      <h4>Лист · <code>.work-sheet</code></h4>
+      <div class="work">
+        <div class="work-sheet" style="padding:18px">
+          <div class="work-label">мероприятие</div>
+          <div class="work-title" style="font-size:22px;margin-top:5px">Рост 2026</div>
+          <div style="font-size:13px;color:var(--ink-soft);margin-top:8px">Содержимое
+            лежит листом, а колонка — на странице. Край даёт кольцо в волосок и
+            мягкая тень снизу.</div>
+        </div>
+      </div>
+      <div class="spec">Своей краски у листа нет: одной разницы фона мало — две
+        близкие светлоты читаются как неровная печать, а не как две плоскости.
+        На телефоне листа нет вовсе.</div>
+    </div>
+
+    <div>
+      <h4>Постер · <code>.work-poster</code></h4>
+      <div class="work">
+        <div class="work-poster" style="aspect-ratio:4/3">
+          <div style="position:absolute;inset:0;background:linear-gradient(135deg,var(--sun),var(--brick))"></div>
+          <div class="work-poster-body" style="position:absolute;inset:auto 0 0;padding:16px;color:#fff">
+            <div style="font-family:var(--font-onest);font-weight:900;font-size:19px;text-transform:uppercase;line-height:1.05">Александр Пташко</div>
+            <div style="font-size:12px;opacity:0.85;margin-top:4px">тренер · аргументация и структура</div>
+          </div>
+        </div>
+      </div>
+      <div class="spec">Градиент сверху вниз встроен в сам приём, подпись всегда
+        читается поверх любого кадра. Вместо фотографии здесь заливка: живых
+        лиц на витрине не держим.</div>
+    </div>
+
+    <div>
+      <h4>Лента · <code>.work-rail</code></h4>
+      <div class="work">
+        <div class="work-rail" style="padding-bottom:4px">
+          <div class="work-tile" style="width:150px;padding:12px"><div class="work-num" style="font-size:24px">6,0%</div><div class="work-label">клуб директоров</div></div>
+          <div class="work-tile" style="width:150px;padding:12px"><div class="work-num" style="font-size:24px">3,9%</div><div class="work-label">отраслевой форум</div></div>
+          <div class="work-tile" style="width:150px;padding:12px"><div class="work-num" style="font-size:24px">3,1%</div><div class="work-label">вебинар</div></div>
+          <div class="work-tile" style="width:150px;padding:12px"><div class="work-num" style="font-size:24px">2,0%</div><div class="work-label">конференция</div></div>
+        </div>
+      </div>
+      <div class="spec">Прокрутка со snap и без полосы: карточка всегда
+        останавливается по центру. Потяните мышью — лента едет.</div>
+    </div>
+
+    <div>
+      <h4>Телефонное меню листом · <code>.work-phone-sheet</code></h4>
+      <div class="frame frame--phone work">
+        <div style="padding:14px">
+          <div class="work-title" style="font-size:20px">Лог времени</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-top:6px">Страница под листом остаётся на месте и не прокручивается.</div>
+        </div>
+        <div class="work-phone-sheet">
+          <div class="work-phone-panel" style="padding:14px">
+            <div class="work-label" style="margin-bottom:10px">бюро Глагол</div>
+            <a class="work-side-item" href="#g" style="display:flex;align-items:center;height:44px;padding:0 10px;border-radius:12px;text-decoration:none;font-size:14px">Календарь</a>
+            <a class="work-side-item" href="#g" aria-current="page" style="display:flex;align-items:center;height:44px;padding:0 10px;border-radius:12px;text-decoration:none;font-size:14px">Лог времени</a>
+            <a class="work-side-item" href="#g" style="display:flex;align-items:center;height:44px;padding:0 10px;border-radius:12px;text-decoration:none;font-size:14px">Мероприятия</a>
+            <a class="work-side-item" href="#g" style="display:flex;align-items:center;height:44px;padding:0 10px;border-radius:12px;text-decoration:none;font-size:14px">Доступы</a>
+          </div>
+          <div class="work-phone-scrim" style="flex:1"></div>
+        </div>
+      </div>
+      <div class="spec">Лист занимает 75% ширины, остальное — затемнение: видно,
+        что страница никуда не делась. В витрине слой прибит к рамке, в
+        продукте — к экрану; больше ничего не менялось.</div>
+    </div>
+  </div>
+
+  <p class="spec">Не показаны и остаются в очереди: <code>.work-layer</code> с
+    лентой страниц (сторисы мини-аппа), <code>.work-solo-*</code> (соло-вид
+    спикера: постер во весь экран и прокручиваемая карточка под ним),
+    <code>.work-shell</code> и <code>.work-menu</code> — их видно на снимках
+    рабочей среды в разделе Б.</p>
+</div>
+
+<div class="shelf">
+  <h3>Установлено, но не используется</h3>
+  <p class="note">Лежит в <code>package.json</code> дизайн-системы и в
+    <code>components/ui/</code>. В продукте (календаре) из тринадцати
+    примитивов живут <b>три</b>: аватар, кнопка, переключатель. Остальное —
+    дамп установщика. Показать эти компоненты живьём на статической странице
+    нельзя: это React, и без сборки они не работают. Поэтому здесь каталог, а
+    не образцы — копий не заводим.</p>
+  <div class="lab-table-wrap">
+  <table class="lab-table">
+    <thead><tr><th>Что</th><th>Источник</th><th>Что даёт</th><th>Где в 2.0</th><th>Решение</th></tr></thead>
+    <tbody>
+      <tr><td><code>popover</code>, <code>dropdown-menu</code></td><td>radix-ui</td><td>всплывающее с позиционированием, фокусом и Escape из коробки</td><td>меню действий строки, выбор статуса — сейчас это пишется руками в каждом экране</td><td class="verdict" data-v="брать">брать</td></tr>
+      <tr><td><code>tabs</code></td><td>radix-ui</td><td>вкладки с клавиатурой и aria</td><td>разделы карточки выступления: структура, прогоны, разборы</td><td class="verdict" data-v="брать">брать</td></tr>
+      <tr><td><code>progress</code></td><td>radix-ui</td><td>доступная полоса со значением</td><td>только как основа под <code>.work-bar</code>; вид остаётся наш</td><td class="verdict" data-v="позже">позже</td></tr>
+      <tr><td><code>scroll-area</code></td><td>radix-ui</td><td>прокрутка без системной полосы</td><td>ленты и длинные списки — правило «полос прокрутки не показываем» сейчас держится самим <code>.work</code></td><td class="verdict" data-v="нет">не нужно</td></tr>
+      <tr><td><code>skeleton</code></td><td>shadcn</td><td>заглушка той же высоты, что содержимое</td><td>везде, где список грузится: правило есть, компонента в продукте нет</td><td class="verdict" data-v="брать">брать</td></tr>
+      <tr><td><code>sonner</code></td><td>sonner</td><td>всплывающие уведомления стопкой</td><td>у бюро уже есть <code>flash-toast</code> в календаре — свой и под наши тексты</td><td class="verdict" data-v="нет">не нужно</td></tr>
+      <tr><td><code>drawer</code></td><td>vaul</td><td>лист снизу с перетаскиванием</td><td>мобильные формы; но <code>.work-phone-sheet</code> уже делает то же без библиотеки</td><td class="verdict" data-v="позже">позже</td></tr>
+      <tr><td><code>chart</code></td><td>recharts</td><td>графики</td><td>история конверсии по выступлениям — но полоса и засечки читаются лучше графика</td><td class="verdict" data-v="позже">позже</td></tr>
+      <tr><td><code>calendar</code></td><td>react-day-picker</td><td>сетка месяца</td><td>у бюро свой <code>month-grid</code>, он синхронизируется между тремя продуктами</td><td class="verdict" data-v="нет">не нужно</td></tr>
+      <tr><td><code>carousel</code></td><td>embla</td><td>лента с перелистыванием</td><td><code>.work-rail</code> даёт то же на CSS, без веса</td><td class="verdict" data-v="нет">не нужно</td></tr>
+      <tr><td><code>command</code></td><td>cmdk</td><td>командная строка поиска</td><td>файл есть, а <code>cmdk</code> в зависимостях нет — он просто не соберётся</td><td class="verdict" data-v="нет">удалить файл</td></tr>
+      <tr><td><code>resizable</code>, <code>input-otp</code>, <code>menubar</code>, <code>breadcrumb</code>, <code>context-menu</code> и ещё 25</td><td>shadcn</td><td>—</td><td>сценария в «Глаголе 2.0» не видно</td><td class="verdict" data-v="нет">не трогать</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>Есть в коде бюро, но не в системе</h3>
+  <p class="note">Самое ценное — здесь. В календаре <b>46 своих компонентов</b>,
+    и по <code>sync-design</code> в дизайн-систему едут <b>семь</b>. Остальные
+    тридцать девять не описаны, не показаны и при следующей задаче будут
+    написаны заново. Это не библиотека — это наше, уже проверенное работой.</p>
+  <div class="lab-table-wrap">
+  <table class="lab-table">
+    <thead><tr><th>Компонент</th><th>Что умеет</th><th>Где в «Глаголе 2.0»</th><th>Решение</th></tr></thead>
+    <tbody>
+      <tr><td><code>choice-chips</code></td><td>готовые ответы чипами вместо выпадающего списка</td><td>бриф выступления: цель, аудитория, формат</td><td class="verdict" data-v="брать">в систему</td></tr>
+      <tr><td><code>steps-bar</code></td><td>этапы полосой сверху, с правилом «не показывать при двух шагах»</td><td>подготовка выступления</td><td class="verdict" data-v="брать">в систему</td></tr>
+      <tr><td><code>busy-button</code></td><td>спиннер на время отправки, ширина прибита распоркой</td><td>любое действие с сервером — прямо следует из правила «ничего не скачет»</td><td class="verdict" data-v="брать">в систему</td></tr>
+      <tr><td><code>flash-toast</code></td><td>сообщение после действия, которое уводит на другой экран</td><td>сохранили, отправили, записали</td><td class="verdict" data-v="брать">в систему</td></tr>
+      <tr><td><code>search-pill</code></td><td>кружок с лупой, раскрывающийся в поле</td><td>поиск по выступлениям и материалам</td><td class="verdict" data-v="брать">в систему</td></tr>
+      <tr><td><code>leave-guard</code></td><td>вопрос перед уходом с несохранённой формы</td><td>везде, где есть форма — правило записано, компонент один</td><td class="verdict" data-v="брать">в систему</td></tr>
+      <tr><td><code>brief-layer</code></td><td>второй слой поверх карточки</td><td>разбор поверх выступления</td><td class="verdict" data-v="позже">рассмотреть</td></tr>
+      <tr><td><code>people-slider</code></td><td>ползунок ступенями, не линейный</td><td>размер зала — прямо из сценария цели</td><td class="verdict" data-v="позже">рассмотреть</td></tr>
+      <tr><td><code>week-editor</code></td><td>обычная неделя строкой на день</td><td>регулярная подготовка</td><td class="verdict" data-v="позже">рассмотреть</td></tr>
+      <tr><td><code>recording-player</code>, <code>uploads</code></td><td>плеер записи и загрузка файлов</td><td>запись выступления и материалы к нему</td><td class="verdict" data-v="позже">рассмотреть</td></tr>
+      <tr><td>панель хаба (<code>panel.css</code>)</td><td>сворачивающаяся колонка, «лавабл», цели касания</td><td>хозяин приёма — хаб; в системе он не описан вовсе</td><td class="verdict" data-v="брать">описать</td></tr>
+      <tr><td>панель записи в <code>gig-screen.tsx</code></td><td>слой с карточкой: правка на месте, стоимость, встречи, обратная связь</td><td>карточка выступления в 2.0 — это она</td><td class="verdict" data-v="брать">вынуть</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="spec">Последняя строка — главная находка разбора. Самый богатый
+    приём продукта живёт внутри одного файла на <b>3700 строк</b>
+    (<code>app/app/gigs/[id]/gig-screen.tsx</code>): слой с карточкой, где всё
+    правится на месте — стоимость, встречи, заметки, статусы, обратная связь.
+    Он не компонент, не в <code>work.css</code> и не в <code>sync-design</code>.
+    Повторить его в «Глаголе 2.0» будет означать написать заново.</p>
+</div>
+
+<div class="shelf">
+  <h3>Чего в подключённых библиотеках нет смысла брать</h3>
+  <p class="note">Для полноты: в <code>radix-ui</code> лежат ещё
+    <code>Accordion</code>, <code>AlertDialog</code>, <code>Collapsible</code>,
+    <code>ContextMenu</code>, <code>HoverCard</code>, <code>Menubar</code>,
+    <code>NavigationMenu</code>, <code>RadioGroup</code>, <code>Slider</code>,
+    <code>Toolbar</code>, <code>Toast</code> и ещё десяток. Ни один из них не
+    обёрнут и не используется. Брать их «про запас» не нужно: правило бюро —
+    сперва искать готовое, и готовое у нас своё. Из иконок
+    <code>lucide-react</code> в календаре живут <b>62</b> штуки — этого хватает,
+    второго набора не заводим.</p>
 </div>
 </section>
 
