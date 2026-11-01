@@ -109,6 +109,8 @@ const noDs = args.includes("--no-ds");
 const СТРАНИЦЫ = [
   { key: "lab-index", url: `${LAB}/`, full: false, store: "glagol-lab-theme",
     note: "сама витрина" },
+  { key: "новый-экран", url: `${LAB}/новый-экран.html`, full: true, store: "glagol-lab-theme",
+    note: "контрольный экран по стандарту 01.11.2026" },
   { key: "concept-a", url: `${LAB}/concept-a.html`, full: true, store: "glagol-lab-theme",
     note: "концепция A · Инструмент" },
   { key: "concept-b", url: `${LAB}/concept-b.html`, full: true, store: "glagol-lab-theme",
@@ -136,6 +138,34 @@ const ТЕМЫ = ["light", "dark"];
    элементы в их десктопных размерах — это её работа. */
 const НЕ_ПРОДУКТ =
   ".bar, .lab-top, .lab-switch, .bench, .a-states, .b-states, .c-states, .lab-foot";
+
+/* Ссылка внутри абзаца — системное исключение, а не поблажка: нарастить её до
+   44 можно только разогнав строки текста. То же говорит WCAG 2.5.8, где цель
+   внутри предложения из правила выведена. Исключение именно для ссылки в
+   абзаце: кнопка в абзаце исключением не станет. */
+const ССЫЛКА_В_ТЕКСТЕ = "p > a, p > button";
+
+/*
+ * Контрольный экран доказывает, что по стандарту можно собрать страницу, не
+ * изобретая своего. Доказательство должно быть проверяемым, а не словами:
+ * в его собственном <style> разрешена только раскладка. Появится там цвет,
+ * кегль, рост, вес, радиус или подложка — значит, стандарта не хватило, и
+ * об этом надо узнать от проверки, а не через месяц от Артёма.
+ */
+{
+  const файл = join(here, "новый-экран.html");
+  const текст = await readFile(файл, "utf8");
+  const стиль = (текст.match(/<style>([\s\S]*?)<\/style>/) || [, ""])[1]
+    .replace(/\/\*[\s\S]*?\*\//g, "");
+  const запрет = /(^|[;{\s])(color|background|background-color|font-size|font-weight|font-family|border-radius|height|min-height|letter-spacing)\s*:/g;
+  const нашли = [...new Set((стиль.match(запрет) || []).map((s) => s.trim().replace(/[;{]/, "").trim()))];
+  // `height` у поля и textarea задаёт раскладку формы, а не вид элемента:
+  // рост поля приходит из work.css, здесь только то, что без Tailwind не
+  // выражается. Остальное запрещено.
+  const разрешено = нашли.filter((д) => !/^(height|min-height)\s*:/.test(д));
+  if (разрешено.length)
+    беды.push(`новый-экран.html: в своём <style> есть вид, а не раскладка — ${разрешено.join(", ")}`);
+}
 
 await mkdir(join(here, "shots"), { recursive: true });
 const browser = await chromium.launch();
@@ -188,12 +218,12 @@ for (const стр of СТРАНИЦЫ) {
         сняли.push(имя);
 
         /* ── проверки ── */
-        const итог = await page.evaluate((неПродукт) => {
+        const итог = await page.evaluate(([неПродукт, ссылкаВТексте]) => {
           const корень = document.documentElement;
           const шире = корень.scrollWidth - window.innerWidth;
           const мелкие = [];
           for (const el of document.querySelectorAll('a, button, [aria-current="page"]')) {
-            if (el.closest(неПродукт)) continue;
+            if (el.closest(неПродукт) || el.matches(ссылкаВТексте)) continue;
             const r = el.getBoundingClientRect();
             if (r.width === 0 || r.height === 0) continue;
             if (r.width < 44 || r.height < 44) {
@@ -209,7 +239,7 @@ for (const стр of СТРАНИЦЫ) {
             onest: document.fonts.check('900 16px "Onest"'),
             manrope: document.fonts.check('400 16px "Manrope"'),
           };
-        }, НЕ_ПРОДУКТ);
+        }, [НЕ_ПРОДУКТ, ССЫЛКА_В_ТЕКСТЕ]);
 
         const где = `${стр.key} · ${вид.key} · ${тема}`;
         if (итог.шире > 1) беды.push(`${где}: горизонтальная прокрутка, лишние ${итог.шире}px`);

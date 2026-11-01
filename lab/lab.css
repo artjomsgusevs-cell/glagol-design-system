@@ -453,3 +453,54 @@ button {
 .verdict[data-v="брать"] { color: var(--primary) }
 .verdict[data-v="позже"] { color: var(--muted-foreground) }
 .verdict[data-v="нет"] { color: var(--muted-foreground); font-weight: 500 }
+
+
+/* ── Полоса стандарта ───────────────────────────────────────────────────── */
+/*
+ * Витрина показывает то, что в продукте есть сегодня, а стандарт — то, по
+ * чему делается новое. Пока это не одно и то же, страница обязана говорить,
+ * что из показанного чем является: иначе старый элемент выдаётся за
+ * действующий стандарт.
+ */
+.лаб-полоса {
+  border: 1px solid var(--primary);
+  border-radius: calc(var(--radius) * 1.4);
+  padding: 22px 24px;
+  margin-top: 28px;
+  background: color-mix(in oklab, var(--primary) 5%, var(--card));
+}
+.лаб-таблица {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0 10px;
+  font-size: 13px;
+}
+.лаб-таблица th,
+.лаб-таблица td {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 12px 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.лаб-таблица th {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+/* Пометка на полке, которая показывает не стандарт, а то, что есть сегодня. */
+.ист {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}

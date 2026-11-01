@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Глагол 2.0 · Подготовка · контрольный экран</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="work.css">
+<link rel="stylesheet" href="ds3.css">
+<style>
+/*
+ * КОНТРОЛЬНЫЙ ЭКРАН. Собран по стандарту 01.11.2026, ничего своего.
+ *
+ * Правило этого файла: здесь задаётся ТОЛЬКО раскладка — что где стоит и
+ * сколько между этим воздуха. Ни одного цвета, кегля, роста, веса, радиуса и
+ * начертания: всё это приходит из tokens.css, work.css и ds3.css. Проверка
+ * `lab/shoot.mjs` читает этот блок и падает, если здесь появится `color`,
+ * `font-size`, `font-weight`, `height`, `border-radius` или `background`.
+ *
+ * Раскладку приходится писать потому, что Tailwind в статической странице
+ * нет. В продукте её задают утилиты, и этого блока там не будет вовсе.
+ */
+body { margin: 0 }
+
+.э { max-width: 760px; margin: 0 auto; padding: 0 16px 64px }
+
+.э-демо { display: flex; align-items: center; gap: 10px; margin: 16px 0 4px; padding: 12px 16px }
+.э-демо svg { flex: 0 0 auto }
+
+.э-шапка { display: flex; align-items: flex-start; gap: 12px; padding: 24px 0 20px }
+.э-шапка h1 { flex: 1; min-width: 0; margin: 0 }
+
+.э-отборы { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px }
+
+.э-разд { display: flex; align-items: center; gap: 12px; margin: 28px 0 4px }
+.э-разд h2 { margin: 0 }
+
+.э-строка { display: flex; align-items: center; gap: 12px; padding: 9px 0 }
+.э-строка > :first-child { flex: 0 0 116px }
+.э-строка > :nth-child(2) { flex: 1; min-width: 0 }
+
+.э-плитки { display: flex; flex-direction: column; gap: 8px; margin-top: 8px }
+.э-плитка { display: flex; align-items: center; gap: 12px; padding: 14px 16px }
+.э-плитка-текст { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px }
+
+.э-форма { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; padding: 16px }
+.э-поле { display: flex; flex-direction: column; gap: 6px }
+.э-кнопки { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px }
+
+.э-подвал { margin-top: 36px; padding-top: 20px }
+.э-строка-текста { margin: 0 }
+
+@media (max-width: 1023px) {
+  .э-строка { flex-wrap: wrap; gap: 4px 12px }
+  .э-строка > :first-child { flex: 0 0 100% }
+  .э-кнопки > button { flex: 1 1 0; min-width: 0 }
+}
+</style>
+</head>
+<body class="work" data-ds="3">
+
+<main class="э">
+
+  <!-- Экран на выдуманных данных носит это на себе: правило процесса №2
+       «Глагола 2.0». Снимается вместе с подключением настоящего источника. -->
+  <div class="э-демо work-tile">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+    <span class="work-label">Выдуманные данные · контрольный экран дизайн-системы</span>
+  </div>
+
+  <header class="э-шапка">
+    <h1 class="work-title work-title--экран">Конференция Продукт 2026</h1>
+    <button class="work-icon" aria-label="Поделиться">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v7H3V3h7"/></svg>
+    </button>
+    <button class="work-icon" aria-label="Закрыть">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </header>
+
+  <div class="э-отборы">
+    <button class="work-btn work-btn--second">Подготовка</button>
+    <button class="work-btn work-btn--soft">Материалы</button>
+    <button class="work-btn work-btn--soft">Разборы</button>
+  </div>
+
+  <div class="э-разд">
+    <h2 class="work-title work-title--раздел">Выступление</h2>
+    <button class="work-edit">
+      Править
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+    </button>
+  </div>
+
+  <div class="э-строка"><span class="work-label">Когда</span><span>14 ноября, 12:00 · 20 минут</span></div>
+  <div class="э-строка"><span class="work-label">Аудитория</span><span>продакт-менеджеры, около 300 человек</span></div>
+  <div class="э-строка"><span class="work-label">Тренер</span><span>Марина Седова</span></div>
+  <div class="э-строка"><span class="work-label">Цель</span><span>поднять конверсию из выступления в заявку до 10 %</span></div>
+
+  <div class="э-разд">
+    <h2 class="work-title work-title--раздел">Тезисы</h2>
+    <button class="work-edit">
+      Править
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+    </button>
+  </div>
+
+  <div class="э-плитки">
+    <div class="work-tile э-плитка">
+      <span class="work-num work-num--строка">1</span>
+      <span class="э-плитка-текст">
+        <b>Ситуация аудитории</b>
+        <span class="work-label">проверено на прогоне</span>
+      </span>
+      <span class="work-chip" data-tone="lime">готово</span>
+    </div>
+    <div class="work-tile э-плитка">
+      <span class="work-num work-num--строка">2</span>
+      <span class="э-плитка-текст">
+        <b>Почему проблема важна именно сейчас</b>
+        <span class="work-label">нужен факт, а не мнение</span>
+      </span>
+      <span class="work-chip" data-tone="sun">в работе</span>
+    </div>
+    <div class="work-tile э-плитка">
+      <span class="work-num work-num--строка">3</span>
+      <span class="э-плитка-текст">
+        <b>Что делать в понедельник</b>
+        <span class="work-label">тезиса ещё нет</span>
+      </span>
+      <button class="work-icon work-icon--tight" aria-label="Открыть">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="э-разд">
+    <h2 class="work-title work-title--раздел">Новый тезис</h2>
+  </div>
+
+  <form class="work-tile э-форма" onsubmit="return false">
+    <label class="э-поле">
+      <span class="work-label">Заголовок</span>
+      <input class="work-field" type="text" placeholder="одной строкой, как скажете со сцены">
+    </label>
+    <label class="э-поле">
+      <span class="work-label">Чем подкрепляем</span>
+      <textarea class="work-field" placeholder="факт, цифра или история — то, что не нужно доказывать"></textarea>
+    </label>
+    <div class="э-кнопки">
+      <button class="work-btn work-btn--second">Добавить тезис</button>
+      <button class="work-btn work-btn--quiet">Отмена</button>
+    </div>
+  </form>
+
+  <div class="э-подвал">
+    <p class="э-строка-текста">Разбор прошлого выступления —
+      <button class="work-link">открыть запись и заметки тренера</button>.</p>
+  </div>
+
+</main>
+
+</body>
+</html>
