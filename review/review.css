@@ -307,6 +307,10 @@ button {
   background: color-mix(in oklab, var(--foreground) 10%, var(--card));
   color: var(--foreground);
 }
+.метка[data-м="решено"] {
+  background: var(--foreground);
+  color: var(--background);
+}
 .метка[data-м="утверждено"] {
   background: color-mix(in oklab, var(--lime, #c2d86b) 40%, var(--card));
   color: var(--foreground);

@@ -90,8 +90,14 @@ const ВИДЫ = [
 
 /* Верхняя полоса сверки — мебель страницы, а не интерфейс продукта. Сцены с
    образцами показывают элементы в их настоящих размерах: мерить у них палец
-   незачем, в этом вся суть разбора. */
+   незачем, в этом вся суть разбора.
+
+   Ссылка внутри абзаца — системное исключение, а не поблажка: нарастить её до
+   44 можно только разогнав строки текста, и то же самое говорит WCAG 2.5.8,
+   где цель внутри предложения из правила выведена. Исключение именно для
+   ссылки в абзаце: кнопка в абзаце исключением не станет. */
 const НЕ_ПРОДУКТ = ".св-верх, .св-тумблер, .сцена, .св-оглавление";
+const ССЫЛКА_В_ТЕКСТЕ = ".св p > a, .реко a, .р-суть a";
 
 await mkdir(join(here, "shots"), { recursive: true });
 const browser = await chromium.launch();
@@ -136,11 +142,11 @@ for (const вид of ВИДЫ) {
       });
       сняли.push(имя);
 
-      const итог = await page.evaluate((неПродукт) => {
+      const итог = await page.evaluate(([неПродукт, ссылкаВТексте]) => {
         const корень = document.documentElement;
         const мелкие = [];
         for (const el of document.querySelectorAll("a, button")) {
-          if (el.closest(неПродукт)) continue;
+          if (el.closest(неПродукт) || el.matches(ссылкаВТексте)) continue;
           const r = el.getBoundingClientRect();
           if (r.width === 0 || r.height === 0) continue;
           if (r.width < 44 || r.height < 44)
@@ -159,7 +165,7 @@ for (const вид of ВИДЫ) {
           тёмная: корень.classList.contains("dark"),
           кнопок: document.querySelectorAll(".сцена button").length,
         };
-      }, НЕ_ПРОДУКТ);
+      }, [НЕ_ПРОДУКТ, ССЫЛКА_В_ТЕКСТЕ]);
 
       const где = `${вид.key} · ${тема}`;
       if (итог.шире > 1) беды.push(`${где}: горизонтальная прокрутка, лишние ${итог.шире}px`);
