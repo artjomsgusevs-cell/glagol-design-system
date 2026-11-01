@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Глагол 2.0 · Маршрут</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="work.css">
+<script src="lab.js"></script>
+<style>
+/*
+ * КОНЦЕПЦИЯ C · «Маршрут к результату»
+ *
+ * Композиционная идея одна: ось. Цель стоит сверху горизонтом, выступления —
+ * засечками, идущими к ней, и расстояние между засечками пропорционально
+ * времени, а не одинаково. Поэтому пустые месяцы видны как пустые, а плотная
+ * осень — как плотная: это и есть сообщение, которое список строк не передаёт.
+ *
+ * Прогресс выражен самой линией: она утолщается к цели и залита снизу до
+ * достигнутого. Процента нет нигде — число на горизонте и толщина линии
+ * говорят то же самое, и второй раз это повторять незачем.
+ *
+ * Своё здесь — геометрия оси и масштаб времени. Краски, плитки, чипы, числа,
+ * кнопки — work.css и токены бюро.
+ */
+* { box-sizing: border-box }
+html, body { margin: 0; padding: 0 }
+/*
+ * Страница концепции — самостоятельный документ, и сброса браузера ей мало:
+ * у элемента с `display: flex` правило UA `[hidden] { display: none }`
+ * перебивается собственным display, и скрытое остаётся на экране. Ровно это и
+ * случилось с фильтром списка в концепции A — снимок показал все четыре
+ * строки вместо двух.
+ */
+[hidden] { display: none !important }
+body { padding-top: env(safe-area-inset-top, 0px); min-height: 100vh }
+
+.bar {
+  position: sticky; top: 0; z-index: 30;
+  /* Переносится, а не обрезается: на 375 три переключателя темы в одну строку
+     не встают, и последний уезжал под правый край. */
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; padding-block: 8px;
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
+  background: var(--background); border-bottom: 1px solid var(--border); font-size: 12px;
+}
+.bar a { color: var(--muted-foreground); text-decoration: none; font-weight: 600 }
+.bar a:hover { color: var(--foreground) }
+.bar b { font-family: var(--font-onest); font-weight: 900; text-transform: uppercase;
+  letter-spacing: -0.01em; font-size: 13px; margin-right: auto }
+.bar b i { font-style: normal; color: var(--primary) }
+.bar button {
+  appearance: none; border: 1px solid var(--border); background: var(--card);
+  color: var(--muted-foreground); font: inherit; font-size: 11px; font-weight: 700;
+  height: 28px; padding: 0 10px; border-radius: 999px; cursor: pointer;
+}
+.bar button[aria-pressed="true"] { background: var(--foreground); color: var(--background);
+  border-color: var(--foreground) }
+
+.c-pad {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.c-wrap { max-width: 980px; margin: 0 auto; padding-bottom: 104px }
+@media (min-width: 1024px) { .c-wrap { padding-bottom: 56px } }
+
+/* ── Горизонт: цель ─────────────────────────────────────────────────── */
+.c-horizon { padding-block: 26px 20px; text-align: center }
+.c-horizon .work-label { display: block; margin-bottom: 9px }
+.c-horizon h1 { margin: 0 auto; font-size: clamp(26px, 6.4vw, 50px); max-width: 20ch }
+.c-horizon .nums {
+  display: inline-flex; align-items: flex-end; gap: 16px; margin-top: 16px;
+}
+.c-horizon .nums .work-num { font-size: clamp(30px, 8vw, 46px); line-height: 0.95 }
+.c-horizon .nums .arrow { font-size: 22px; color: var(--ink-soft); padding-bottom: 6px }
+.c-horizon .nums .work-label { margin: 3px 0 0 }
+.c-horizon .when {
+  font-size: 12px; color: var(--ink-soft); margin-top: 12px;
+}
+.c-horizon .when b { color: var(--ink) }
+
+.c-controls {
+  display: flex; gap: 6px; justify-content: center; align-items: center;
+  flex-wrap: wrap; padding-bottom: 8px;
+}
+.c-controls > span {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.c-controls button {
+  appearance: none; border: 1px solid var(--hairline); background: transparent;
+  color: var(--ink-soft); font: inherit; font-size: 12px; font-weight: 700;
+  height: 34px; padding: 0 13px; border-radius: 999px; cursor: pointer;
+}
+.c-controls button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink) }
+
+/* ── Ось ────────────────────────────────────────────────────────────── */
+.c-route { position: relative; padding-block: 8px 0 }
+
+/* Линия. Клин: у цели толстая, в прошлом тонкая — к результату путь
+   «сгущается». Залита снизу до достигнутого. */
+.c-line {
+  position: absolute; top: 0; bottom: 0; width: 10px;
+  left: 14px;
+}
+@media (min-width: 860px) { .c-line { left: 50%; translate: -50% 0 } }
+.c-line i {
+  position: absolute; inset: 0;
+  clip-path: polygon(10% 0, 90% 0, 68% 100%, 32% 100%);
+  background: color-mix(in oklab, var(--ink) 12%, transparent);
+}
+.c-line b {
+  position: absolute; inset: auto 0 0 0;
+  clip-path: polygon(10% 0, 90% 0, 68% 100%, 32% 100%);
+  background: var(--flame);
+  transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.c-steps { position: relative; display: flex; flex-direction: column }
+
+/*
+ * Засечка. Отступ сверху пропорционален числу дней до предыдущей точки —
+ * поэтому между сентябрём и маем на оси пусто, и это видно.
+ */
+.c-step {
+  position: relative;
+  margin-top: max(26px, calc(var(--days) * var(--scale, 1px)));
+  padding-left: 44px;
+  min-width: 0;
+}
+.c-step:first-child { margin-top: 10px }
+.c-step::before {
+  content: ""; position: absolute; left: 13px; top: 20px;
+  width: 13px; height: 13px; border-radius: 999px; translate: -50% 0;
+  background: var(--paper); border: 3px solid var(--ink); z-index: 2;
+}
+.c-step[data-kind="ahead"]::before { border-color: var(--flame) }
+.c-step[data-kind="now"]::before { border-color: var(--sun); width: 17px; height: 17px; top: 18px }
+.c-step[data-kind="weak"]::before { border-color: color-mix(in oklab, var(--ink) 35%, transparent) }
+
+@media (min-width: 860px) {
+  .c-step { padding-left: 0; width: calc(50% - 38px) }
+  .c-step::before { left: auto; right: -44px; translate: 50% 0 }
+  .c-step:nth-child(even) { margin-left: auto; text-align: left }
+  .c-step:nth-child(even)::before { right: auto; left: -44px; translate: -50% 0 }
+  .c-step:nth-child(odd) { text-align: right }
+  .c-step:nth-child(odd) .c-card { align-items: flex-end }
+  .c-step:nth-child(odd) .c-detail { text-align: right }
+}
+
+.c-when {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-soft); margin-bottom: 6px; font-variant-numeric: tabular-nums;
+}
+.c-card {
+  appearance: none; border: 0; background: transparent; font: inherit; color: inherit;
+  cursor: pointer; display: flex; flex-direction: column; gap: 7px; width: 100%;
+  text-align: inherit; padding: 8px; margin: -8px; border-radius: 18px;
+  min-height: 44px;
+}
+.c-card:hover { background: color-mix(in oklab, var(--accent) 24%, transparent) }
+.c-step[aria-expanded="true"] .c-card { background: color-mix(in oklab, var(--accent) 38%, transparent) }
+.c-name {
+  font-family: var(--font-onest); font-weight: 900; font-size: 18px; line-height: 1.1;
+  letter-spacing: -0.015em; text-transform: uppercase;
+}
+.c-sub { font-size: 12px; color: var(--ink-soft); line-height: 1.45 }
+.c-res { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap }
+.c-step:nth-child(odd) .c-res { justify-content: flex-end }
+@media (max-width: 859px) { .c-step:nth-child(odd) .c-res { justify-content: flex-start } }
+.c-res .work-num { font-size: 22px }
+.c-res .work-label { font-size: 9px }
+
+.c-detail { display: none; margin-top: 10px; padding: 14px; font-size: 13px; line-height: 1.55 }
+.c-step[aria-expanded="true"] .c-detail { display: block }
+.c-detail p { margin: 0 0 9px }
+.c-detail p:last-child { margin: 0 }
+.c-detail b { font-weight: 700 }
+
+/* Блок «сейчас»: следующие действия прямо на оси. */
+.c-now { padding: 14px; margin-top: 10px }
+.c-act { display: flex; gap: 11px; align-items: flex-start; text-align: left }
+.c-act + .c-act { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--hairline) }
+.c-act .tick {
+  appearance: none; flex: 0 0 auto; width: 20px; height: 20px; border-radius: 7px;
+  border: 2px solid color-mix(in oklab, var(--ink) 28%, transparent); background: transparent;
+  cursor: pointer; position: relative; padding: 12px; margin: -11px 0 0 -11px;
+  box-sizing: content-box;
+}
+.c-act .tick::after {
+  content: ""; position: absolute; inset: 14px; border-radius: 3px;
+  background: var(--lime); opacity: 0; transition: opacity 0.15s ease;
+}
+.c-act[data-done="true"] .tick::after { opacity: 1 }
+.c-act[data-done="true"] .txt { opacity: 0.45; text-decoration: line-through }
+.c-act .txt { font-size: 13px; line-height: 1.45; min-width: 0 }
+
+/* ── Полка ──────────────────────────────────────────────────────────── */
+.c-dock {
+  position: fixed; inset: auto 0 0; z-index: 25; display: flex; gap: 10px; align-items: center;
+  padding: 10px max(14px, env(safe-area-inset-left, 0px))
+           calc(10px + env(safe-area-inset-bottom, 0px))
+           max(14px, env(safe-area-inset-right, 0px));
+  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  backdrop-filter: blur(14px); border-top: 1px solid var(--hairline);
+}
+.c-dock .left { min-width: 0; flex: 1 }
+.c-dock .left b { display: block; font-size: 13px; font-weight: 700 }
+.c-dock .left span { font-size: 11px; color: var(--ink-soft) }
+.c-dock .work-btn { height: 48px; border-radius: 999px; padding: 0 20px; font-size: 15px; flex: 0 0 auto }
+@media (max-width: 1023px) {
+  /* Следующий шаг и действие в одну строку не вставали: подпись в три строки
+     прижимала кнопку к краю. Строкой выше — подпись, под ней действие во всю
+     ширину. */
+  .c-dock { flex-direction: column; align-items: stretch; gap: 8px }
+  .c-dock .work-btn { width: 100% }
+  .c-wrap { padding-bottom: 164px }
+  /* Соседние засечки на узком экране сливались: минимальный перегон больше. */
+  .c-step { margin-top: max(44px, calc(var(--days) * var(--scale, 1px))) }
+}
+
+@media (min-width: 1024px) {
+  .c-dock {
+    position: static; margin: 32px auto 0; max-width: 980px; border-radius: 999px;
+    border: 1px solid var(--hairline); border-top: 1px solid var(--hairline);
+    background: var(--paper-deep); backdrop-filter: none; padding: 10px 10px 10px 20px;
+  }
+}
+
+/* ── Состояния ──────────────────────────────────────────────────────── */
+.c-states { margin: 26px auto 0; display: flex; gap: 6px; flex-wrap: wrap;
+  align-items: center; justify-content: center }
+.c-states > span { font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft) }
+.c-states button {
+  appearance: none; border: 1px solid var(--hairline); background: transparent;
+  color: var(--ink-soft); font: inherit; font-size: 11px; font-weight: 700;
+  height: 30px; padding: 0 11px; border-radius: 999px; cursor: pointer;
+}
+.c-states button[aria-pressed="true"] { background: var(--paper-deep); color: var(--ink) }
+.c-skel { padding-left: 44px }
+.c-skel > i {
+  display: block; height: 62px; border-radius: 20px; margin-bottom: 26px;
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--ink) 7%, transparent) 25%,
+    color-mix(in oklab, var(--ink) 12%, transparent) 37%,
+    color-mix(in oklab, var(--ink) 7%, transparent) 50%);
+  background-size: 300% 100%; animation: c-shine 1.3s linear infinite;
+}
+@keyframes c-shine { from { background-position: 100% 0 } to { background-position: -100% 0 } }
+.c-err { padding: 16px; border: 1px solid var(--brick); border-radius: 20px; margin-left: 44px }
+.c-err b { display: block; font-size: 14px; margin-bottom: 5px }
+.c-err p { margin: 0 0 11px; font-size: 13px; line-height: 1.5; color: var(--ink-soft) }
+@media (prefers-reduced-motion: reduce) {
+  .c-skel > i { animation: none }
+  .c-line b { transition: none }
+}
+
+/* ── Палец ──────────────────────────────────────────────────────────── */
+/*
+ * 36 — это высота кнопки на компьютере. Переносить её на телефон значит
+ * уменьшать интерфейс вместо того, чтобы его приспосабливать, а требование от
+ * 01.11.26 говорит ровно обратное. Поэтому на телефоне кнопка, пилюля и пункт
+ * меню не ниже 44, а главное действие на полке — 48, как и было.
+ *
+ * Поймано не глазами: node lab/shoot.mjs мерит каждую нажимаемую область на
+ * 375 и показал всё, что меньше.
+ */
+@media (max-width: 1023px) {
+  .work-btn,
+  .c-controls button { min-height: 44px }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a href="index.html">← Design Lab</a>
+  <b>C <i>·</i> Маршрут</b>
+  <button data-theme-btn="light">светлая</button>
+  <button data-theme-btn="dark">тёмная</button>
+  <button data-theme-btn="system">системная</button>
+</div>
+
+<div class="work">
+  <div class="c-wrap c-pad">
+
+    <header class="c-horizon">
+      <span class="work-label">горизонт · 31 декабря</span>
+      <h1 class="work-title">Из выступления — обращение</h1>
+      <div class="nums">
+        <div>
+          <div class="work-num">4,0<span style="font-size:0.5em">%</span></div>
+          <div class="work-label">сейчас</div>
+        </div>
+        <div class="arrow">→</div>
+        <div>
+          <div class="work-num" style="color:var(--flame)">10<span style="font-size:0.5em">%</span></div>
+          <div class="work-label">цель</div>
+        </div>
+      </div>
+      <div class="when">Одна цель, <b>пять выступлений</b>: четыре позади, одно через
+        14 дней. Осталось <b>6 пунктов</b> и 60 дней.</div>
+    </header>
+
+    <div class="c-controls" role="group" aria-label="Горизонт">
+      <span>показать</span>
+      <button data-horizon="quarter" aria-pressed="true">последние 3 месяца</button>
+      <button data-horizon="year" aria-pressed="false">весь год</button>
+    </div>
+
+    <div class="c-route" id="route">
+      <div class="c-line"><i></i><b id="done" style="height:40%"></b></div>
+
+      <div class="c-steps" id="steps">
+
+        <div class="c-step" data-kind="ahead" data-days="46" data-age="-14" aria-expanded="false">
+          <div class="c-when">15 ноября · через 14 дней</div>
+          <button class="c-card">
+            <span class="c-name">Рост 2026</span>
+            <span class="c-sub">Конференция · доклад 12 минут · поток «Развитие»</span>
+            <span class="c-res">
+              <span><span class="work-num">300</span> <span class="work-label">в зале</span></span>
+              <span><span class="work-num" style="color:var(--flame)">30</span> <span class="work-label">нужно обращений</span></span>
+            </span>
+          </button>
+          <div class="work-tile c-detail">
+            <p>Это выступление решает цель: <b>30 обращений из 300</b> дают ровно
+              те шесть пунктов, которых не хватает.</p>
+            <p>Доклад «Рост без найма» готов на структуру, но два аргумента из
+              трёх не подкреплены, а текст читается за 17 минут вместо 12.</p>
+          </div>
+        </div>
+
+        <div class="c-step" data-kind="now" data-days="14" data-age="0" aria-expanded="true">
+          <div class="c-when">сегодня · 1 ноября</div>
+          <button class="c-card">
+            <span class="c-name">Подготовка</span>
+            <span class="c-sub">Три шага до доклада. Два из них меняют конверсию, один — регламент.</span>
+          </button>
+          <div class="work-tile c-now">
+            <div class="c-act" data-done="false" data-weight="3">
+              <button class="tick" aria-label="Сделано"></button>
+              <div class="txt">Подкрепить аргументы 1 и 2 цифрами — без них вывод держится на одном</div>
+            </div>
+            <div class="c-act" data-done="false" data-weight="2">
+              <button class="tick" aria-label="Сделано"></button>
+              <div class="txt">Прогон на 12 минут и разбор записи</div>
+            </div>
+            <div class="c-act" data-done="true" data-weight="1">
+              <button class="tick" aria-label="Сделано"></button>
+              <div class="txt">Оставить один вывод вместо трёх</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="c-step" data-kind="plain" data-days="20" data-age="20" aria-expanded="false">
+          <div class="c-when">12 октября</div>
+          <button class="c-card">
+            <span class="c-name">Клуб директоров</span>
+            <span class="c-sub">Вне плана · позвали за неделю</span>
+            <span class="c-res">
+              <span><span class="work-num">6,0<span style="font-size:0.5em">%</span></span> <span class="work-label">конверсия</span></span>
+              <span><span class="work-num">14</span> <span class="work-label">из 240</span></span>
+            </span>
+          </button>
+          <div class="work-tile c-detail">
+            <p>Лучший результат года, и единственное выступление, где был
+              <b>один вывод</b>, а не три.</p>
+            <p>Отсюда и взялась гипотеза, на которой стоит вся цель.</p>
+          </div>
+        </div>
+
+        <div class="c-step" data-kind="weak" data-days="23" data-age="43" aria-expanded="false">
+          <div class="c-when">19 сентября</div>
+          <button class="c-card">
+            <span class="c-name">Отраслевой форум</span>
+            <span class="c-sub">Доклад 20 минут</span>
+            <span class="c-res">
+              <span><span class="work-num">3,9<span style="font-size:0.5em">%</span></span> <span class="work-label">конверсия</span></span>
+              <span><span class="work-num">7</span> <span class="work-label">из 180</span></span>
+            </span>
+          </button>
+          <div class="work-tile c-detail">
+            <p>Разбор: три вывода, и зал не запомнил ни одного. Ссылку для
+              обращений дали голосом, без слайда.</p>
+          </div>
+        </div>
+
+        <div class="c-step" data-kind="weak" data-days="121" data-age="164" aria-expanded="false">
+          <div class="c-when">21 мая</div>
+          <button class="c-card">
+            <span class="c-name">Вебинар</span>
+            <span class="c-sub">420 подключений, запись смотрели ещё 600</span>
+            <span class="c-res">
+              <span><span class="work-num">3,1<span style="font-size:0.5em">%</span></span> <span class="work-label">конверсия</span></span>
+              <span><span class="work-num">13</span> <span class="work-label">из 420</span></span>
+            </span>
+          </button>
+          <div class="work-tile c-detail">
+            <p>Между майским вебинаром и сентябрём — четыре пустых месяца. На оси
+              это самый длинный перегон: навык стоял.</p>
+          </div>
+        </div>
+
+        <div class="c-step" data-kind="weak" data-days="68" data-age="232" aria-expanded="false">
+          <div class="c-when">14 марта · начало</div>
+          <button class="c-card">
+            <span class="c-name">Конференция</span>
+            <span class="c-sub">Первое выступление, с которого начали считать</span>
+            <span class="c-res">
+              <span><span class="work-num">2,0<span style="font-size:0.5em">%</span></span> <span class="work-label">конверсия</span></span>
+              <span><span class="work-num">3</span> <span class="work-label">из 150</span></span>
+            </span>
+          </button>
+          <div class="work-tile c-detail">
+            <p>Отсюда считается путь. <b>2% → 4%</b> за восемь месяцев; чтобы
+              дойти до 10%, темп нужно удвоить.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="empty" class="work-empty" style="margin-left:44px" hidden>
+        За этот горизонт выступлений нет. Ближайшее — Рост 2026, через 14 дней.
+      </div>
+      <div id="loading" class="c-skel" hidden><i></i><i></i><i></i></div>
+      <div id="error" class="c-err" hidden>
+        <b>Маршрут не загрузился</b>
+        <p>Цель и ближайшее выступление на месте, не доехала история.</p>
+        <button class="work-btn work-btn--second" data-retry>Повторить</button>
+      </div>
+    </div>
+
+    <div class="c-dock">
+      <div class="left">
+        <b>Следующий шаг: подкрепить аргументы 1 и 2</b>
+        <span>до Рост 2026 — 14 дней</span>
+      </div>
+      <button class="work-btn work-btn--main">Открыть доклад</button>
+    </div>
+
+    <div class="c-states" role="group" aria-label="Состояния маршрута">
+      <span>состояния</span>
+      <button data-state="data" aria-pressed="true">с данными</button>
+      <button data-state="empty" aria-pressed="false">пусто</button>
+      <button data-state="loading" aria-pressed="false">грузится</button>
+      <button data-state="error" aria-pressed="false">ошибка</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const steps = document.getElementById("steps");
+  const route = document.getElementById("route");
+  const done = document.getElementById("done");
+  const panes = {
+    data: steps,
+    empty: document.getElementById("empty"),
+    loading: document.getElementById("loading"),
+    error: document.getElementById("error"),
+  };
+
+  /* Масштаб оси: пикселей на день. У близкого горизонта он крупнее — иначе
+     две недели до конференции сжались бы в три пикселя и перестали читаться
+     как две недели. */
+  const МАСШТАБ = { quarter: 1.5, year: 0.45 };
+  const ОКНО = { quarter: 92, year: 400 };
+
+  function горизонт(key) {
+    route.style.setProperty("--scale", `${МАСШТАБ[key]}px`);
+    let видимых = 0;
+    for (const s of steps.querySelectorAll(".c-step")) {
+      const возраст = Number(s.dataset.age);
+      const видно = возраст <= ОКНО[key];
+      s.hidden = !видно;
+      if (видно) видимых++;
+    }
+    for (const b of document.querySelectorAll("[data-horizon]")) {
+      b.setAttribute("aria-pressed", String(b.dataset.horizon === key));
+    }
+    состояние(видимых ? "data" : "empty");
+  }
+
+  function состояние(key) {
+    for (const [name, el] of Object.entries(panes)) el.hidden = name !== key;
+    for (const b of document.querySelectorAll("[data-state]")) {
+      b.setAttribute("aria-pressed", String(b.dataset.state === key));
+    }
+    document.querySelector(".c-line").hidden = key !== "data";
+  }
+
+  /* Линия — это и есть прогресс. Базовые 40% — то, что уже достигнуто
+     (4% из 10%); сделанные шаги подготовки добавляют свой вес вперёд, потому
+     что именно они двигают следующее выступление. */
+  function линия() {
+    const acts = [...document.querySelectorAll(".c-act")];
+    const весь = acts.reduce((s, a) => s + Number(a.dataset.weight), 0);
+    const сделано = acts
+      .filter((a) => a.dataset.done === "true")
+      .reduce((s, a) => s + Number(a.dataset.weight), 0);
+    done.style.height = `${40 + (весь ? (сделано / весь) * 22 : 0)}%`;
+  }
+
+  document.addEventListener("click", (e) => {
+    const tick = e.target.closest(".c-act .tick");
+    if (tick) {
+      const act = tick.closest(".c-act");
+      act.dataset.done = act.dataset.done === "true" ? "false" : "true";
+      линия();
+      return;
+    }
+    const card = e.target.closest(".c-card");
+    if (card) {
+      const step = card.closest(".c-step");
+      if (!step.querySelector(".c-detail")) return;
+      step.setAttribute(
+        "aria-expanded",
+        step.getAttribute("aria-expanded") === "true" ? "false" : "true",
+      );
+      return;
+    }
+    const h = e.target.closest("[data-horizon]");
+    if (h) return горизонт(h.dataset.horizon);
+
+    const st = e.target.closest("[data-state]");
+    if (st) return состояние(st.dataset.state);
+
+    if (e.target.closest("[data-retry]")) {
+      состояние("loading");
+      setTimeout(() => горизонт("quarter"), 850);
+    }
+  });
+
+  горизонт("quarter");
+  линия();
+})();
+</script>
+</body>
+</html>

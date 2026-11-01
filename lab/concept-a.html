@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Глагол 2.0 · Инструмент</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="work.css">
+<script src="lab.js"></script>
+<style>
+/*
+ * КОНЦЕПЦИЯ A · «Инструмент»
+ *
+ * Композиционная идея одна: шкала цели во всю ширину сверху, и под ней
+ * разворот «что решить сейчас» / «арифметика цели» на одной базовой линии.
+ * Никакой сетки одинаковых плиток: на экране одно число-плакат и один список
+ * решений, остальное — подписи.
+ *
+ * Краски, кнопки, плитки, чипы и числа — из work.css и токенов бюро. Своё
+ * здесь только раскладка: в продукте её задают утилиты Tailwind, которых в
+ * статической странице нет. Это и есть названное исключение.
+ */
+* { box-sizing: border-box }
+html, body { margin: 0; padding: 0 }
+/*
+ * Страница концепции — самостоятельный документ, и сброса браузера ей мало:
+ * у элемента с `display: flex` правило UA `[hidden] { display: none }`
+ * перебивается собственным display, и скрытое остаётся на экране. Ровно это и
+ * случилось с фильтром списка в концепции A — снимок показал все четыре
+ * строки вместо двух.
+ */
+[hidden] { display: none !important }
+body {
+  padding-top: env(safe-area-inset-top, 0px);
+  min-height: 100vh;
+}
+
+/* ── Шапка лаборатории (не часть концепции) ─────────────────────────── */
+.bar {
+  position: sticky; top: 0; z-index: 30;
+  /* Переносится, а не обрезается: на 375 три переключателя темы в одну строку
+     не встают, и последний уезжал под правый край. */
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px;
+  padding-block: 8px;
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
+  background: var(--background); border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.bar a { color: var(--muted-foreground); text-decoration: none; font-weight: 600 }
+.bar a:hover { color: var(--foreground) }
+.bar b { font-family: var(--font-onest); font-weight: 900; text-transform: uppercase;
+  letter-spacing: -0.01em; font-size: 13px; margin-right: auto }
+.bar b i { font-style: normal; color: var(--primary) }
+.bar button {
+  appearance: none; border: 1px solid var(--border); background: var(--card);
+  color: var(--muted-foreground); font: inherit; font-size: 11px; font-weight: 700;
+  height: 28px; padding: 0 10px; border-radius: 999px; cursor: pointer;
+}
+.bar button[aria-pressed="true"] { background: var(--foreground); color: var(--background);
+  border-color: var(--foreground) }
+
+/* ── Оболочка экрана ────────────────────────────────────────────────── */
+.a-shell { display: flex; min-height: calc(100vh - 46px) }
+
+.a-side {
+  display: none; flex-direction: column; gap: 2px;
+  width: 232px; flex: 0 0 232px; padding: 18px 12px;
+  border-right: 1px solid var(--hairline);
+}
+.a-side .mark {
+  font-family: var(--font-onest); font-weight: 900; font-size: 16px;
+  text-transform: uppercase; letter-spacing: -0.01em; padding: 0 10px 18px;
+}
+.a-side .mark em { font-style: normal; color: var(--flame) }
+.a-side a {
+  display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px;
+  border-radius: 12px; text-decoration: none; font-size: 14px;
+}
+.a-side a svg { width: 17px; height: 17px; flex: 0 0 17px; color: currentColor }
+.a-side a:hover { background: color-mix(in oklab, var(--ink) 5%, transparent) }
+.a-side .spacer { flex: 1 }
+.a-side .who {
+  display: flex; align-items: center; gap: 9px; padding: 10px;
+  border-top: 1px solid var(--hairline); margin-top: 8px; font-size: 12px;
+}
+.a-side .who i {
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px;
+  background: var(--paper-deep); font-style: normal; font-weight: 800; font-size: 11px;
+}
+
+.a-main { flex: 1; min-width: 0; padding: 0 0 92px }
+.a-pad {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ── Строка состояния: шкала цели ───────────────────────────────────── */
+.a-state { padding-block: 22px 18px; border-bottom: 1px solid var(--hairline) }
+.a-state .work-label { display: block; margin-bottom: 8px }
+.a-state h1 {
+  margin: 0; font-size: clamp(28px, 7vw, 56px);
+}
+.a-state .sub {
+  margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft);
+  max-width: 54ch;
+}
+
+/*
+ * Шкала — главный узнаваемый элемент концепции. Это не прогресс-бар: на ней
+ * стоят засечки прошлых выступлений, и видно не «сколько процентов пути», а
+ * чем именно двигали число. Перерасхода здесь быть не может, зато может быть
+ * откат — засечка ниже предыдущей, и это тоже должно быть видно.
+ */
+.a-scale { margin-top: 22px; position: relative; padding-bottom: 30px }
+.a-scale-line {
+  position: relative; height: 6px; border-radius: 999px;
+  background: color-mix(in oklab, var(--ink) 10%, transparent);
+}
+.a-scale-done {
+  position: absolute; inset: 0 auto 0 0; border-radius: 999px;
+  background: var(--flame); transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.a-notch {
+  position: absolute; top: 50%; translate: -50% -50%;
+  width: 13px; height: 13px; border-radius: 999px;
+  background: var(--paper); border: 3px solid var(--ink);
+}
+.a-notch[data-weak="true"] { border-color: var(--sun) }
+.a-notch span {
+  position: absolute; top: 17px; left: 50%; translate: -50% 0;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap;
+  color: var(--ink-soft); font-variant-numeric: tabular-nums;
+}
+.a-scale-ends {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 10px;
+}
+.a-scale-ends b { font-family: var(--font-onest); font-weight: 900; font-size: 15px }
+.a-scale-ends b em { font-style: normal; color: var(--flame) }
+.a-legend {
+  display: none; margin-top: 10px; font-size: 11px; line-height: 1.5;
+  color: var(--ink-soft); font-variant-numeric: tabular-nums;
+}
+@media (max-width: 1023px) {
+  .a-notch span { display: none }
+  .a-scale { padding-bottom: 0 }
+  .a-legend { display: block }
+  .a-scale-ends { flex-wrap: wrap; gap: 4px 12px }
+}
+.a-scale-ends span { font-size: 11px; color: var(--ink-soft) }
+
+/* ── Разворот ───────────────────────────────────────────────────────── */
+.a-spread { display: grid; gap: 28px; padding-block: 24px }
+@media (min-width: 1024px) {
+  .a-side { display: flex }
+  .a-spread { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 40px }
+  .a-main { padding-bottom: 40px }
+}
+
+.a-head {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.a-head h2 {
+  font-family: var(--font-onest); font-weight: 900; font-size: 19px;
+  text-transform: uppercase; letter-spacing: -0.01em; margin: 0; margin-right: auto;
+}
+.a-head .count { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums }
+
+.a-pills { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap }
+.a-pills .work-pill {
+  appearance: none; border: 0; font: inherit; cursor: pointer;
+  height: 40px; padding: 0 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+}
+
+/* Плитка решения. Плитка и чип — из work.css; своё здесь только то, как
+   внутри плитки расставлены галочка, текст и чипы. */
+.a-task { display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px }
+.a-task + .a-task { margin-top: 8px }
+.a-task .tick {
+  appearance: none; flex: 0 0 auto; margin: 1px 0 0;
+  width: 22px; height: 22px; border-radius: 7px; cursor: pointer;
+  border: 2px solid color-mix(in oklab, var(--ink) 28%, transparent);
+  background: transparent; position: relative;
+}
+.a-task .tick:hover { border-color: var(--ink) }
+.a-task .tick::after {
+  content: ""; position: absolute; inset: 3px; border-radius: 3px;
+  background: var(--lime); opacity: 0; transition: opacity 0.15s ease;
+}
+.a-task[data-done="true"] .tick::after { opacity: 1 }
+.a-task[data-done="true"] .body { opacity: 0.45 }
+.a-task[data-done="true"] .t { text-decoration: line-through }
+.a-task .body { min-width: 0; flex: 1 }
+.a-task .t { font-size: 14px; font-weight: 600; line-height: 1.35 }
+.a-task .meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; align-items: center }
+.a-task .where { font-size: 11px; color: var(--ink-soft) }
+/* Область касания 44: сама галочка 22, запас добирается полем. */
+.a-task .tick { padding: 11px; margin: -10px 0 0 -11px; box-sizing: content-box }
+
+/* ── Правая полоса: арифметика ──────────────────────────────────────── */
+.a-goal > .work-tile { padding: 16px }
+.a-figures { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-end }
+.a-figures > div { min-width: 0 }
+.a-figures .work-num { font-size: 40px; line-height: 0.95 }
+.a-figures .work-num small { font-size: 0.45em; font-weight: 700 }
+.a-arith { margin-top: 16px; font-size: 13px; line-height: 1.6; color: var(--ink-soft) }
+.a-arith b { color: var(--ink) }
+.a-past { margin-top: 18px }
+.a-past table { width: 100% }
+
+/* ── Полка действий на телефоне ─────────────────────────────────────── */
+.a-dock {
+  position: fixed; inset: auto 0 0; z-index: 25;
+  display: flex; gap: 10px; align-items: center;
+  padding: 10px max(14px, env(safe-area-inset-left, 0px))
+           calc(10px + env(safe-area-inset-bottom, 0px))
+           max(14px, env(safe-area-inset-right, 0px));
+  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--hairline);
+}
+.a-dock nav { display: flex; gap: 2px; flex: 1; min-width: 0 }
+.a-dock nav a {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
+  color: var(--ink-soft); text-decoration: none;
+}
+.a-dock nav a svg { width: 19px; height: 19px }
+.a-dock nav a[aria-current="page"] { background: var(--paper-deep); color: var(--ink) }
+.a-dock nav a[aria-current="page"] svg { color: var(--flame) }
+.a-dock .work-btn { flex: 0 0 auto }
+@media (max-width: 1023px) {
+  .a-dock { flex-direction: column; align-items: stretch; gap: 8px }
+  .a-dock nav { justify-content: space-between }
+  .a-dock .work-btn { width: 100% }
+  .a-main { padding-bottom: 150px }
+}
+@media (min-width: 1024px) { .a-dock { display: none } }
+
+/* ── Форма, раскрытая кнопкой ───────────────────────────────────────── */
+.a-form { margin-top: 12px; padding: 14px; display: none }
+.a-form[data-open="true"] { display: block }
+.a-form .row { display: grid; gap: 10px }
+@media (min-width: 620px) { .a-form .row { grid-template-columns: 1fr 160px auto; align-items: center } }
+.a-field {
+  height: 40px; border-radius: 12px; border: 1px solid var(--hairline);
+  background: var(--paper); color: var(--ink); font: inherit; font-size: 14px;
+  padding: 0 12px; width: 100%; min-width: 0;
+}
+.a-form .hint { font-size: 11px; color: var(--ink-soft); margin-top: 9px }
+
+/* ── Состояния ──────────────────────────────────────────────────────── */
+.a-states { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center }
+.a-states span { font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft); margin-right: 4px }
+.a-states button {
+  appearance: none; border: 1px solid var(--hairline); background: transparent;
+  color: var(--ink-soft); font: inherit; font-size: 11px; font-weight: 700;
+  height: 30px; padding: 0 11px; border-radius: 999px; cursor: pointer;
+}
+.a-states button[aria-pressed="true"] { background: var(--paper-deep); color: var(--ink) }
+.a-skeleton > i {
+  display: block; height: 58px; border-radius: 20px; margin-bottom: 8px;
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--ink) 7%, transparent) 25%,
+    color-mix(in oklab, var(--ink) 12%, transparent) 37%,
+    color-mix(in oklab, var(--ink) 7%, transparent) 50%);
+  background-size: 300% 100%; animation: a-shine 1.3s linear infinite;
+}
+@keyframes a-shine { from { background-position: 100% 0 } to { background-position: -100% 0 } }
+.a-error { padding: 16px; border: 1px solid var(--brick); border-radius: 20px }
+.a-error b { display: block; font-size: 14px; font-weight: 700; margin-bottom: 5px }
+.a-error p { margin: 0 0 11px; font-size: 13px; line-height: 1.5; color: var(--ink-soft) }
+@media (prefers-reduced-motion: reduce) {
+  .a-skeleton > i { animation: none }
+  .a-scale-done { transition: none }
+}
+
+/* ── Палец ──────────────────────────────────────────────────────────── */
+/*
+ * 36 — это высота кнопки на компьютере. Переносить её на телефон значит
+ * уменьшать интерфейс вместо того, чтобы его приспосабливать, а требование от
+ * 01.11.26 говорит ровно обратное. Поэтому на телефоне кнопка, пилюля и пункт
+ * меню не ниже 44, а главное действие на полке — 48, как и было.
+ *
+ * Поймано не глазами: node lab/shoot.mjs мерит каждую нажимаемую область на
+ * 375 и показал всё, что меньше.
+ */
+@media (max-width: 1023px) {
+  .work-btn,
+  .work-pill { min-height: 44px }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a href="index.html">← Design Lab</a>
+  <b>A <i>·</i> Инструмент</b>
+  <button data-theme-btn="light">светлая</button>
+  <button data-theme-btn="dark">тёмная</button>
+  <button data-theme-btn="system">системная</button>
+</div>
+
+<div class="work a-shell">
+
+  <aside class="a-side work work-side">
+    <div class="mark">Глагол<em>.</em></div>
+    <a class="work-side-item" href="#" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5m0 14h16M8 15V9m4 6V7m4 8v-4"/></svg>
+      Цель
+    </a>
+    <a class="work-side-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v16l-7-4-7 4z"/></svg>
+      Выступления
+    </a>
+    <a class="work-side-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
+      Материалы
+    </a>
+    <a class="work-side-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4m0 10v4m-9-9h4m10 0h4M6 6l3 3m6 6l3 3m0-12l-3 3m-6 6l-3 3"/></svg>
+      Разборы
+    </a>
+    <div class="spacer"></div>
+    <div class="who"><i>МС</i><span>Марина Соколова<br><em style="color:var(--ink-soft);font-style:normal">директор по развитию</em></span></div>
+  </aside>
+
+  <main class="a-main">
+
+    <header class="a-state a-pad">
+      <span class="work-label">цель · до конца декабря</span>
+      <h1 class="work-title">Из выступления — обращение</h1>
+      <p class="sub">Одна цель собирает несколько выступлений. Считаем по одному
+        числу: сколько человек из зала написали после доклада.</p>
+
+      <div class="a-scale">
+        <div class="a-scale-ends">
+          <b>сейчас <em>4,0%</em></b>
+          <span>осталось 6 пунктов · 4 выступления позади</span>
+          <b>цель 10%</b>
+        </div>
+        <div class="a-scale-line">
+          <i class="a-scale-done" style="width:40%"></i>
+          <i class="a-notch" style="left:20%" data-weak="true"><span>2% · март</span></i>
+          <i class="a-notch" style="left:30%"><span>3% · май</span></i>
+          <i class="a-notch" style="left:40%"><span>4% · сентябрь</span></i>
+          <i class="a-notch" style="left:60%" data-weak="true"><span>6% · октябрь, вне плана</span></i>
+        </div>
+        <div class="a-legend">Засечки — прошлые выступления:
+          2% март · 3% май · 4% сентябрь · 6% октябрь, вне плана</div>
+      </div>
+    </header>
+
+    <div class="a-spread a-pad">
+
+      <section class="a-now">
+        <div class="a-head">
+          <h2>Что решить</h2>
+          <span class="count" id="count">3 из 4 ждут решения</span>
+        </div>
+
+        <div class="a-pills" role="group" aria-label="Срок">
+          <button class="work-pill" data-when="today" aria-current="true">Сегодня</button>
+          <button class="work-pill" data-when="week">До конференции</button>
+          <button class="work-pill" data-when="all">Всё</button>
+        </div>
+
+        <div id="list">
+          <div class="work-tile a-task" data-done="false" data-when="today">
+            <button class="tick" aria-label="Сделано"></button>
+            <div class="body">
+              <div class="t">Подкрепить два аргумента цифрами — без них доклад не держит вывод</div>
+              <div class="meta">
+                <span class="work-chip work-chip--small" style="color:var(--brick)">не подкреплено</span>
+                <span class="where">Рост 2026 · структура, блок 3 и 4</span>
+              </div>
+            </div>
+          </div>
+          <div class="work-tile a-task" data-done="false" data-when="today">
+            <button class="tick" aria-label="Сделано"></button>
+            <div class="body">
+              <div class="t">Прогон на 12 минут: уложиться в регламент, сейчас 17</div>
+              <div class="meta">
+                <span class="work-chip work-chip--small" style="color:var(--sun)">идёт</span>
+                <span class="where">запись от 28 октября · разбор готов</span>
+              </div>
+            </div>
+          </div>
+          <div class="work-tile a-task" data-done="false" data-when="week">
+            <button class="tick" aria-label="Сделано"></button>
+            <div class="body">
+              <div class="t">Договориться про QR на последнем слайде — через него и считаем обращения</div>
+              <div class="meta">
+                <span class="work-chip work-chip--small">14 ноября</span>
+                <span class="where">организаторы Рост 2026</span>
+              </div>
+            </div>
+          </div>
+          <div class="work-tile a-task" data-done="true" data-when="week">
+            <button class="tick" aria-label="Сделано"></button>
+            <div class="body">
+              <div class="t">Выбрать один вывод вместо трёх</div>
+              <div class="meta"><span class="where">сделано 29 октября</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="empty" class="work-empty" hidden>
+          На этот срок решений нет. Ближайшее — к 14 ноября: договориться про QR.
+        </div>
+        <div id="loading" class="a-skeleton" hidden><i></i><i></i><i></i></div>
+        <div id="error" class="a-error" hidden>
+          <b>Не удалось получить список</b>
+          <p>Соединение оборвалось на полпути. Решения никуда не делись — они
+             на сервере, список просто не доехал.</p>
+          <button class="work-btn work-btn--second" data-retry>Попробовать снова</button>
+        </div>
+
+        <div class="a-states" role="group" aria-label="Состояния списка">
+          <span>состояния</span>
+          <button data-state="data" aria-pressed="true">с данными</button>
+          <button data-state="empty" aria-pressed="false">пусто</button>
+          <button data-state="loading" aria-pressed="false">грузится</button>
+          <button data-state="error" aria-pressed="false">ошибка</button>
+        </div>
+      </section>
+
+      <aside class="a-goal">
+        <div class="a-head"><h2>Ближайшее</h2></div>
+        <div class="work-tile" style="padding:16px">
+          <div class="work-label">через 14 дней · 15 ноября</div>
+          <div style="font-family:var(--font-onest);font-weight:900;font-size:22px;line-height:1.1;margin-top:6px;text-transform:uppercase;letter-spacing:-0.015em">Рост 2026</div>
+          <div style="font-size:13px;color:var(--ink-soft);margin-top:7px">Доклад 12 минут · зал 300 человек · поток «Развитие»</div>
+          <div class="a-figures" style="margin-top:16px">
+            <div>
+              <div class="work-num">300</div>
+              <div class="work-label">в зале</div>
+            </div>
+            <div>
+              <div class="work-num">30<small> чел</small></div>
+              <div class="work-label">нужно обращений</div>
+            </div>
+          </div>
+          <div class="work-bar" style="margin-top:16px">
+            <i style="width:40%;background:var(--ink)"></i>
+            <i style="width:18%;background:var(--flame)"></i>
+          </div>
+          <div class="a-arith">
+            Чтобы цель сошлась, на этом докладе нужны <b>30 обращений из 300</b>.
+            Прошлый раз из 240 написали 14 — это 6%. Разница в шести пунктах
+            стоит двух подкреплённых аргументов и одного вывода вместо трёх.
+          </div>
+          <button class="work-btn work-btn--main" style="margin-top:16px;width:100%" data-toggle>
+            <span data-plus>+</span> <span data-word>Внести выступление</span>
+          </button>
+          <div class="work-tile a-form" data-open="false">
+            <div class="row">
+              <input class="a-field" placeholder="Название и место" value="">
+              <input class="a-field" placeholder="дд.мм.гггг" value="">
+              <button class="work-btn work-btn--second work-btn--row">Сохранить</button>
+            </div>
+            <p class="hint">Кнопка в ряду с полями берёт их рост — сорок, а не
+              тридцать шесть: иначе ряд перестаёт читаться рядом.</p>
+          </div>
+        </div>
+
+        <div class="a-past">
+          <div class="a-head"><h2>Что было</h2></div>
+          <div class="work-tile" style="padding:6px 14px 10px">
+            <table class="work-table">
+              <thead><tr><th>Выступление</th><th style="text-align:right">Зал</th><th style="text-align:right">Обращений</th><th style="text-align:right">Конверсия</th></tr></thead>
+              <tbody>
+                <tr><td>Клуб директоров, октябрь</td><td style="text-align:right">240</td><td style="text-align:right">14</td><td style="text-align:right">6,0%</td></tr>
+                <tr><td>Отраслевой форум, сентябрь</td><td style="text-align:right">180</td><td style="text-align:right">7</td><td style="text-align:right">3,9%</td></tr>
+                <tr><td>Вебинар, май</td><td style="text-align:right">420</td><td style="text-align:right">13</td><td style="text-align:right">3,1%</td></tr>
+                <tr><td>Конференция, март</td><td style="text-align:right">150</td><td style="text-align:right">3</td><td style="text-align:right">2,0%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="a-dock">
+    <nav>
+      <a href="#" aria-current="page" aria-label="Цель"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5m0 14h16M8 15V9m4 6V7m4 8v-4"/></svg></a>
+      <a href="#" aria-label="Выступления"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v16l-7-4-7 4z"/></svg></a>
+      <a href="#" aria-label="Материалы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/></svg></a>
+      <a href="#" aria-label="Разборы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4m0 10v4m-9-9h4m10 0h4"/></svg></a>
+    </nav>
+    <button class="work-btn work-btn--main" style="height:48px;border-radius:999px;padding:0 20px;font-size:15px">Собрать доклад</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const list = document.getElementById("list");
+  const count = document.getElementById("count");
+  const panes = {
+    data: list,
+    empty: document.getElementById("empty"),
+    loading: document.getElementById("loading"),
+    error: document.getElementById("error"),
+  };
+
+  /* Счётчик считает только то, что видно: иначе «3 из 4» врёт при фильтре. */
+  function пересчитать() {
+    const видимые = [...list.querySelectorAll(".a-task")].filter((t) => !t.hidden);
+    const ждут = видимые.filter((t) => t.dataset.done === "false").length;
+    count.textContent = ждут
+      ? `${ждут} из ${видимые.length} ждут решения`
+      : `всё решено — ${видимые.length} из ${видимые.length}`;
+  }
+
+  function фильтр(when) {
+    for (const t of list.querySelectorAll(".a-task")) {
+      t.hidden = when !== "all" && t.dataset.when !== when;
+    }
+    for (const b of document.querySelectorAll("[data-when]")) {
+      b.setAttribute("aria-current", String(b.dataset.when === when));
+    }
+    const пусто = ![...list.querySelectorAll(".a-task")].some((t) => !t.hidden);
+    состояние(пусто ? "empty" : "data");
+    пересчитать();
+  }
+
+  function состояние(key) {
+    for (const [name, el] of Object.entries(panes)) el.hidden = name !== key;
+    for (const b of document.querySelectorAll("[data-state]")) {
+      b.setAttribute("aria-pressed", String(b.dataset.state === key));
+    }
+  }
+
+  document.addEventListener("click", (e) => {
+    const tick = e.target.closest(".tick");
+    if (tick) {
+      const task = tick.closest(".a-task");
+      task.dataset.done = task.dataset.done === "true" ? "false" : "true";
+      пересчитать();
+      return;
+    }
+    const when = e.target.closest("[data-when]");
+    if (when) return фильтр(when.dataset.when);
+
+    const st = e.target.closest("[data-state]");
+    if (st) return состояние(st.dataset.state);
+
+    if (e.target.closest("[data-retry]")) {
+      состояние("loading");
+      setTimeout(() => фильтр("today"), 900);
+      return;
+    }
+
+    /* Кнопка, раскрывшая поля, их и закрывает: плюс становится крестиком,
+       подпись — словом «Отменить». Крестик именно на кнопке. */
+    const toggle = e.target.closest("[data-toggle]");
+    if (toggle) {
+      const form = toggle.parentElement.querySelector(".a-form");
+      const open = form.dataset.open !== "true";
+      form.dataset.open = String(open);
+      toggle.querySelector("[data-plus]").textContent = open ? "×" : "+";
+      toggle.querySelector("[data-word]").textContent = open ? "Отменить" : "Внести выступление";
+      if (open) form.querySelector(".a-field").focus();
+    }
+  });
+
+  фильтр("today");
+})();
+</script>
+</body>
+</html>

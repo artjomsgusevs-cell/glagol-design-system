@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "check": "node ../glagol-calendar/scripts/check.mjs .",
     "ui-guard": "node ../glagol-calendar/scripts/ui-guard.mjs .",
-    "sync-design": "node ../glagol-calendar/scripts/sync-design.mjs"
+    "sync-design": "node ../glagol-calendar/scripts/sync-design.mjs",
+    "lab": "node lab/build.mjs && node lab/shoot.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "1.3.1",

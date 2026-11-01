@@ -1,0 +1,569 @@
+<title>Glagol Design Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="work.css">
+<link rel="stylesheet" href="lab.css">
+<script src="lab.js"></script>
+
+<div class="lab">
+
+<div class="lab-top">
+  <span class="lab-mark">Glagol Design Lab <span class="lab-ver">v3.0.0</span></span>
+  <span class="lab-switch">
+    <span>тема</span>
+    <button data-theme-btn="light">светлая</button>
+    <button data-theme-btn="dark">тёмная</button>
+    <button data-theme-btn="system">системная</button>
+  </span>
+  <span class="lab-switch">
+    <span>полоса образцов</span>
+    <button data-bench-btn="free">свободная</button>
+    <button data-bench-btn="375">375</button>
+  </span>
+</div>
+
+<div class="lab-h">
+  <div class="section-rule"><b>00</b> Что это</div>
+  <h2>Действующая система и три концепции</h2>
+  <p>Витрина дизайн-системы бюро Глагол версии 3.0.0 и площадка, на которой
+    сравниваются три концепции «Глагола 2.0». Краски, типографика и элементы
+    рабочей среды взяты из настоящих файлов продукта — <code>app/globals.css</code>
+    и <code>app/work.css</code>, — а не из копий: их вынимает
+    <code>node lab/build.mjs</code>. Разойтись с продуктом эта страница не может.</p>
+  <p><b>Исключение одно, и вот оно.</b> Примитивы <code>components/ui/</code> — это
+    React, и в статической странице без сборки они не живут. Здесь они показаны
+    разметкой на тех же токенах; источником остаётся код. Раскладку в продукте
+    задают утилиты Tailwind, которых здесь тоже нет, поэтому композиция
+    разделов и концепций написана своим CSS.</p>
+</div>
+
+<nav class="lab-toc">
+  <a href="#a"><b>А · Действующая система</b><i>Краски, типографика, высоты, кнопки, поля, строки, навигация, состояния</i></a>
+  <a href="#b"><b>Б · Реальные экраны</b><i>Публичная и рабочая среды в их нынешнем виде, снимки на 1440 и 375</i></a>
+  <a href="#c"><b>В · Три концепции 2.0</b><i>Инструмент, Мастерская, Маршрут — один сценарий, три композиции</i></a>
+</nav>
+
+<!-- ═══════════════ А ═══════════════ -->
+
+<section id="a">
+<div class="lab-h">
+  <div class="section-rule"><b>01</b> Действующая система</div>
+  <h2>Из чего собираются экраны</h2>
+  <p>Всё ниже работает в продукте сегодня. Значения не названы числами там, где
+    их держит токен: поменяется токен — поменяется образец.</p>
+</div>
+
+<div class="shelf">
+  <h3>Краски</h3>
+  <p class="note">Семантика, а не названия цветов. Модель — oklch, Tailwind 4.
+    Светлая и тёмная заданы полностью; переключите тему в шапке — поменяются и
+    образцы.</p>
+  <div class="swatches">
+    <div class="sw"><i style="background:var(--background)"></i><span><b>--background</b><em>бумага страницы</em></span></div>
+    <div class="sw"><i style="background:var(--card)"></i><span><b>--card</b><em>поверхность, карточка</em></span></div>
+    <div class="sw"><i style="background:var(--foreground)"></i><span><b>--foreground</b><em>текст, главное действие</em></span></div>
+    <div class="sw"><i style="background:var(--muted-foreground)"></i><span><b>--muted-foreground</b><em>подписи, иконки</em></span></div>
+    <div class="sw"><i style="background:var(--primary)"></i><span><b>--primary</b><em>оранжевый: только действие</em></span></div>
+    <div class="sw"><i style="background:var(--accent)"></i><span><b>--accent</b><em>персик: отмена и удаление</em></span></div>
+    <div class="sw"><i style="background:var(--success)"></i><span><b>--success</b><em>получилось</em></span></div>
+    <div class="sw"><i style="background:var(--warning)"></i><span><b>--warning</b><em>внимание</em></span></div>
+    <div class="sw"><i style="background:var(--border)"></i><span><b>--border</b><em>волосок, рамка поля</em></span></div>
+  </div>
+  <p class="spec">Красного среди действий нет: <b>--destructive</b> живёт в
+    валидации и стектрейсах, а удаление и отмена — персиковые. Красная кнопка
+    пугает сильнее, чем стоит поступок, который всегда можно повторить.</p>
+</div>
+
+<div class="shelf">
+  <h3>Состояния рабочей среды</h3>
+  <p class="note">Эти четыре — своё у рабочей среды: в палитре бюро им
+    соответствия нет, они кодируют этап и беду. У каждого цвета один смысл на
+    всю систему; придумывать второй нельзя.</p>
+  <div class="work">
+  <div class="swatches">
+    <div class="sw"><i style="background:var(--flame)"></i><span><b>--flame</b><em>= --primary. Сейчас, срочно, сверх сметы</em></span></div>
+    <div class="sw"><i style="background:var(--sun)"></i><span><b>--sun</b><em>идёт, но не закончено</em></span></div>
+    <div class="sw"><i style="background:var(--lime)"></i><span><b>--lime</b><em>сделано, закрыто</em></span></div>
+    <div class="sw"><i style="background:var(--brick)"></i><span><b>--brick</b><em>беда: пауза, отказ, отмена</em></span></div>
+  </div>
+  </div>
+  <p class="spec">Оранжевый берётся <b>var(--primary)</b>, а не числом. В
+    мини-аппе он был прописан значением — ровно то место, где через месяц
+    появился бы третий оранжевый.</p>
+</div>
+
+<div class="shelf">
+  <h3>Типографика</h3>
+  <div class="bench">
+    <div class="work bench-col">
+      <div class="work-title" style="font-size:44px">Плакатный заголовок ЁЙ</div>
+      <div class="work-label">мелкая подпись вразрядку, 10</div>
+      <div style="font-size:15px;line-height:1.6;max-width:62ch">Основной текст
+        Manrope: открытая «г», прямая «д», ровные «к» и «ж». Мера строки около
+        65 знаков — дальше глаз теряет начало следующей.</div>
+      <div style="font-size:13px;color:var(--ink-soft)">Второй кегль: подписи под
+        значением, служебное, пояснения.</div>
+      <div class="work-num">7,5 ч</div>
+    </div>
+  </div>
+  <p class="spec"><b>Onest</b> на заголовках и числах, <b>Manrope</b> в тексте,
+    оба с кириллическим сабсетом. Плакатный заголовок — Onest 900 заглавными,
+    межстрочный 0.9. Проверять его нужно на <b>Ё и Й</b>: при обрезке первыми
+    пропадают точки и бреве, и «Ё-ТАКСИ» читается как «Е-ТАКСИ». Лечится
+    возвратом роста коробке и отрицательным полем.</p>
+</div>
+
+<div class="shelf">
+  <h3>Высоты</h3>
+  <p class="note">Их четыре, и это не лестница одного ряда, а четыре
+    назначения. Сводить к одному числу нельзя: 44 — вообще не про внешний вид.</p>
+  <div class="lab-table-wrap">
+  <table class="lab-table">
+    <thead><tr><th>Число</th><th>Что это</th><th>Где</th></tr></thead>
+    <tbody>
+      <tr><td class="num">36</td><td>высота кнопки <b>на компьютере</b></td><td><code>.work-btn</code> — main, second, soft, quiet</td></tr>
+      <tr><td class="num">40</td><td>поле, пилюля, выпадающий список</td><td>и кнопка в ряду с полями — <code>.work-btn--row</code></td></tr>
+      <tr><td class="num">44</td><td><b>минимум на телефоне</b> для всего нажимаемого</td><td>кнопка, пилюля, поле, пункт меню под 1024</td></tr>
+      <tr><td class="num">48</td><td>главное действие на телефоне</td><td><code>.work-shelf-main</code>, под 1024</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="spec">36 и 44 не спорят, потому что это разные среды: 36 —
+    компьютер, где нажимают курсором, 44 — телефон, где нажимают пальцем. Под
+    1024 всё нажимаемое поднимается до 44. Внутри одного ряда высоты обязаны
+    совпадать, и это правило <b>сильнее назначения</b>: кнопка 36 рядом с полями 40 торчит на четыре
+    пикселя, и ряд перестаёт читаться рядом. Ловится командой — <code>ui-guard</code>,
+    правило «кнопка в ряду с полями выше самих полей».</p>
+</div>
+
+<div class="shelf">
+  <h3>Кнопки</h3>
+  <div class="bench">
+    <div class="work bench-col">
+      <div class="bench-row">
+        <button class="work-btn work-btn--main">Главное действие</button>
+        <button class="work-btn work-btn--second">Вторичное</button>
+        <button class="work-btn work-btn--soft">Тихое на листе</button>
+        <button class="work-btn work-btn--quiet">Совсем тихое</button>
+        <button class="work-btn work-btn--second" disabled>Недоступно</button>
+      </div>
+      <div class="bench-row">
+        <input class="work-field-demo" placeholder="поле в ряду, 40" style="height:40px;border-radius:12px;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);font:inherit;font-size:14px;padding:0 12px;min-width:0;flex:1 1 180px">
+        <button class="work-btn work-btn--second work-btn--row">В ряду: 40</button>
+      </div>
+      <div class="bench-row">
+        <button class="work-pill" aria-current="true" style="appearance:none;border:0;font:inherit;height:40px;padding:0 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer">Сегодня</button>
+        <button class="work-pill" style="appearance:none;border:0;font:inherit;height:40px;padding:0 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer">Неделя</button>
+        <button class="work-pill" style="appearance:none;border:0;font:inherit;height:40px;padding:0 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer">Всё</button>
+      </div>
+      <div class="bench-row">
+        <button class="work-btn" style="background:var(--accent);color:var(--ink)">⚠ Отменить встречу</button>
+        <span class="spec" style="margin:0">Отмена персиковая, не красная.</span>
+      </div>
+    </div>
+  </div>
+  <p class="spec">Четыре вида, и отклик описан у них, а не у каждого экрана —
+    на этом и держится то, что отклик одинаков везде: <b>фон становится
+    плотнее</b>, не сдвиг и не тень. Пятого вида не заводим. Подпись — в одну
+    строку: не влезает, переписываем текст.</p>
+</div>
+
+<div class="shelf">
+  <h3>Поля, даты и списки</h3>
+  <p class="note">Нативные <code>input type="date"</code> и <code>&lt;select&gt;</code>
+    запрещены: они рисуют календарь и список операционной системы. В продукте
+    работают <code>components/booking/date-field.tsx</code> и
+    <code>select.tsx</code> — это React, здесь показан их вид.</p>
+  <div class="bench">
+    <div class="work bench-col" style="max-width:420px">
+      <div class="bench-row" style="gap:8px">
+        <div style="flex:1 1 150px;min-width:0">
+          <div class="work-label" style="margin-bottom:5px">дата</div>
+          <div style="height:40px;border-radius:12px;border:1px solid var(--hairline);background:var(--paper);display:flex;align-items:center;gap:8px;padding:0 12px;font-size:14px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--ink-soft)"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4m8-4v4"/></svg>
+            15 ноября (сб), 2026
+          </div>
+        </div>
+        <div style="flex:1 1 130px;min-width:0">
+          <div class="work-label" style="margin-bottom:5px">длительность</div>
+          <div style="height:40px;border-radius:12px;border:1px solid var(--hairline);background:var(--paper);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:14px">
+            12 минут
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--ink-soft)"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="work-tile" style="padding:6px;max-width:220px">
+        <div style="padding:9px 12px;font-size:14px;border-radius:12px;background:var(--paper-deep);font-weight:700">12 минут</div>
+        <div style="padding:9px 12px;font-size:14px">20 минут</div>
+        <div style="padding:9px 12px;font-size:14px">45 минут</div>
+        <div style="padding:9px 12px;font-size:13px;color:var(--ink-soft);border-top:1px solid var(--hairline);margin-top:4px">Своё значение…</div>
+      </div>
+    </div>
+  </div>
+  <p class="spec">Меню рисуется поверх страницы, закрывается по Escape,
+    открывается вверх у нижнего края и несёт поле «своё значение» под списком.
+    Всплывающее из строки списка уходит <b>в конец страницы</b>
+    (<code>createPortal</code>): внутри списка его накрывали дважды и по разным
+    причинам.</p>
+</div>
+
+<div class="shelf">
+  <h3>Строка списка</h3>
+  <p class="note">Четыре обязательства: подсвечивается персиком целиком,
+    открывается нажатием в любое место, тащится мышью за любое место, носит
+    свои действия при себе. На телефоне ручки нет — перетаскивания пальцем в
+    вебе не существует.</p>
+  <div class="bench">
+    <div class="work bench-col">
+      <div class="work-tile" style="display:flex;gap:12px;align-items:center;padding:13px 14px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="color:var(--ink-soft);flex:0 0 14px"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>
+        <span class="work-dot" style="background:var(--sun)"></span>
+        <span style="min-width:0;flex:1">
+          <span style="display:block;font-size:14px;font-weight:600">Рост 2026 · доклад «Рост без найма»</span>
+          <span style="display:block;font-size:12px;color:var(--ink-soft);margin-top:3px">15 ноября (сб), 12 минут · 300 человек</span>
+        </span>
+        <span class="work-chip work-chip--small" style="color:var(--sun)">готовится</span>
+        <span class="bench-row" style="gap:4px;flex:0 0 auto">
+          <button class="work-btn work-btn--quiet" style="width:28px;height:28px;padding:0;border-radius:999px">↗</button>
+          <button class="work-btn work-btn--quiet" style="width:28px;height:28px;padding:0;border-radius:999px">✎</button>
+          <button class="work-btn work-btn--quiet" style="width:28px;height:28px;padding:0;border-radius:999px">⧉</button>
+        </span>
+      </div>
+      <div class="work-tile" style="display:flex;gap:12px;align-items:center;padding:13px 14px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="color:var(--ink-soft);flex:0 0 14px"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>
+        <span class="work-dot" style="background:var(--lime)"></span>
+        <span style="min-width:0;flex:1">
+          <span style="display:block;font-size:14px;font-weight:600">Клуб директоров</span>
+          <span style="display:block;font-size:12px;color:var(--ink-soft);margin-top:3px">12 октября · 240 человек · конверсия 6,0%</span>
+        </span>
+        <span class="work-chip work-chip--small" style="color:var(--lime)">закрыто</span>
+      </div>
+    </div>
+  </div>
+  <p class="spec">Строка <b>не сжимается по нажатию</b>: сжатие — это
+    <code>transform</code>, а предок с <code>transform</code> забирает себе всё
+    абсолютное и всё <code>fixed</code> внутри. Выпадашка запиралась среди
+    соседних строк, окно согласия открывалось внутри строки, цель нажатия
+    успевала смениться между нажатием и отпусканием. Три жалобы, одна причина.</p>
+</div>
+
+<div class="shelf">
+  <h3>Навигация</h3>
+  <p class="note">Место обозначается тремя тихими средствами сразу: нейтральная
+    подложка, вес 800, оранжевая пиктограмма. Подпись остаётся чёрной — цветной
+    текст рядом с цветной кнопкой снова даёт два пятна. Вид активного пункта
+    живёт ровно в одном месте: <code>.work-side-item[aria-current="page"]</code>.</p>
+  <div class="bench">
+    <div class="work bench-row" style="gap:24px;align-items:flex-start">
+      <div class="bench-col" style="gap:2px;width:208px;flex:0 0 208px">
+        <a class="work-side-item" href="#a" aria-current="page" style="display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;border-radius:12px;text-decoration:none;font-size:14px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5m0 14h16M8 15V9m4 6V7m4 8v-4"/></svg> Цель
+        </a>
+        <a class="work-side-item" href="#a" style="display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;border-radius:12px;text-decoration:none;font-size:14px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v16l-7-4-7 4z"/></svg> Выступления
+        </a>
+        <a class="work-side-item" href="#a" style="display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;border-radius:12px;text-decoration:none;font-size:14px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/></svg> Материалы
+        </a>
+      </div>
+      <div class="bench-col" style="gap:8px">
+        <div class="work-label">на телефоне — полка внизу</div>
+        <div class="work-tile" style="display:flex;gap:4px;padding:8px;border-radius:999px;align-items:center">
+          <span class="work-side-item" aria-current="page" style="display:grid;place-items:center;width:44px;height:44px;border-radius:999px">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5m0 14h16M8 15V9m4 6V7m4 8v-4"/></svg>
+          </span>
+          <span class="work-side-item" style="display:grid;place-items:center;width:44px;height:44px;border-radius:999px">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v16l-7-4-7 4z"/></svg>
+          </span>
+          <span class="work-side-item" style="display:grid;place-items:center;width:44px;height:44px;border-radius:999px">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
+          </span>
+          <button class="work-btn work-btn--main" style="height:48px;border-radius:999px;padding:0 18px;font-size:15px;margin-left:6px">Собрать доклад</button>
+        </div>
+        <div class="spec" style="margin:0">Область касания у пункта — 44, хотя
+          знак внутри 19. Главное действие на телефоне — 48.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>Числа, полосы, чипы</h3>
+  <div class="bench">
+    <div class="work bench-col">
+      <div class="bench-row" style="gap:28px;align-items:flex-end">
+        <div><div class="work-num">4,0%</div><div class="work-label">конверсия сейчас</div></div>
+        <div><div class="work-num">30</div><div class="work-label">нужно обращений</div></div>
+        <div><div class="work-num">7,5 ч</div><div class="work-label">потрачено на подготовку</div></div>
+      </div>
+      <div>
+        <div class="work-label" style="margin-bottom:7px">полоса сметы: проведено · назначено вперёд · остаток</div>
+        <div class="work-bar"><i style="width:46%;background:var(--ink)"></i><i style="width:22%;background:var(--flame)"></i></div>
+      </div>
+      <div class="bench-row">
+        <span class="work-chip" style="color:var(--sun)">идёт</span>
+        <span class="work-chip" style="color:var(--lime)">закрыто</span>
+        <span class="work-chip" style="color:var(--brick)">отменено</span>
+        <span class="work-chip">15 ноября (сб)</span>
+        <span class="work-chip work-chip--small">не подкреплено</span>
+      </div>
+    </div>
+  </div>
+  <p class="spec">Число всегда с подписью: само по себе оно не сообщает
+    ничего. <code>tabular-nums</code> обязателен — иначе счётчик дёргается при
+    каждом обновлении, а это тот же скачок, что уехавшая кнопка. Перерасход на
+    полосе не обрезается, а продолжается за сотню полупрозрачным: иначе полоса
+    врёт ровно в том случае, ради которого её смотрят. Высота у чипов одна на
+    всех: разнокалиберные ярлыки в строке выглядят как сбой вёрстки.</p>
+</div>
+
+<div class="shelf">
+  <h3>Состояния</h3>
+  <div class="bench">
+    <div class="work bench-col">
+      <div class="work-empty">Тренер не назначен</div>
+      <div class="work-tile" style="padding:14px">
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <i style="display:block;height:13px;width:55%;border-radius:7px;background:color-mix(in oklab,var(--ink) 10%,transparent)"></i>
+          <i style="display:block;height:13px;width:78%;border-radius:7px;background:color-mix(in oklab,var(--ink) 10%,transparent)"></i>
+        </div>
+        <div class="spec" style="margin-top:9px">грузится: скелетон той же высоты, что содержимое</div>
+      </div>
+      <div class="work-tile" style="padding:14px;border:1px solid var(--brick)">
+        <div style="font-size:14px;font-weight:700;margin-bottom:5px">Не удалось получить список</div>
+        <div style="font-size:13px;color:var(--ink-soft);line-height:1.5;margin-bottom:11px">Соединение оборвалось на полпути. Решения никуда не делись — список просто не доехал.</div>
+        <button class="work-btn work-btn--second">Попробовать снова</button>
+      </div>
+    </div>
+  </div>
+  <p class="spec">Пусто — это <b>фраза словами</b>, а не прочерк: прочерк
+    читается как «данные не подгрузились». «Тренер не назначен», «не
+    оговаривали», «не назначено». Ноль — это утверждение, и ставить его вместо
+    пустоты нельзя.</p>
+</div>
+
+<div class="shelf">
+  <h3>Публичная среда</h3>
+  <p class="note">Приёмы, которые до версии 3.0.0 не были описаны словами —
+    о них знало только сообщение коммита <code>09b4980</code>. Все три живут в
+    <code>app/globals.css</code> и работают здесь, на этой странице.</p>
+  <div class="bench grain">
+    <div class="bench-col reveal">
+      <div class="section-rule"><b>07</b> Редакционный разделитель</div>
+      <div style="font-family:var(--font-onest);font-weight:900;font-size:clamp(24px,5vw,38px);line-height:1.02;letter-spacing:-0.02em;text-transform:uppercase;max-width:22ch">Первая секунда решает, идти к нам или нет</div>
+      <div style="font-size:14px;line-height:1.6;max-width:60ch;color:var(--muted-foreground)">Зерно даёт бумаге фактуру печати: шумовой слой через SVG-турбулентность, плитка 240 пикселей, прозрачность 0,22, режим умножения. Эта полка им и покрыта.</div>
+      <div class="bench-row">
+        <button style="appearance:none;border:0;cursor:pointer;height:36px;padding:0 18px;border-radius:999px;background:var(--foreground);color:var(--background);font:inherit;font-size:14px;font-weight:700">Записаться</button>
+        <button style="appearance:none;cursor:pointer;height:36px;padding:0 18px;border-radius:999px;background:var(--card);border:1px solid var(--border);color:var(--foreground);font:inherit;font-size:14px;font-weight:600">Посмотреть тренеров</button>
+      </div>
+    </div>
+  </div>
+  <p class="spec"><code>.reveal</code> — ступенчатое проявление прямых потомков
+    по 60 мс, кривая <code>cubic-bezier(0.22, 1, 0.36, 1)</code>, под
+    <code>prefers-reduced-motion</code> выключается целиком. Порядок проявления
+    задаёт порядок чтения. <code>.section-rule</code> — номер оранжевым,
+    название серым, линия на всю оставшуюся ширину: страница читается как
+    журнальный разворот, а не как лента карточек. В публичной среде главное
+    действие тёмное, не оранжевое: оранжевого на экране одна точка.</p>
+</div>
+</section>
+
+<!-- ═══════════════ Б ═══════════════ -->
+
+<section id="b">
+<div class="lab-h">
+  <div class="section-rule"><b>02</b> Реальные экраны</div>
+  <h2>Как система выглядит сегодня</h2>
+  <p>Снимки живых страниц дизайн-системы, снятые Playwright на 1440 и 375 в той
+    теме, что выбрана в шапке. Это не макеты: страницы работают на
+    <code>localhost:3031</code>, снимки пересобирает <code>node lab/shoot.mjs</code>.</p>
+</div>
+
+<div class="shelf">
+  <h3>Публичная среда · обзор системы</h3>
+  <div class="shots">
+    <figure class="shot"><img data-shot="ds-home-desktop" src="shots/ds-home-desktop-light.jpg" alt="Обзор дизайн-системы, десктоп" loading="lazy"><figcaption>1440 · обложка, редакционные разделители, зерно</figcaption></figure>
+    <figure class="shot"><img data-shot="ds-home-mobile" src="shots/ds-home-mobile-light.jpg" alt="Обзор дизайн-системы, телефон" loading="lazy"><figcaption>375</figcaption></figure>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>Публичная среда · страница записи</h3>
+  <div class="shots">
+    <figure class="shot"><img data-shot="ds-booking-desktop" src="shots/ds-booking-desktop-light.jpg" alt="Эталон записи, десктоп" loading="lazy"><figcaption>1440 · общие компоненты: сетка месяца, своё поле даты, шаги</figcaption></figure>
+    <figure class="shot"><img data-shot="ds-booking-mobile" src="shots/ds-booking-mobile-light.jpg" alt="Эталон записи, телефон" loading="lazy"><figcaption>375</figcaption></figure>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>Рабочая среда · приёмы work.css в потоке</h3>
+  <div class="shots">
+    <figure class="shot"><img data-shot="ds-rabota-desktop" src="shots/ds-rabota-desktop-light.jpg" alt="Рабочая среда, десктоп" loading="lazy"><figcaption>1440 · плакат, плитки-строки, лист и колонка</figcaption></figure>
+    <figure class="shot"><img data-shot="ds-rabota-mobile" src="shots/ds-rabota-mobile-light.jpg" alt="Рабочая среда, телефон" loading="lazy"><figcaption>375 · листа нет, содержимое и есть страница</figcaption></figure>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>Рабочая среда · числа и полосы</h3>
+  <div class="shots">
+    <figure class="shot"><img data-shot="ds-dashboard-desktop" src="shots/ds-dashboard-desktop-light.jpg" alt="Дашборд, десктоп" loading="lazy"><figcaption>1440 · числа-плакаты, полосы, таблица</figcaption></figure>
+    <figure class="shot"><img data-shot="ds-dashboard-mobile" src="shots/ds-dashboard-mobile-light.jpg" alt="Дашборд, телефон" loading="lazy"><figcaption>375</figcaption></figure>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════ В ═══════════════ -->
+
+<section id="c">
+<div class="lab-h">
+  <div class="section-rule"><b>03</b> Три концепции «Глагола 2.0»</div>
+  <h2>Один сценарий, три композиции</h2>
+  <p>Во всех трёх — <b>одни и те же данные</b>, чтобы сравнивался именно дизайн.
+    Марина Соколова, директор по развитию. Долгосрочная цель: конверсия из
+    выступлений в обращения с 4% до 10% к концу декабря. Ближайшее выступление —
+    конференция «Рост 2026» через 14 дней, доклад на 12 минут. Есть структура
+    доклада, четыре прошлых выступления, разбор от тренера и следующие действия.</p>
+  <p>Цель и выступление — разные вещи: одна цель собирает несколько выступлений
+    и несколько попыток. Это различие держат все три концепции, и каждая
+    показывает его по-своему.</p>
+</div>
+
+<div class="shelf">
+  <div class="concepts">
+    <div class="concept">
+      <b><small>концепция A</small>Инструмент</b>
+      <p class="idea">Шкала цели во всю ширину сверху, под ней разворот «что
+        решить сейчас» и «арифметика цели» на одной базовой линии.</p>
+      <p>Узнаваемый элемент — шкала с засечками прошлых выступлений: видно не
+        «сколько процентов пути», а чем именно двигали число. Откат виден так
+        же, как рост.</p>
+      <a class="go" href="concept-a.html">Открыть A →</a>
+    </div>
+    <div class="concept">
+      <b><small>концепция B</small>Мастерская</b>
+      <p class="idea">Разворот рукописи: широкая полоса — сам доклад, узкая
+        правая — поля, куда уходит всё, что не текст.</p>
+      <p>Узнаваемый элемент — вертикальная шкала веса у каждого аргумента,
+        четыре ступени разбора бюро. Отметка стоит на полях, как у корректора.</p>
+      <a class="go" href="concept-b.html">Открыть B →</a>
+    </div>
+    <div class="concept">
+      <b><small>концепция C</small>Маршрут</b>
+      <p class="idea">Одна вертикальная ось: цель сверху горизонтом,
+        выступления — засечками к ней, расстояние пропорционально времени.</p>
+      <p>Узнаваемый элемент — линия, которая утолщается к цели и залита снизу
+        до достигнутого. Процента нет нигде: число и толщина говорят то же.</p>
+      <a class="go" href="concept-c.html">Открыть C →</a>
+    </div>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>A · Инструмент</h3>
+  <p class="note"><b>Чем отличается от типового SaaS.</b> Нет сетки одинаковых
+    плиток с показателями: на экране одно число-плакат и один список решений.
+    Иерархия даётся кеглем, а не рамками. <b>Как помогает задаче.</b> Эксперт
+    открывает экран между делами на двадцать секунд — ему нужно «что сделать
+    сейчас», а не обзор. <b>Почему лучше очевидного.</b> Дашборд из шести
+    плиток отвечает на вопрос «как дела», которого человек не задавал.</p>
+  <div class="shots">
+    <figure class="shot"><img data-shot="concept-a-desktop" src="shots/concept-a-desktop-light.jpg" alt="Концепция A, десктоп" loading="lazy"><figcaption>1440</figcaption></figure>
+    <figure class="shot"><img data-shot="concept-a-mobile" src="shots/concept-a-mobile-light.jpg" alt="Концепция A, телефон" loading="lazy"><figcaption>375</figcaption></figure>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>B · Мастерская</h3>
+  <p class="note"><b>Чем отличается.</b> Это не редактор с панелью инструментов
+    и не чат: инструменты появляются у абзаца, а не над страницей, и тулбара
+    нет вовсе. <b>Как помогает задаче.</b> Человек правит аргументацию, а не
+    управляет проектом; всё, что не текст, должно уйти на поля.
+    <b>Почему лучше очевидного.</b> Обзорные карточки над текстом отбирают у
+    него меру строки — а мера строки здесь и есть рабочий инструмент.</p>
+  <div class="shots">
+    <figure class="shot"><img data-shot="concept-b-desktop" src="shots/concept-b-desktop-light.jpg" alt="Концепция B, десктоп" loading="lazy"><figcaption>1440</figcaption></figure>
+    <figure class="shot"><img data-shot="concept-b-mobile" src="shots/concept-b-mobile-light.jpg" alt="Концепция B, телефон" loading="lazy"><figcaption>375 · поля уходят под выбранный аргумент</figcaption></figure>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>C · Маршрут</h3>
+  <p class="note"><b>Чем отличается.</b> Нет списка задач и нет канбана: есть
+    путь, у которого видно начало, пройденное и горизонт. Пустые месяцы видны
+    как пустые — расстояние на оси пропорционально времени.
+    <b>Как помогает задаче.</b> Связь «что я делаю сейчас → ради чего» видна
+    геометрически, а не словами. <b>Почему лучше очевидного.</b> Процент
+    выполнения цели — число, которое ничего не советует; ось показывает темп и
+    то, что темп нужно удвоить.</p>
+  <div class="shots">
+    <figure class="shot"><img data-shot="concept-c-desktop" src="shots/concept-c-desktop-light.jpg" alt="Концепция C, десктоп" loading="lazy"><figcaption>1440</figcaption></figure>
+    <figure class="shot"><img data-shot="concept-c-mobile" src="shots/concept-c-mobile-light.jpg" alt="Концепция C, телефон" loading="lazy"><figcaption>375 · ось уходит к левому краю</figcaption></figure>
+  </div>
+</div>
+
+<div class="shelf">
+  <h3>Сравнение</h3>
+  <div class="lab-table-wrap">
+  <table class="lab-table">
+    <thead><tr><th></th><th>A · Инструмент</th><th>B · Мастерская</th><th>C · Маршрут</th></tr></thead>
+    <tbody>
+      <tr>
+        <th>Отличительная идея</th>
+        <td>Шкала цели с засечками выступлений и разворот «решить сейчас / арифметика»</td>
+        <td>Разворот рукописи: текст в меру строки, всё остальное на полях</td>
+        <td>Ось времени: цель горизонтом, расстояние пропорционально дням</td>
+      </tr>
+      <tr>
+        <th>Сильные стороны</th>
+        <td>Быстрее всех отвечает «что делать сейчас». Высокая плотность без шума. Прямо показывает арифметику цели</td>
+        <td>Единственная, где настоящая работа — текст — в центре. Вес аргумента даёт честную картину готовности</td>
+        <td>Единственная, где видна связь цели, прошлого и темпа. Самая узнаваемая: такой оси нет ни у кого</td>
+      </tr>
+      <tr>
+        <th>Слабые стороны</th>
+        <td>Самая привычная: рискует выглядеть ещё одной рабочей панелью. Содержание доклада на втором плане</td>
+        <td>Не отвечает «как дела с целью» — для этого нужен второй экран. Узкая полоса полей на 375 исчезает</td>
+        <td>Длинная ось требует прокрутки. Слабо держит ежедневную рутину: шагов подготовки больше, чем влезает на засечку</td>
+      </tr>
+      <tr>
+        <th>Ежедневная работа</th>
+        <td>Лучше всех: открыл, решил, закрыл</td>
+        <td>Хорошо в дни подготовки, незачем в остальные</td>
+        <td>Скорее раз в неделю, чем каждый день</td>
+      </tr>
+      <tr>
+        <th>Масштабируемость</th>
+        <td>Высокая: шкала и список принимают любой сценарий, где есть цель и решения</td>
+        <td>Средняя: приём живёт там, где есть длинный текст</td>
+        <td>Средняя: ось хороша для пути, но плохо держит сценарии без времени</td>
+      </tr>
+      <tr>
+        <th>Сложность сопровождения</th>
+        <td>Низкая: почти всё собрано из существующих приёмов</td>
+        <td>Средняя: шкала веса и поля — новые элементы системы</td>
+        <td>Высокая: геометрия оси и масштаб времени — свой код, и его надо держать</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="spec">Выбор за Артёмом. Моя рекомендация — ниже, в отчёте сессии;
+    на этой странице она намеренно не стоит, чтобы не подталкивать взгляд.</p>
+</div>
+</section>
+
+<div class="lab-foot">
+  <p><b>Glagol Design Lab · v3.0.0.</b> Версия системы — поле <code>version</code>
+    в <code>package.json</code> дизайн-системы. Правила: <code>RULES.md</code>,
+    <code>docs/DESIGN.md</code>, <code>docs/COMPONENTS.md</code>,
+    <code>docs/ADAPTIVE.md</code>, <code>docs/CHECKS.md</code>. Что изменилось в
+    3.0.0 и какие противоречия устранены — <code>CHANGELOG.md</code>.</p>
+  <p>Концепции — экспериментальные. Их композиционные приёмы и токены живут
+    только здесь и системные не замещают. Переносить что-либо из них в рабочий
+    интерфейс до выбора направления нельзя.</p>
+  <p>Данные на всех экранах синтетические. Настоящих людей, клиентов, встреч и
+    закрытых методик здесь нет.</p>
+</div>
+
+</div>
