@@ -50,6 +50,13 @@ body { margin: 0 }
 .э-кнопки { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px }
 
 .э-подвал { margin-top: 36px; padding-top: 20px }
+
+/* Корень портала: в жизни он накрывает экран, здесь показан под ним, чтобы
+   оба состояния были видны на одном снимке. */
+.портал { max-width: 760px; margin: 0 auto; padding: 0 16px 48px }
+.портал-лист { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px }
+.портал-шапка { display: flex; align-items: center; gap: 12px }
+.портал-шапка h2 { flex: 1; min-width: 0; margin: 0 }
 .э-строка-текста { margin: 0 }
 
 @media (max-width: 1023px) {
@@ -59,9 +66,14 @@ body { margin: 0 }
 }
 </style>
 </head>
-<body class="work" data-ds="3">
+<body class="work">
 
-<main class="э">
+<!--
+  Признак стоит на экране, а не на <body>, — ровно так он будет стоять в
+  календаре. На <body> он прятал бы главную ловушку: портал приземляется
+  в <body>, то есть ВНЕ области, и слой до него не достаёт.
+-->
+<main class="э" data-ds="3">
 
   <!-- Экран на выдуманных данных носит это на себе: правило процесса №2
        «Глагола 2.0». Снимается вместе с подключением настоящего источника. -->
@@ -161,6 +173,32 @@ body { margin: 0 }
   </div>
 
 </main>
+
+<!--
+  Корень портала — то, что React рисует в <body> мимо дерева экрана: окно,
+  всплывающее, выдвижная панель. Он несёт ОБА признака: `work` даёт краски
+  рабочей среды, `data-ds="3"` — стандарт. Без них замер 01.11.26 показал
+  кнопку 13/700 с браузерной рамкой и без заливки, а поле — тринадцатым
+  кеглем, на котором iOS зумит страницу.
+-->
+<div class="портал work" data-ds="3">
+  <div class="work-tile портал-лист">
+    <div class="портал-шапка">
+      <h2 class="work-title work-title--раздел">Назначить встречу</h2>
+      <button class="work-icon" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <label class="э-поле">
+      <span class="work-label">Когда</span>
+      <input class="work-field" type="text" value="20 ноября, 16:00">
+    </label>
+    <div class="э-кнопки">
+      <button class="work-btn work-btn--second">Назначить</button>
+      <button class="work-btn work-btn--quiet">Отмена</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
