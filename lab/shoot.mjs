@@ -109,6 +109,8 @@ const noDs = args.includes("--no-ds");
 const СТРАНИЦЫ = [
   { key: "lab-index", url: `${LAB}/`, full: false, store: "glagol-lab-theme",
     note: "сама витрина" },
+  { key: "правила", url: `${LAB}/правила.html`, full: true, store: "glagol-lab-theme",
+    note: "правила работы отдельной страницей" },
   { key: "новый-экран", url: `${LAB}/новый-экран.html`, full: true, store: "glagol-lab-theme",
     note: "контрольный экран по стандарту 01.11.2026" },
   { key: "concept-a", url: `${LAB}/concept-a.html`, full: true, store: "glagol-lab-theme",
@@ -143,7 +145,7 @@ const НЕ_ПРОДУКТ =
    44 можно только разогнав строки текста. То же говорит WCAG 2.5.8, где цель
    внутри предложения из правила выведена. Исключение именно для ссылки в
    абзаце: кнопка в абзаце исключением не станет. */
-const ССЫЛКА_В_ТЕКСТЕ = "p > a, p > button";
+const ССЫЛКА_В_ТЕКСТЕ = "p a, p button, li a";
 
 /*
  * Контрольный экран доказывает, что по стандарту можно собрать страницу, не
