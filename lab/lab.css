@@ -504,3 +504,23 @@ button {
   text-transform: uppercase;
   vertical-align: middle;
 }
+
+
+/* Ссылка на правила в верхней полосе: её ищут первой, когда страницу открыл
+   человек со стороны. */
+.lab-ссылка {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--foreground);
+  color: var(--background);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.lab-ссылка:hover {
+  filter: brightness(0.9);
+}
